@@ -15,7 +15,7 @@ jobs:
         with:
           token: ${{ secrets.GH_TOKEN }}
 
-      -name: Setup JDK
+      - name: Setup JDK
         uses: actions/setup-java@3
         with:
           java-version: 11
