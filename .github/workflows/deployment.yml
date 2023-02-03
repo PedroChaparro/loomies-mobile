@@ -1,0 +1,74 @@
+name: Continuous Deployment
+
+on:
+  workflow_dispatch
+  # release:
+    # types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout and Authenticate
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
+      -name: Setup JDK
+        uses: actions/setup-java@3
+        with:
+          java-version: 11
+      
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      
+      - name: Restore node_modules cache
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      
+      - name: Install yarn dependencies
+        run: yarn install --from-lock-file
+
+      - name: Cache Gradle Wrapper
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+      
+      - name: Cache Gradle Dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-caches-
+
+      - name: Make Gradle executable
+        run: cd android && chmod +x ./gradlew
+      
+      - name: Build Android
+        run: cd android && ./gradlew assembleRelease --no-daemon
+
+      - name: Sign Android
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: android/app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.ANDROID_KEY_BASE64 }}
+          alias: ${{ secrets.ANDROID_ALIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+      - name: Upload artifact
+        run: |
+            mv ./${{steps.sign_app.outputs.signedReleaseFile}} ./artifacts/Loomies.apk
+            git config user.name [BOT]_ANDROID_ARTIFACTS
+            git add ./artifacts/Loomies.apk
+            git commit -m "[CD 🚀] Update android artifact"
+            git push origin main
