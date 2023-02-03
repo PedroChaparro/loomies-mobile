@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint", 
+    "usernamehw.errorlens", 
+    "esbenp.prettier-vscode", 
+    "dsznajder.es7-react-js-snippets", 
+    "streetsidesoftware.code-spell-checker"
+  ]
+}
