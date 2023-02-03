@@ -6,7 +6,8 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "lint": "eslint src/**/*",
-    "format": "prettier --write src/**/*",
+    "format": "prettier --write src/**/*.{ts,tsx,js,jsx} --no-error-on-unmatched-pattern",
+    "format:check": "prettier --check src/**/*.{ts,tsx,js,jsx} --no-error-on-unmatched-pattern",
     "start": "react-native start --verbose"
   },
   "dependencies": {
