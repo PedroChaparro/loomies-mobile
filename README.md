@@ -1,5 +1,8 @@
 # Loomies
 
+![CD Status Badge](https://github.com/PedroChaparro/loomies-mobile/actions/workflows/deployment.yml/badge.svg?branch=main)
+![CI Status Badge](https://github.com/PedroChaparro/loomies-mobile/actions/workflows/integration.yml/badge.svg)
+
 ## Development environment
 
 The project was tested to work with the following specs:
