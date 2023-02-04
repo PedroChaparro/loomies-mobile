@@ -1,18 +1,19 @@
 name: Continuous Deployment
 
 on:
-  release:
-    types: [published]
+  # Create a new release when a tag is pushed
+  push: 
+    tags:
+    - 'v*' # Match tags starting with v*: v1.0, v20.15.10
 
 jobs:
   deploy:
     runs-on: ubuntu-22.04
 
     steps:
+      # -- Setup the environment
       - name: Checkout and Authenticate
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GH_TOKEN }}
 
       - name: Setup JDK
         uses: actions/setup-java@v2
@@ -36,6 +37,7 @@ jobs:
       - name: Install yarn dependencies
         run: yarn install --from-lock-file
 
+      # -- Prepare Gradle for Android
       - name: Cache Gradle Wrapper
         uses: actions/cache@v2
         with:
@@ -53,6 +55,7 @@ jobs:
       - name: Make Gradle executable
         run: cd android && chmod +x ./gradlew
       
+      # -- Build and sign the Android app
       - name: Build Android
         run: cd android && ./gradlew assembleRelease --no-daemon
 
@@ -65,11 +68,28 @@ jobs:
           alias: ${{ secrets.ANDROID_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
-
-      - name: Upload artifact
-        run: |
-            mv ./${{steps.sign_app.outputs.signedReleaseFile}} ./artifacts/Loomies.apk
-            git config user.name [BOT]_ANDROID_ARTIFACTS
-            git add ./artifacts/Loomies.apk
-            git commit -m "[CD 🚀] Update android artifact"
-            git push origin main
+      
+      # -- Create a new release and upload the signed APK
+      - name: Create new release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - ${{ github.event.release.body }}
+          draft: false
+          prerelease: false
+      
+      - name: Upload release artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          asset_name: Loomies.apk
+          asset_content_type: application/vnd.android.package-archive
