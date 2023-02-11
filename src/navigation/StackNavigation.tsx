@@ -9,7 +9,7 @@ const Stack = createStackNavigator();
 export const StackNavigation = () => {
   return (
     <Stack.Navigator
-      initialRouteName='Application'
+      initialRouteName='Map'
       screenOptions={{ headerShown: false }}
     >
       {/* Views that are not included in the bottom tabs navigation but are reachable using the navigator hook */}

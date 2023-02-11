@@ -29,6 +29,7 @@ const Screens = [
 export const BottomNavigation = () => {
   return (
     <Tab.Navigator
+      initialRouteName='Loomies'
       screenOptions={{
         tabBarStyle: {
           backgroundColor: '#ED4A5F',
