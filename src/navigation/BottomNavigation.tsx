@@ -29,6 +29,8 @@ const Screens = [
 export const BottomNavigation = () => {
   return (
     <Tab.Navigator
+      /*Prevent going back to the profile tab when the back button is pressed*/
+      backBehavior='none'
       initialRouteName='Loomies'
       screenOptions={{
         tabBarStyle: {
@@ -54,6 +56,15 @@ export const BottomNavigation = () => {
               <FeatherIcon name={screen.iconName} size={20} color={color} />
             )
           }}
+          /* Redirect to the Map view if the clicked tab is already active / 
+          handle double click */
+          listeners={({ navigation }) => ({
+            tabPress: () => {
+              if (navigation.isFocused()) {
+                return navigation.navigate('Map');
+              }
+            }
+          })}
         />
       ))}
     </Tab.Navigator>
