@@ -8,6 +8,24 @@ import { UserInventory } from '../pages/UserInventory';
 
 const Tab = createBottomTabNavigator();
 
+const Screens = [
+  {
+    name: 'Profile',
+    component: Profile,
+    iconName: 'user'
+  },
+  {
+    name: 'Loomies',
+    component: UserLoomies,
+    iconName: 'user'
+  },
+  {
+    name: 'Inventory',
+    component: UserInventory,
+    iconName: 'box'
+  }
+];
+
 export const BottomNavigation = () => {
   return (
     <Tab.Navigator
@@ -25,33 +43,18 @@ export const BottomNavigation = () => {
         tabBarInactiveTintColor: '#CFCFCF'
       }}
     >
-      <Tab.Screen
-        name='Profile'
-        component={Profile}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <FeatherIcon name='user' size={20} color={color} />
-          )
-        }}
-      />
-      <Tab.Screen
-        name='Loomies'
-        component={UserLoomies}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <FeatherIcon name='user' size={20} color={color} />
-          )
-        }}
-      />
-      <Tab.Screen
-        name='Inventory'
-        component={UserInventory}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <FeatherIcon name='box' size={20} color={color} />
-          )
-        }}
-      />
+      {Screens.map((screen) => (
+        <Tab.Screen
+          key={screen.name}
+          name={screen.name}
+          component={screen.component}
+          options={{
+            tabBarIcon: ({ color }) => (
+              <FeatherIcon name={screen.iconName} size={20} color={color} />
+            )
+          }}
+        />
+      ))}
     </Tab.Navigator>
   );
 };
