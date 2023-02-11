@@ -17,7 +17,7 @@ const Screens = [
   {
     name: 'Loomies',
     component: UserLoomies,
-    iconName: 'user'
+    iconName: 'github'
   },
   {
     name: 'Inventory',
