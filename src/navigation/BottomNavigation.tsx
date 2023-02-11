@@ -13,7 +13,9 @@ export const BottomNavigation = () => {
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: '#ED4A5F'
+          backgroundColor: '#ED4A5F',
+          height: 60,
+          paddingBottom: 8
         },
         headerStyle: {
           backgroundColor: '#ED4A5F'
