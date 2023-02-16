@@ -1,8 +1,11 @@
-import { iPosition, iMap } from './mapInterfaces';
+import { iPosition, iMap, iGridPosition } from './mapInterfaces';
 
 export const BBOX_SIDE_LENGTH = 0.0015;
 
-export async function fetchMap(pos: iPosition): Promise<iMap> {
+export async function fetchMap(
+  pos: iPosition,
+  offset: iGridPosition = { x: 0, y: 0 }
+): Promise<iMap> {
   let map: iMap = {
     origin: {
       lat: pos.lat - BBOX_SIDE_LENGTH,
@@ -15,9 +18,13 @@ export async function fetchMap(pos: iPosition): Promise<iMap> {
   };
 
   const url = `https://www.openstreetmap.org/api/0.6/map?bbox=${
-    pos.lon - BBOX_SIDE_LENGTH
-  },${pos.lat - BBOX_SIDE_LENGTH},${pos.lon + BBOX_SIDE_LENGTH},${
-    pos.lat + BBOX_SIDE_LENGTH
+    pos.lon - BBOX_SIDE_LENGTH + (BBOX_SIDE_LENGTH * 2 * offset.x)
+  },${
+    pos.lat - BBOX_SIDE_LENGTH + (BBOX_SIDE_LENGTH * 2 * offset.y)
+  },${
+    pos.lon + BBOX_SIDE_LENGTH + (BBOX_SIDE_LENGTH * 2 * offset.x)
+  },${
+    pos.lat + BBOX_SIDE_LENGTH + (BBOX_SIDE_LENGTH * 2 * offset.y)
   }`;
 
   console.log(url);
