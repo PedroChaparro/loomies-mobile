@@ -1,9 +1,13 @@
 import { iPosition, iMap } from './mapInterfaces';
 
-const BBOX_SIDE_LENGTH = 0.0015;
+export const BBOX_SIDE_LENGTH = 0.0015;
 
 export async function fetchMap(pos: iPosition): Promise<iMap> {
   let map: iMap = {
+    origin: {
+      lat: pos.lat - BBOX_SIDE_LENGTH,
+      lon: pos.lon - BBOX_SIDE_LENGTH
+    },
     dicNodes: {},
     roads: [],
     paths: [],
@@ -38,7 +42,7 @@ export async function fetchMap(pos: iPosition): Promise<iMap> {
 
 // get ways
 
-export function getWays(map: iMap, osm: any): iMap {
+function getWays(map: iMap, osm: any): iMap {
   // loop trough all nodes
   osm.elements.forEach((ele: any) => {
     // index all nodes
@@ -51,7 +55,6 @@ export function getWays(map: iMap, osm: any): iMap {
       };
     } else if (ele['type'] === 'way') {
       for (const tag in ele['tags']) {
-
         // buldings
         if (tag === 'building') {
           map.buildings.push({
@@ -80,7 +83,7 @@ export function getWays(map: iMap, osm: any): iMap {
   return map;
 }
 
-function debugPrintMap(map: iMap) {
+export function debugPrintMap(map: iMap) {
   for (const prop in map.dicNodes) {
     console.log((map.dicNodes as any)[prop]);
   }

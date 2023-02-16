@@ -12,6 +12,7 @@ export interface iWay {
 }
 
 export interface iMap {
+  origin: iPosition;
   dicNodes: Record<string, iNode>;
   roads: iWay[];
   paths: iWay[];
