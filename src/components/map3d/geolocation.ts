@@ -32,19 +32,24 @@ export const getPosition = async (): Promise<iPosition | null> => {
   const locationPermission: boolean = await requestLocationPermission();
   if (!locationPermission) return null;
 
-  Geolocation.getCurrentPosition(
-    (position) => {
-      return {
+  const opt = { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 };
+
+  const getCurrentPosition = () =>
+    new Promise((resolve, error) =>
+      Geolocation.getCurrentPosition(resolve, error, opt)
+    );
+
+  try {
+    const position: any = await getCurrentPosition();
+    return {
         lat: position.coords.latitude,
         lon: position.coords.longitude
-      };
-    },
-    (error) => {
-      // See error code charts below.
-      console.log(error.code, error.message);
-    },
-    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-  );
+    }
+  } catch (error) {
+    const geoError = error as Geolocation.GeoError
+    if (geoError)
+      console.log(geoError.code, geoError.message);
+    return null;
+  }
 
-  return null;
 };
