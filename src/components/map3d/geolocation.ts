@@ -42,14 +42,12 @@ export const getPosition = async (): Promise<iPosition | null> => {
   try {
     const position: any = await getCurrentPosition();
     return {
-        lat: position.coords.latitude,
-        lon: position.coords.longitude
-    }
+      lat: position.coords.latitude,
+      lon: position.coords.longitude
+    };
   } catch (error) {
-    const geoError = error as Geolocation.GeoError
-    if (geoError)
-      console.log(geoError.code, geoError.message);
+    const geoError = error as Geolocation.GeoError;
+    if (geoError) console.log(geoError.code, geoError.message);
     return null;
   }
-
 };

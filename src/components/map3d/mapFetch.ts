@@ -1,6 +1,17 @@
 import { iPosition, iMap, iGridPosition } from './mapInterfaces';
 
-export const BBOX_SIDE_LENGTH = 0.0015;
+/*
+min Longitude , min Latitude , max Longitude , max Latitude
+          ^
+          |
+        +lat
+  <- -lon   +lon ->
+        -lat
+          |
+          v
+*/
+
+export const BBOX_SIZE = 0.0015;
 
 export async function fetchMap(
   pos: iPosition,
@@ -8,8 +19,8 @@ export async function fetchMap(
 ): Promise<iMap> {
   let map: iMap = {
     origin: {
-      lat: pos.lat - BBOX_SIDE_LENGTH,
-      lon: pos.lon - BBOX_SIDE_LENGTH
+      lon: pos.lon - BBOX_SIZE + BBOX_SIZE * 2 * offset.x,
+      lat: pos.lat + BBOX_SIZE + BBOX_SIZE * 2 * -offset.y
     },
     dicNodes: {},
     roads: [],
@@ -18,14 +29,10 @@ export async function fetchMap(
   };
 
   const url = `https://www.openstreetmap.org/api/0.6/map?bbox=${
-    pos.lon - BBOX_SIDE_LENGTH + (BBOX_SIDE_LENGTH * 2 * offset.x)
-  },${
-    pos.lat - BBOX_SIDE_LENGTH + (BBOX_SIDE_LENGTH * 2 * offset.y)
-  },${
-    pos.lon + BBOX_SIDE_LENGTH + (BBOX_SIDE_LENGTH * 2 * offset.x)
-  },${
-    pos.lat + BBOX_SIDE_LENGTH + (BBOX_SIDE_LENGTH * 2 * offset.y)
-  }`;
+    pos.lon - BBOX_SIZE + BBOX_SIZE * 2 * offset.x
+  },${pos.lat - BBOX_SIZE + BBOX_SIZE * 2 * -offset.y},${
+    pos.lon + BBOX_SIZE + BBOX_SIZE * 2 * offset.x
+  },${pos.lat + BBOX_SIZE + BBOX_SIZE * 2 * -offset.y}`;
 
   console.log(url);
 
@@ -60,7 +67,10 @@ function getWays(map: iMap, osm: any): iMap {
           lon: ele.lon
         }
       };
-    } else if (ele['type'] === 'way') {
+    }
+
+    // group by category
+    else if (ele['type'] === 'way') {
       for (const tag in ele['tags']) {
         // buldings
         if (tag === 'building') {

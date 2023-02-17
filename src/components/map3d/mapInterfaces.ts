@@ -1,3 +1,8 @@
+export interface iGridPosition {
+  x: number;
+  y: number;
+}
+
 export interface iPosition {
   lat: number;
   lon: number;
