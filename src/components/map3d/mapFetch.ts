@@ -1,4 +1,5 @@
-import { iPosition, iMap, iGridPosition } from './mapInterfaces';
+import { iPosition, iMap } from './mapInterfaces';
+import { iGridPosition } from '@src/context/MapProvider';
 
 /*
 min Longitude , min Latitude , max Longitude , max Latitude

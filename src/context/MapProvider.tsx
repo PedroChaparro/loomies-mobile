@@ -1,6 +1,10 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { iPosition } from '@src/services/geolocation';
-import { iGridPosition } from '@src/components/map3d/mapInterfaces';
+
+export interface iGridPosition {
+  x: number;
+  y: number;
+}
 
 export const GRIDMAP_SIZE = 3; // only uneven numbers
 

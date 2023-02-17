@@ -4,11 +4,17 @@ import { Image, ScrollView, Text } from 'react-native';
 import { fetchMap } from './mapFetch';
 import { mapToSVG } from './mapSvgRenderer';
 import { SvgWrapper } from './SvgWrapper';
-import { iGridPosition, iMap, iQueuedTile } from './mapInterfaces';
+import { iMap, iQueuedTile } from './mapInterfaces';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { iPosition } from '@src/services/geolocation';
 import { GRIDMAP_SIZE } from '@src/context/MapProvider';
-import { MapContext } from '@src/context/MapProvider';
+import { MapContext, iGridPosition } from '@src/context/MapProvider';
+
+export interface iQueuedTile {
+  pos: iGridPosition,
+  map: iMap,
+  xml?: string | null,
+}
 
 export const Map3D = () => {
   // track position
