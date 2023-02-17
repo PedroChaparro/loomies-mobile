@@ -1,7 +1,10 @@
 import { PermissionsAndroid } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 
-import { iPosition } from './mapInterfaces';
+export interface iPosition {
+  lat: number;
+  lon: number;
+}
 
 export const requestLocationPermission = async (): Promise<boolean> => {
   try {

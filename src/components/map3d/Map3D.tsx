@@ -1,19 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { Image, ScrollView, Text } from 'react-native';
-import { useEffect, useState, useRef } from 'react';
 
 import { fetchMap } from './mapFetch';
 import { mapToSVG } from './mapSvgRenderer';
 import { SvgWrapper } from './SvgWrapper';
-import { getPosition } from './geolocation';
-import { iPosition, iMap, iQueuedTile } from './mapInterfaces';
+import { iMap, iQueuedTile } from './mapInterfaces';
+import { UserPositionContext } from '@src/context/UserPositionProvider';
+import { iPosition } from '@src/services/geolocation';
 
 const GRIDMAP_SIZE = 3; // only uneven numbers
 
 export const Map3D = () => {
   // track position
-  const userPrevPosition = useRef<iPosition | null>(null);
-  const userPosition = useRef<iPosition | null>(null);
+  const userCachedPosition = useRef<iPosition | null>(null);
+  const userPosition = useContext(UserPositionContext);
 
   const gridImageB64 = useRef<Array<Array<string>>>([]);
 
@@ -32,18 +32,26 @@ export const Map3D = () => {
     // iterate trought tiles
     for (let i = 0; i < GRIDMAP_SIZE; i++) {
       for (let j = 0; j < GRIDMAP_SIZE; j++) {
+        // it's already on the list
+        if (
+          listQueuedTiles.current.find((tile: iQueuedTile) => {
+            return tile.pos.x == i && tile.pos.y == j;
+          })
+        )
+          continue;
+
         // check which is missing
 
-        console.log('Check tile ', i, ' ', j, ' ', userPosition.current);
+        console.log('Check tile ', i, ' ', j, ' ', userPosition);
         if (gridImageB64.current[i][j] !== '') continue;
 
         (async () => {
           try {
             console.log('Empty tile ', i, ' ', j);
-            if (!userPosition.current) return;
+            if (!userPosition) return;
 
             // fetch OSM map
-            const map: iMap = await fetchMap(userPosition.current, {
+            const map: iMap = await fetchMap(userPosition, {
               x: i - offset,
               y: j - offset
             });
@@ -93,18 +101,18 @@ export const Map3D = () => {
         gridImageB64.current[i].push('');
       }
     }
-
-    (async () => {
-      // get position
-      const position = await getPosition();
-      userPosition.current = position;
-      console.log('Position: ', position);
-
-      // build grid
-      console.log('R callling');
-      collectFetchedMapInfo();
-    })();
   }, []);
+
+  useEffect(() => {
+    console.log('User position changed');
+    if (!userPosition) return;
+
+    // check it's outside boundaries
+
+    // build grid
+    console.log('R callling');
+    collectFetchedMapInfo();
+  }, [userPosition]);
 
   const storeImageBase64 = (base64: string, tile: iQueuedTile) => {
     // dispatch
