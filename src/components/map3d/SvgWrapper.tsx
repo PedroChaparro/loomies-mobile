@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Svg, { SvgXml } from 'react-native-svg';
+import { iQueuedTile } from './mapInterfaces';
 
 const BASE64_IMAGE_SIZE = 500;
 
 interface iSvgWrapper {
-  xml: string;
-  storeImageBase64: (_str: string) => void;
+  tile: iQueuedTile;
+  storeImageBase64: (_base64: string, _tile: iQueuedTile) => void;
 }
 
 /*
@@ -14,9 +15,12 @@ interface iSvgWrapper {
  */
 
 export const SvgWrapper = (props: iSvgWrapper) => {
-  const getBase64 = (svgComponent: Svg) => {
-    console.log('entered getBase64');
+  const done = useRef<boolean>(false);
 
+  const getBase64 = (svgComponent: Svg) => {
+    if (done.current) return;
+
+    console.log('entered getBase64');
     // TODO: add a % of failure to test
 
     if (!svgComponent) {
@@ -24,15 +28,19 @@ export const SvgWrapper = (props: iSvgWrapper) => {
       return;
     }
 
+    done.current = true;
+
     svgComponent.toDataURL(
       (base64: string) => {
         console.log('Base64 Data Start');
         console.log('Base64 Data End');
-        props.storeImageBase64(base64);
+        props.storeImageBase64(base64, props.tile);
       },
       { width: BASE64_IMAGE_SIZE, height: BASE64_IMAGE_SIZE }
     );
   };
 
-  return <SvgXml ref={getBase64} xml={props.xml} width='100' height='100' />;
+  return (
+    <SvgXml ref={getBase64} xml={props.tile.xml!} width='100' height='100' />
+  );
 };

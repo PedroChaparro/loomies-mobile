@@ -1,7 +1,17 @@
+// grid
+
 export interface iGridPosition {
   x: number;
   y: number;
 }
+
+export interface iQueuedTile {
+  pos: iGridPosition,
+  map: iMap,
+  xml?: string | null,
+}
+
+// map
 
 export interface iPosition {
   lat: number;

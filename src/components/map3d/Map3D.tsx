@@ -1,11 +1,12 @@
 import React from 'react';
+import { Image, ScrollView, Text } from 'react-native';
 import { useEffect, useState, useRef } from 'react';
 
 import { fetchMap } from './mapFetch';
 import { mapToSVG } from './mapSvgRenderer';
 import { SvgWrapper } from './SvgWrapper';
 import { getPosition } from './geolocation';
-import { iGridPosition, iPosition, iMap } from './mapInterfaces';
+import { iPosition, iMap, iQueuedTile } from './mapInterfaces';
 
 const GRIDMAP_SIZE = 3; // only uneven numbers
 
@@ -15,56 +16,73 @@ export const Map3D = () => {
   const userPosition = useRef<iPosition | null>(null);
 
   const gridImageB64 = useRef<Array<Array<string>>>([]);
-  //const [gridImageB64, setGridImageB64] = useState<Array<Array<string>>>([]);
-  const [listSvgWrappers, setListSvgComponents] = useState<string[]>([]);
 
-  const gridIsComplete = useRef<boolean>(false);
-  const posScanningTile = useRef<iGridPosition>({
-    x: 0,
-    y: 0
-  });
+  const [finalGridImageB64, setFinalGridImageB64] = useState<Array<string>>([]);
+  const [currentProcessingTile, setProcessingTile] = useState<iQueuedTile[]>(
+    []
+  );
 
-  const buildGrid = async () => {
-    if (gridIsComplete.current) return;
+  // queued tiles to be drawn in base64
+  const listQueuedTiles = useRef<iQueuedTile[]>([]);
+  const isBuilderBusy = useRef<boolean>(false);
 
-    // iterate through tiles in grid
-
+  const collectFetchedMapInfo = async () => {
     const offset = (GRIDMAP_SIZE - 1) / 2;
 
+    // iterate trought tiles
     for (let i = 0; i < GRIDMAP_SIZE; i++) {
       for (let j = 0; j < GRIDMAP_SIZE; j++) {
-        //
-        // check if a tile is empty
+        // check which is missing
 
-        if (gridImageB64.current[i][j] === '') {
-          console.log('Check tile ', i, ' ', j, ' ', userPosition.current);
-          if (!userPosition.current) continue;
-          console.log('Empty tile ', i, ' ', j);
+        console.log('Check tile ', i, ' ', j, ' ', userPosition.current);
+        if (gridImageB64.current[i][j] !== '') continue;
 
-          // set scannig tile
-          posScanningTile.current = {
-            x: i,
-            y: j
-          };
+        (async () => {
+          try {
+            console.log('Empty tile ', i, ' ', j);
+            if (!userPosition.current) return;
 
-          // get OSM map
-          const map: iMap = await fetchMap(userPosition.current, {
-            x: i - offset,
-            y: j - offset
-          });
-          console.log('this: ', i - offset, j - offset);
+            // fetch OSM map
+            const map: iMap = await fetchMap(userPosition.current, {
+              x: i - offset,
+              y: j - offset
+            });
+            console.log('FETCHED ===========================');
 
-          // convert to svg image
-          const svg = mapToSVG(map);
+            // push
+            listQueuedTiles.current.push({
+              pos: { x: i, y: j },
+              map: map
+            });
 
-          // empty list then set it again
-          setListSvgComponents([]);
-          setListSvgComponents([svg]);
-
-          return;
-        }
+            // signal builder
+            signalBuilderCheckTiles();
+          } catch (error) {
+            console.log("Couldn't fetch map");
+          }
+        })();
       }
     }
+  };
+
+  const signalBuilderCheckTiles = () => {
+    // is there a tile being processed?
+    if (isBuilderBusy.current) return;
+
+    // the list is not empty?
+    if (!listQueuedTiles.current.length) return;
+
+    // prepare tile
+    isBuilderBusy.current = true;
+    const tile = listQueuedTiles.current[0];
+
+    // convert to svg
+    tile.xml = mapToSVG(tile.map);
+
+    // send to process
+    console.log('PROCESSING ', tile.pos);
+    setProcessingTile([]);
+    setProcessingTile([tile]);
   };
 
   useEffect(() => {
@@ -84,20 +102,15 @@ export const Map3D = () => {
 
       // build grid
       console.log('R callling');
-      await buildGrid();
-      console.log('R callling ended');
+      collectFetchedMapInfo();
     })();
   }, []);
 
-  const storeImageBase64 = (base64: string) => {
-    setListSvgComponents([]);
-    gridImageB64.current[posScanningTile.current.x][posScanningTile.current.y] =
-      base64;
-
-    // continue
-    (async () => {
-      buildGrid();
-    })();
+  const storeImageBase64 = (base64: string, tile: iQueuedTile) => {
+    // dispatch
+    setProcessingTile([]);
+    console.log('Finished tile ', tile.pos);
+    gridImageB64.current[tile.pos.x][tile.pos.y] = base64;
 
     // print what we have
     let complete = true;
@@ -109,24 +122,59 @@ export const Map3D = () => {
       }
       console.log(str);
     }
+    console.log('\n');
 
     if (complete) {
       console.log('COMPLETE\n');
-      for (let i = 0; i < GRIDMAP_SIZE; i++) {
-        for (let j = 0; j < GRIDMAP_SIZE; j++) {
-          console.log('');
-          console.log('');
-          console.log(gridImageB64.current[i][j]);
-        }
-      }
     }
+
+    // dispatch and continue
+    const tileIndex = listQueuedTiles.current.indexOf(tile);
+    console.log(tileIndex);
+
+    if (tileIndex > -1) listQueuedTiles.current.splice(tileIndex, 1);
+    else
+      console.log(
+        "WARNING: there shouldn't be a processing tile missing in the Queue"
+      );
+
+    console.log('QUEUE:\n');
+    listQueuedTiles.current.forEach((tile, i) => {
+      console.log(i, ' ', tile.pos);
+    });
+
+    isBuilderBusy.current = false;
+    signalBuilderCheckTiles();
+
+    setFinalGridImageB64((old) => {
+      return [...old, 'data:image/png;base64,' + base64];
+    });
   };
 
   return (
-    <>
-      {listSvgWrappers.map((svg: string, i: number) => (
-        <SvgWrapper xml={svg} key={i} storeImageBase64={storeImageBase64} />
+    <ScrollView>
+      <>
+        {currentProcessingTile.map((tile: iQueuedTile, i: number) => (
+          <SvgWrapper key={i} tile={tile} storeImageBase64={storeImageBase64} />
+        ))}
+      </>
+
+      {finalGridImageB64.map((base64: string, i: number) => (
+        <>
+          <Text>Hello</Text>
+          <Image
+            key={i}
+            style={{
+              width: 200,
+              height: 200,
+              resizeMode: 'contain'
+            }}
+            source={{
+              uri: base64
+            }}
+          />
+        </>
       ))}
-    </>
+    </ScrollView>
   );
 };
