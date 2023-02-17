@@ -4,18 +4,19 @@ import { Image, ScrollView, Text } from 'react-native';
 import { fetchMap } from './mapFetch';
 import { mapToSVG } from './mapSvgRenderer';
 import { SvgWrapper } from './SvgWrapper';
-import { iMap, iQueuedTile } from './mapInterfaces';
+import { iGridPosition, iMap, iQueuedTile } from './mapInterfaces';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { iPosition } from '@src/services/geolocation';
-
-const GRIDMAP_SIZE = 3; // only uneven numbers
+import { GRIDMAP_SIZE } from '@src/context/MapProvider';
+import { MapContext } from '@src/context/MapProvider';
 
 export const Map3D = () => {
   // track position
   const userCachedPosition = useRef<iPosition | null>(null);
   const userPosition = useContext(UserPositionContext);
 
-  const gridImageB64 = useRef<Array<Array<string>>>([]);
+  const mapInfo = useContext(MapContext);
+  //const gridImageB64 = useRef<Array<Array<string>>>([]);
 
   const [finalGridImageB64, setFinalGridImageB64] = useState<Array<string>>([]);
   const [currentProcessingTile, setProcessingTile] = useState<iQueuedTile[]>(
@@ -27,6 +28,9 @@ export const Map3D = () => {
   const isBuilderBusy = useRef<boolean>(false);
 
   const collectFetchedMapInfo = async () => {
+
+    // check grid is initialized
+    //if (map)
     const offset = (GRIDMAP_SIZE - 1) / 2;
 
     // iterate trought tiles
@@ -43,7 +47,8 @@ export const Map3D = () => {
         // check which is missing
 
         console.log('Check tile ', i, ' ', j, ' ', userPosition);
-        if (gridImageB64.current[i][j] !== '') continue;
+        //if (gridImageB64.current[i][j] !== '') continue;
+        if (mapInfo?.getGridImageB64Pos({x: i, y: j})) continue;
 
         (async () => {
           try {
@@ -93,21 +98,19 @@ export const Map3D = () => {
     setProcessingTile([tile]);
   };
 
-  useEffect(() => {
-    // initialize gridmap
-    for (let i = 0; i < GRIDMAP_SIZE; i++) {
-      gridImageB64.current.push([]);
-      for (let j = 0; j < GRIDMAP_SIZE; j++) {
-        gridImageB64.current[i].push('');
-      }
-    }
-  }, []);
+  //useEffect(() => {
+  //}, []);
 
   useEffect(() => {
     console.log('User position changed');
     if (!userPosition) return;
 
     // check it's outside boundaries
+    let userOffset: iGridPosition = {
+      'x': 0,
+      'y': 0
+    }
+    //if (userPosition.)
 
     // build grid
     console.log('R callling');
@@ -118,44 +121,39 @@ export const Map3D = () => {
     // dispatch
     setProcessingTile([]);
     console.log('Finished tile ', tile.pos);
-    gridImageB64.current[tile.pos.x][tile.pos.y] = base64;
+    //gridImageB64.current[tile.pos.x][tile.pos.y] = base64;
+    mapInfo?.externalSetGridImageB64(tile.pos, base64);
 
     // print what we have
     let complete = true;
     for (let i = 0; i < GRIDMAP_SIZE; i++) {
       let str = '';
       for (let j = 0; j < GRIDMAP_SIZE; j++) {
-        complete = complete && gridImageB64.current[i][j] !== '';
-        str += (gridImageB64.current[i][j] !== '') + ' ';
+        //complete = complete && gridImageB64.current[i][j] !== '';
+        //str += (gridImageB64.current[i][j] !== '') + ' ';
+        str += (mapInfo?.getGridImageB64Pos({x:i, y:j}) !== '') + ' ';
       }
       console.log(str);
     }
     console.log('\n');
-
-    if (complete) {
-      console.log('COMPLETE\n');
-    }
 
     // dispatch and continue
     const tileIndex = listQueuedTiles.current.indexOf(tile);
     console.log(tileIndex);
 
     if (tileIndex > -1) listQueuedTiles.current.splice(tileIndex, 1);
-    else
-      console.log(
-        "WARNING: there shouldn't be a processing tile missing in the Queue"
-      );
-
-    console.log('QUEUE:\n');
-    listQueuedTiles.current.forEach((tile, i) => {
-      console.log(i, ' ', tile.pos);
-    });
+    else console.log('WARNING: Processing tile missing in the Queue');
 
     isBuilderBusy.current = false;
     signalBuilderCheckTiles();
 
     setFinalGridImageB64((old) => {
       return [...old, 'data:image/png;base64,' + base64];
+    });
+
+    console.log('QUEUE:\n');
+    listQueuedTiles.current.forEach((tile, i) => {
+      console.log(i, ' ', tile.pos);
     });
   };
 
