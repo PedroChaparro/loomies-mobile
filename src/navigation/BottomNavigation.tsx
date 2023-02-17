@@ -38,12 +38,9 @@ export const BottomNavigation = () => {
           height: 60,
           paddingBottom: 8
         },
-        headerStyle: {
-          backgroundColor: '#ED4A5F'
-        },
-        headerTintColor: '#FFF',
         tabBarActiveTintColor: '#FFF',
-        tabBarInactiveTintColor: '#CFCFCF'
+        tabBarInactiveTintColor: '#CFCFCF',
+        headerShown: false
       }}
     >
       {Screens.map((screen) => (
