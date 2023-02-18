@@ -120,6 +120,7 @@ const Styles = StyleSheet.create({
     padding: 12
   },
   formField: {
+    color: '#6C6C6C',
     backgroundColor: '#ECECEC',
     paddingHorizontal: 16
   },
