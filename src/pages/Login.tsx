@@ -35,12 +35,7 @@ export const Login = ({ navigation }: LoginProps) => {
     },
     validationSchema: Yup.object({
       email: Yup.string().email().required(),
-      password: Yup.string()
-        .matches(
-          /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[$!%*#?&/%])[A-Za-z\d$!%*#?&/%]{8,}$/,
-          'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character'
-        )
-        .required()
+      password: Yup.string().required()
     }),
     onSubmit: (values) => {
       login(values.email, values.password);
