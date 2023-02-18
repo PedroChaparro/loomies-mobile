@@ -1,11 +1,12 @@
-import React from "react";
-import { MapBuilder } from "./MapBuilder";
-import { Map3DEngine } from "./Map3DEngine";
+import React from 'react';
+import { TileManager } from './TileManager';
+import { Map3DEngine } from './Map3DEngine';
 
 export const Map3D = () => {
-
-  return (<>
-    <Map3DEngine/>
-    <MapBuilder/>
-  </>);
-}
+  return (
+    <>
+      <Map3DEngine />
+      <TileManager />
+    </>
+  );
+};
