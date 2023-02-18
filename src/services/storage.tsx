@@ -26,3 +26,14 @@ export const getStorageData = async (
     return ['', true];
   }
 };
+
+// Remove an item from the storage and returns a boolean indicating if there was an error
+export const removeStorageData = async (key: string): Promise<boolean> => {
+  try {
+    await AsyncStorage.removeItem(key);
+    return false;
+  } catch (error) {
+    console.error(error);
+    return true;
+  }
+};
