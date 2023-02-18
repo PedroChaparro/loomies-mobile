@@ -16,9 +16,16 @@
     "@babylonjs/loaders": "^5.46.0",
     "@babylonjs/react-native": "^1.5.1",
     "@babylonjs/react-native-iosandroid-0-69": "^1.5.1",
+    "@react-navigation/bottom-tabs": "^6.5.5",
+    "@react-navigation/native": "^6.1.4",
+    "@react-navigation/stack": "^6.3.14",
     "react": "18.0.0",
     "react-native": "0.69.8",
-    "react-native-permissions": "^3.6.1"
+    "react-native-gesture-handler": "^2.9.0",
+    "react-native-permissions": "^3.6.1",
+    "react-native-safe-area-context": "^4.5.0",
+    "react-native-screens": "^3.20.0",
+    "react-native-vector-icons": "^9.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -27,6 +34,7 @@
     "@tsconfig/react-native": "^2.0.2",
     "@types/jest": "^26.0.23",
     "@types/react-native": "^0.69.5",
+    "@types/react-native-vector-icons": "^6.4.13",
     "@types/react-test-renderer": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
