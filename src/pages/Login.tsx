@@ -1,10 +1,20 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { CustomButton } from '../components/CustomButton';
+import { NavigationProp } from '@react-navigation/core';
 
-export const Login = () => {
+interface LoginProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  navigation: NavigationProp<any, any>;
+}
+
+export const Login = ({ navigation }: LoginProps) => {
+  const redirectToSignup = () => {
+    navigation.navigate('Signup');
+  };
+
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -58,6 +68,11 @@ export const Login = () => {
             callback={formik.handleSubmit}
           />
         </View>
+        <View style={Styles.redirect}>
+          <Pressable onPress={redirectToSignup}>
+            <Text>Does not have an account? Sign-up</Text>
+          </Pressable>
+        </View>
       </View>
     </View>
   );
@@ -101,5 +116,11 @@ const Styles = StyleSheet.create({
     color: '#ED4A5F',
     fontSize: 12,
     fontWeight: 'bold'
+  },
+  redirect: {
+    flex: 1,
+    padding: 16,
+    alignSelf: 'center',
+    justifyContent: 'flex-end'
   }
 });
