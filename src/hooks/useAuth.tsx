@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { loginRequest } from '../services/session';
+import { saveStorageData } from '../services/storage';
 
 export const useAuth = () => {
   const { user, setUser, isLoading, setIsLoading } = useContext(AuthContext);
@@ -18,7 +19,10 @@ export const useAuth = () => {
 
     if (!error) {
       const { accessToken, refreshToken, user } = response;
-      console.log({ accessToken, refreshToken });
+
+      // TODO: Handle the error if the tokens are not saved
+      await saveStorageData('accessToken', accessToken);
+      await saveStorageData('refreshToken', refreshToken);
       setUser(user);
     }
 

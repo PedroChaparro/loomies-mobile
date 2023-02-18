@@ -1,6 +1,7 @@
 import { NavigationProp } from '@react-navigation/native';
 import React from 'react';
 import { Text, View, Button, StyleSheet } from 'react-native';
+import { useAuth } from '../hooks/useAuth';
 
 interface MapViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,6 +15,13 @@ const Screens = [
 ];
 
 export const MapView = ({ navigation }: MapViewProps) => {
+  const { isLoading, isAuthenticated } = useAuth();
+
+  // Redirects to the login view if the user is not authenticated
+  if (!isLoading && !isAuthenticated()) {
+    navigation.navigate('Login');
+  }
+
   return (
     <View style={Styles.container}>
       <Text>Map view</Text>

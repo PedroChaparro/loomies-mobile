@@ -12,7 +12,12 @@ interface LoginProps {
 }
 
 export const Login = ({ navigation }: LoginProps) => {
-  const { login } = useAuth();
+  const { login, isAuthenticated, isLoading } = useAuth();
+
+  // Redirects to the map view if the user is already authenticated
+  if (!isLoading && isAuthenticated()) {
+    navigation.navigate('Map');
+  }
 
   const redirectToSignup = () => {
     navigation.navigate('Signup');

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
+import { whoamiRequest } from '../services/session';
 import { TUser } from '../typescript/types';
 
 // Create the context and set the initial values
@@ -17,6 +18,22 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [user, setUser] = useState<TUser | null>(null);
+
+  // Recover the user session from the tokens when the app starts\
+  const recoverUserSession = async () => {
+    const [response, error] = await whoamiRequest();
+
+    if (!error) {
+      setUser(response.user);
+    }
+
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    recoverUserSession();
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, isLoading, setUser, setIsLoading }}>
