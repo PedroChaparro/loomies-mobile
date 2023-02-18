@@ -14,7 +14,7 @@ interface LoginProps {
 
 export const Login = ({ navigation }: LoginProps) => {
   const { login, isAuthenticated, isLoading } = useAuth();
-  const { showInfoToast } = useToastAlert();
+  const { showInfoToast, showErrorToast } = useToastAlert();
 
   // Redirects to the map view if the user is already authenticated
   useEffect(() => {
@@ -37,8 +37,12 @@ export const Login = ({ navigation }: LoginProps) => {
       email: Yup.string().email().required(),
       password: Yup.string().required()
     }),
-    onSubmit: (values) => {
-      login(values.email, values.password);
+    onSubmit: async (values) => {
+      const [response, error] = await login(values.email, values.password);
+
+      if (error && response.message) {
+        showErrorToast(response.message);
+      }
     }
   });
 

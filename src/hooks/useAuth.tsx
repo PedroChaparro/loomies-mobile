@@ -12,7 +12,11 @@ export const useAuth = () => {
   };
 
   // Make the login request and update the user state
-  const login = async (username: string, password: string): Promise<void> => {
+  const login = async (
+    username: string,
+    password: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): Promise<[any, boolean]> => {
     setIsLoading(true);
 
     const [response, error] = await loginRequest(username, password);
@@ -27,6 +31,7 @@ export const useAuth = () => {
     }
 
     setIsLoading(false);
+    return [response, error];
   };
 
   return { isLoading, isAuthenticated, login };
