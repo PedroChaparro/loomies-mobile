@@ -2,6 +2,7 @@ import { NavigationProp } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { Text, View, Button, StyleSheet } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
+import { useToastAlert } from '../hooks/useToastAlert';
 
 interface MapViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,10 +17,12 @@ const Screens = [
 
 export const MapView = ({ navigation }: MapViewProps) => {
   const { isLoading, isAuthenticated } = useAuth();
+  const { showInfoToast } = useToastAlert();
 
   // Redirects to the login view if the user is not authenticated
   useEffect(() => {
     if (!isLoading && !isAuthenticated()) {
+      showInfoToast('You are not logged in');
       navigation.navigate('Login');
     }
   }, [isLoading]);

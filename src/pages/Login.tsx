@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { CustomButton } from '../components/CustomButton';
 import { NavigationProp } from '@react-navigation/core';
 import { useAuth } from '../hooks/useAuth';
+import { useToastAlert } from '../hooks/useToastAlert';
 
 interface LoginProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -13,10 +14,12 @@ interface LoginProps {
 
 export const Login = ({ navigation }: LoginProps) => {
   const { login, isAuthenticated, isLoading } = useAuth();
+  const { showInfoToast } = useToastAlert();
 
   // Redirects to the map view if the user is already authenticated
   useEffect(() => {
     if (!isLoading && isAuthenticated()) {
+      showInfoToast('You are already logged in');
       navigation.navigate('Map');
     }
   }, [isLoading]);
