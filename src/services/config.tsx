@@ -1,3 +1,5 @@
+import { API_URL } from '@env';
+
 export const CONFIG = {
-  API_URL: 'http://192.168.1.15:8080'
+  API_URL
 };
