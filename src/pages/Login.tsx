@@ -95,45 +95,45 @@ const Styles = StyleSheet.create({
     flex: 1
   },
   header: {
-    flex: 1,
     alignContent: 'center',
-    justifyContent: 'flex-end',
-    backgroundColor: '#ED4A5F'
+    backgroundColor: '#ED4A5F',
+    flex: 1,
+    justifyContent: 'flex-end'
   },
   headerTitle: {
     color: '#fff',
     fontSize: 28,
     fontWeight: 'bold',
+    marginBottom: 96,
     textAlign: 'center',
-    textTransform: 'uppercase',
-    marginBottom: 96
+    textTransform: 'uppercase'
   },
   footer: {
-    flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    flex: 1
   },
   form: {
     alignSelf: 'center',
-    width: '80%',
-    marginTop: -64,
     backgroundColor: '#fff',
-    padding: 12
+    marginTop: -64,
+    padding: 12,
+    width: '80%'
   },
   formField: {
-    color: '#6C6C6C',
     backgroundColor: '#ECECEC',
+    color: '#6C6C6C',
     paddingHorizontal: 16
   },
   formError: {
-    textTransform: 'capitalize',
     color: '#ED4A5F',
     fontSize: 12,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    textTransform: 'capitalize'
   },
   redirect: {
-    flex: 1,
-    padding: 16,
     alignSelf: 'center',
-    justifyContent: 'flex-end'
+    flex: 1,
+    justifyContent: 'flex-end',
+    padding: 16
   }
 });
