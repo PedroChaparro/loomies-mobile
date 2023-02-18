@@ -4,7 +4,7 @@ import { Image, ScrollView, Text } from 'react-native';
 import { fetchMap } from './mapFetch';
 import { mapToSVG } from './mapSvgRenderer';
 import { SvgWrapper } from './SvgWrapper';
-import { iMap, iQueuedTile } from './mapInterfaces';
+import { iMap } from './mapInterfaces';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { iPosition } from '@src/services/geolocation';
 import { GRIDMAP_SIZE } from '@src/context/MapProvider';
@@ -16,7 +16,7 @@ export interface iQueuedTile {
   xml?: string | null,
 }
 
-export const Map3D = () => {
+export const MapBuilder = () => {
   // track position
   const userCachedPosition = useRef<iPosition | null>(null);
   const userPosition = useContext(UserPositionContext);
@@ -171,22 +171,24 @@ export const Map3D = () => {
         ))}
       </>
 
-      {finalGridImageB64.map((base64: string, i: number) => (
-        <>
-          <Text>Hello</Text>
-          <Image
-            key={i}
-            style={{
-              width: 200,
-              height: 200,
-              resizeMode: 'contain'
-            }}
-            source={{
-              uri: base64
-            }}
-          />
-        </>
-      ))}
+      {
+        //finalGridImageB64.map((base64: string, i: number) => (
+        //<>
+          //<Text>Hello</Text>
+          //<Image
+            //key={i}
+            //style={{
+              //width: 200,
+              //height: 200,
+              //resizeMode: 'contain'
+            //}}
+            //source={{
+              //uri: base64
+            //}}
+          ///>
+        //</>
+      //))
+        }
     </ScrollView>
   );
 };
