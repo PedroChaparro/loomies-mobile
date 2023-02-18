@@ -4,6 +4,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { CustomButton } from '../components/CustomButton';
 import { NavigationProp } from '@react-navigation/core';
+import { useAuth } from '../hooks/useAuth';
 
 interface LoginProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -11,6 +12,8 @@ interface LoginProps {
 }
 
 export const Login = ({ navigation }: LoginProps) => {
+  const { login } = useAuth();
+
   const redirectToSignup = () => {
     navigation.navigate('Signup');
   };
@@ -30,7 +33,7 @@ export const Login = ({ navigation }: LoginProps) => {
         .required()
     }),
     onSubmit: (values) => {
-      console.log(values);
+      login(values.email, values.password);
     }
   });
 
