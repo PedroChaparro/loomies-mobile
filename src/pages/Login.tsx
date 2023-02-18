@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -15,9 +15,11 @@ export const Login = ({ navigation }: LoginProps) => {
   const { login, isAuthenticated, isLoading } = useAuth();
 
   // Redirects to the map view if the user is already authenticated
-  if (!isLoading && isAuthenticated()) {
-    navigation.navigate('Map');
-  }
+  useEffect(() => {
+    if (!isLoading && isAuthenticated()) {
+      navigation.navigate('Map');
+    }
+  }, [isLoading]);
 
   const redirectToSignup = () => {
     navigation.navigate('Signup');

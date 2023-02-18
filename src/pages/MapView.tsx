@@ -1,5 +1,5 @@
 import { NavigationProp } from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View, Button, StyleSheet } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
 
@@ -18,9 +18,11 @@ export const MapView = ({ navigation }: MapViewProps) => {
   const { isLoading, isAuthenticated } = useAuth();
 
   // Redirects to the login view if the user is not authenticated
-  if (!isLoading && !isAuthenticated()) {
-    navigation.navigate('Login');
-  }
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated()) {
+      navigation.navigate('Login');
+    }
+  }, [isLoading]);
 
   return (
     <View style={Styles.container}>
