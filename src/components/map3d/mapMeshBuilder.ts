@@ -11,44 +11,48 @@ const ROAD_WIDTH_BORDER = 0.6;
 //const ROAD_WIDTH_BORDER = 1.3;
 
 export interface iMapBundleVertexData {
-  roads: VertexData[];
-  roadsBorder: VertexData[];
-  buildings: VertexData[];
+  roads: VertexData;
+  roadsBorder: VertexData;
 }
-
-let ssvg = '';
 
 export const mapToVertexData = (map: iMap): iMapBundleVertexData => {
   let bundleVector3: Array<Vector3[]>;
-  const mapBundle: iMapBundleVertexData = {
-    roads: [],
-    roadsBorder: [],
-    buildings: []
-  };
 
-  ssvg =
-    '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">';
-  ssvg += `<rect fill="gray" width="500" height="500" />`;
+  const roads = createLineVertex({
+    path: [new Vector3(99999, 99999), new Vector3(99999, 100000)],
+    width: 1
+  });
+  const roadsBorder = createLineVertex({
+    path: [new Vector3(99999, 99999), new Vector3(99999, 100000)],
+    width: 1
+  });
+
+  console.log('mapToVertexData: Starting');
 
   // buildings disabled
 
   // roads
   bundleVector3 = waysToBundleVector3(map, map.roads);
-
-  mapBundle.roads = createVertexDataPath(bundleVector3, ROAD_WIDTH);
-  mapBundle.roadsBorder = createVertexDataPath(bundleVector3, ROAD_WIDTH_BORDER);
+  roads.merge(createVertexDataPath(bundleVector3, ROAD_WIDTH), true);
+  roadsBorder.merge(
+    createVertexDataPath(bundleVector3, ROAD_WIDTH_BORDER),
+    true
+  );
 
   // paths
   bundleVector3 = waysToBundleVector3(map, map.paths);
+  roads.merge(createVertexDataPath(bundleVector3, ROAD_WIDTH), true);
+  roadsBorder.merge(
+    createVertexDataPath(bundleVector3, ROAD_WIDTH_BORDER),
+    true
+  );
 
-  mapBundle.roads.push.apply(createVertexDataPath(bundleVector3, ROAD_WIDTH));
-  mapBundle.roadsBorder.push.apply( createVertexDataPath(bundleVector3, ROAD_WIDTH_BORDER));
+  console.log('mapToVertexData: Succesfully built');
 
-  console.log('FOUND ROADS ', mapBundle.roads.length);
-
-  ssvg += '</svg>';
-  console.log(ssvg);
-  return mapBundle;
+  return {
+    roads: roads,
+    roadsBorder: roadsBorder
+  };
 };
 
 const waysToBundleVector3 = (map: iMap, ways: iWay[]): Array<Vector3[]> => {
@@ -58,14 +62,11 @@ const waysToBundleVector3 = (map: iMap, ways: iWay[]): Array<Vector3[]> => {
   let nodeMapYCoord = 0;
   let node: iNode | null = null;
 
-  let svg = '';
-
   console.log('WAYS found ', ways.length);
   ways.forEach((way: iWay) => {
     //
     // start vertex path
     vertexList = [];
-    svg += '<path d="M';
 
     way.nodes.forEach((nodeIdentifier: string) => {
       //
@@ -75,38 +76,23 @@ const waysToBundleVector3 = (map: iMap, ways: iWay[]): Array<Vector3[]> => {
 
       // convert coordinates
 
-      //nodeMapXCoord = 
-        //((map.origin.lon - node.position.lon) / (BBOX_SIZE * 2)) * PLANE_SIZE
-      //nodeMapYCoord = 
-        //((map.origin.lat - node.position.lat) / (BBOX_SIZE * 2)) * PLANE_SIZE
-
-      nodeMapXCoord = 
-        ((node.position.lon - map.origin.lon) / (BBOX_SIZE * 2)) * PLANE_SIZE
-      nodeMapYCoord = 
-        ((node.position.lat - map.origin.lat) / (BBOX_SIZE * 2)) * PLANE_SIZE
-      
-
-      //nodeMapXCoord = Math.round(
-        //((node.position.lon - map.origin.lon) / (BBOX_SIZE * 2)) * PLANE_SIZE
-      //);
-      //nodeMapYCoord = Math.round(
-        //((map.origin.lat - node.position.lat) / (BBOX_SIZE * 2)) * PLANE_SIZE
-      //);
+      nodeMapXCoord =
+        ((node.position.lon - map.origin.lon) / (BBOX_SIZE * 2)) * PLANE_SIZE;
+      nodeMapYCoord =
+        ((node.position.lat - map.origin.lat) / (BBOX_SIZE * 2)) * PLANE_SIZE;
 
       vertexList.push(new Vector3(nodeMapXCoord, 0, nodeMapYCoord));
-      svg += ` ${nodeMapXCoord},${nodeMapYCoord}`;
     });
 
     // end path
     wayVertexCollection.push(vertexList);
-    svg += `" stroke="red" stroke-linejoin="round" stroke-width="7" fill="none" /> \n`;
   });
 
   console.log('WAYS retreived ', wayVertexCollection.length);
-  ssvg += svg;
   return wayVertexCollection;
 };
 
+// converts a collection of vector3 into vertexData
 const createVertexDataPath = (
   vector3Bundle: Array<Vector3[]>,
   width: number
