@@ -3,10 +3,11 @@ import React, { useEffect, useContext } from 'react';
 import { BBOX_SIZE, fetchMap } from './mapFetch';
 import { iMap } from './mapInterfaces';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
-//import { iPosition } from '@src/services/geolocation';
 import { GRIDMAP_SIZE } from '@src/context/MapProvider';
 import { MapContext, iGridPosition } from '@src/context/MapProvider';
 import { iMapBundleVertexData, mapToVertexData } from './mapMeshBuilder';
+
+const BOUNDARY_MARGIN = BBOX_SIZE / 8;
 
 export interface iQueuedTile {
   pos: iGridPosition;
@@ -44,12 +45,11 @@ export const TileManager = () => {
         (async () => {
           try {
             console.log('Empty tile ', i, ' ', j);
-            //if (!userPosition) return;
 
             // fetch OSM map
             const map: iMap = await fetchMap(mapOrigin, {
               x: i - offset,
-              y: j - offset
+              y: GRIDMAP_SIZE - 1 - j - offset // compensate for inversed z
             });
             console.log('FETCHED 1 ===========================');
 
@@ -59,7 +59,7 @@ export const TileManager = () => {
 
             // push to context
             externalSetGridImageB64(
-              { x: i, y: GRIDMAP_SIZE - 1 - j },
+              { x: i, y: j },
               mapBundle
             );
             console.log('FETCHED 3 ===========================');
@@ -89,20 +89,25 @@ export const TileManager = () => {
       y: 0
     };
 
-    const margin = BBOX_SIZE / 8;
+    let outOfBoundaries = false;
 
-    if (userPosition.lon > mapOrigin.lon + BBOX_SIZE + margin) {
+    if (userPosition.lon > mapOrigin.lon + BBOX_SIZE + BOUNDARY_MARGIN) {
       userOffset.x = 1;
-    } else if (userPosition.lon < mapOrigin.lon - BBOX_SIZE - margin) {
+      outOfBoundaries = true;
+    } else if (userPosition.lon < mapOrigin.lon - BBOX_SIZE - BOUNDARY_MARGIN) {
       userOffset.x = -1;
+      outOfBoundaries = true;
     }
-    if (userPosition.lat > mapOrigin.lat + BBOX_SIZE + margin) {
+    // y offset is flipped vecause our map index is
+    if (userPosition.lat > mapOrigin.lat + BBOX_SIZE + BOUNDARY_MARGIN) {
       userOffset.y = 1;
-    } else if (userPosition.lat < mapOrigin.lat - BBOX_SIZE - margin) {
+      outOfBoundaries = true;
+    } else if (userPosition.lat < mapOrigin.lat - BBOX_SIZE - BOUNDARY_MARGIN) {
       userOffset.y = -1;
+      outOfBoundaries = true;
     }
 
-    if (userOffset.x || userOffset.y) {
+    if (outOfBoundaries){
       console.log('OUT OF BOUNDARIES ', userOffset);
       // offset the whole source grid
       offsetGrid(userOffset);

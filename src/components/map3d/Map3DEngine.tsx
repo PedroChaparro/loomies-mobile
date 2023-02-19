@@ -313,7 +313,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       // ROADS
       const roads = generateRoad(
         mapBundle.roads,
-        DEBUG_COLORS[tilePos.x][0],
+        DEBUG_COLORS[tilePos.x][tilePos.y],
         scene
       );
       roads.position.y = ROAD_HEIGHT;

@@ -70,6 +70,7 @@ export const MapProvider = (props: { children: any }) => {
     mapBundle: iMapBundleVertexData
   ) => {
     gridImageB64.current[pos.x][pos.y] = mapBundle;
+    console.log("settet grid ", pos, " to ", !!mapBundle);
 
     // trigger update
     updatedTiles.current.push(pos);
@@ -156,6 +157,15 @@ export const MapProvider = (props: { children: any }) => {
           console.log('offset outside of accepted range ', newPos);
         }
       }
+    }
+    console.log("=========\nWhat we have:");
+    let str = "";
+    for (let i = 0; i < GRIDMAP_SIZE; i++) {
+      str ="";
+      for (let j = 0; j < GRIDMAP_SIZE; j++) {
+        str += (+(!!gridImageB64.current[i][j])).toString();
+      }
+      console.log(str);
     }
 
     // trigger update
