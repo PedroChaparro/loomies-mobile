@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { Text } from 'react-native';
-import { iPosition, getPosition } from '@src/services/geolocation';
+import { iPosition, getPosition } from '@src/services/geolocation.services';
 
 export interface iUserPositionContext {
   userPosition: iPosition | null;

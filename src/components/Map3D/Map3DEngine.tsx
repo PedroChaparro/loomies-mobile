@@ -29,7 +29,7 @@ import { MapContext } from '@src/context/MapProvider';
 import { iMapBundleVertexData } from './mapMeshBuilder';
 import { VertexData } from '@babylonjs/core';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
-import { BBOX_SIZE } from './mapFetch';
+import { BBOX_SIZE } from '@src/services/mapAPI.services';
 
 const DEBUG_MOVE_DISTANCE = 0.0001;
 

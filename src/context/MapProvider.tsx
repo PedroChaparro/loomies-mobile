@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState, useRef } from 'react';
-import { iPosition } from '@src/services/geolocation';
+import { iPosition } from '@src/services/geolocation.services';
 import { iMapBundleVertexData } from '@src/components/map3d/mapMeshBuilder';
-import { BBOX_SIZE } from '@src/components/map3d/mapFetch';
+import { BBOX_SIZE } from '@src/services/mapAPI.services';
 
 export interface iGridPosition {
   x: number;

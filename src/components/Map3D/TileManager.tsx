@@ -1,7 +1,8 @@
 import React, { useEffect, useContext } from 'react';
 
-import { BBOX_SIZE, fetchMap } from './mapFetch';
-import { iMap } from './mapInterfaces';
+import { BBOX_SIZE, fetchMap } from '@src/services/mapAPI.services';
+
+import { iMap } from '@src/typescript/mapInterfaces';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { GRIDMAP_SIZE } from '@src/context/MapProvider';
 import { MapContext, iGridPosition } from '@src/context/MapProvider';

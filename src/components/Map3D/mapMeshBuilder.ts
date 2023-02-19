@@ -1,5 +1,6 @@
-import { iNode, iWay, iMap } from './mapInterfaces';
-import { BBOX_SIZE } from './mapFetch';
+import { iNode, iWay, iMap } from '@src/typescript/mapInterfaces';
+import { BBOX_SIZE } from '@src/services/mapAPI.services';
+
 import { Vector3, VertexData } from '@babylonjs/core';
 import { createLineVertex, iLineOptions } from './createLineVertex';
 import { PLANE_SIZE } from './Map3DEngine';
