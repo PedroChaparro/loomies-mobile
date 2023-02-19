@@ -18,7 +18,6 @@ import '@babylonjs/loaders/glTF';
 import { Scene } from '@babylonjs/core/scene';
 
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
-import { DirectionalLight } from '@babylonjs/core/Lights/directionalLight';
 import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
@@ -31,10 +30,67 @@ import { GRIDMAP_SIZE, iGridPosition } from '@src/context/MapProvider';
 // grid map context
 import { MapContext } from '@src/context/MapProvider';
 import { iMapBundleVertexData } from './mapMeshBuilder';
-import { VertexData } from '@babylonjs/core';
+import {  VertexData } from '@babylonjs/core';
 
 // drawing constants
-export const PLANE_SIZE = 10;
+//export const PLANE_SIZE = 20;
+export const PLANE_SIZE = 20;
+const ROAD_HEIGHT = 0.1;
+const ROAD_BORDER_HEIGHT = 0.05;
+
+const COLOR_BACKGROUND = '#C8FACC';
+const COLOR_ROAD_BORDER = '#C6C6C5';
+const COLOR_ROAD_FILL = '#FFFFFF';
+const COLOR_BUILDING_STROKE = '#BFB1A5';
+const COLOR_BUILDING_FILL = '#D9D0C9';
+
+const DEBUG_COLORS = [
+  ['#FF0000', '#00FF00', '#0000FF'],
+  ['#FFFF00', '#000000', '#FF00FF'],
+  ['#FF00FF', '#00FFFF', '#FFFFFF']
+  ]
+
+const hexToRgb = (hex: string): Babylon.Color3 => {
+  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, function (_m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? new Babylon.Color3(
+        parseInt(result[1], 16) / 255,
+        parseInt(result[2], 16) / 255,
+        parseInt(result[3], 16) / 255
+      )
+    : new Babylon.Color3(0, 0, 0);
+};
+
+const generateRoad = (vertexList: VertexData[], colorHex: string, scene: Babylon.Scene): Babylon.Mesh => {
+
+  let currMesh: Babylon.Mesh | null = Babylon.MeshBuilder.CreateBox('box', { size: 1 }, scene);
+  let newMesh: Babylon.Mesh;
+
+  // material
+  currMesh.material = new Babylon.StandardMaterial('road', scene);
+  (currMesh.material as StandardMaterial).diffuseColor = hexToRgb(colorHex);
+  (currMesh.material as StandardMaterial).specularColor = new Babylon.Color3(0.1, 0.1, 0.1);
+
+  vertexList.forEach((vertexData: VertexData) => {
+    newMesh = new Babylon.Mesh('road', scene);
+    vertexData.applyToMesh(newMesh); // apply vertexData
+
+    // merge
+    if (!currMesh) return;
+
+    currMesh = Babylon.Mesh.MergeMeshes(
+      [currMesh, newMesh],
+      true
+    );
+  });
+
+  return currMesh;
+}
 
 export const Map3DEngine: FunctionComponent<ViewProps> = () => {
   // map info
@@ -63,13 +119,35 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
     if (!scene) return;
 
+    const axes = new Babylon.AxesViewer(scene, 5)
+
     console.log('Creating scene');
 
     // create camera
-    scene.createDefaultCameraOrLight(true, undefined, true);
-    (scene.activeCamera as ArcRotateCamera).alpha += Math.PI;
-    (scene.activeCamera as ArcRotateCamera).radius = 10;
-    setCamera(scene.activeCamera!);
+    //scene.createDefaultCameraOrLight(true, undefined, true);
+    //scene.createDefaultCamera(true);
+    scene.createDefaultCamera(true, true, true);
+
+    if (scene.activeCamera){
+      const camera = (scene.activeCamera as ArcRotateCamera)
+      camera.checkCollisions=false;
+      camera.panningSensibility=0;
+
+      // limit camera zoom
+      camera.lowerRadiusLimit = 20;
+      //camera.upperRadiusLimit = 30;
+      
+      // limit camera angle
+      camera.lowerBetaLimit = Math.PI * 1/16;
+      camera.upperBetaLimit = Math.PI / 4;
+
+      camera.setTarget(Babylon.Vector3.Zero());
+      //camera.alpha = Math.PI / 8;
+      camera.beta  = Math.PI / 8;
+      camera.radius = 10;
+
+      setCamera(scene.activeCamera);
+    }
 
     // initialize planes
 
@@ -80,12 +158,8 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       planeList.current.push([]);
       for (let j = 0; j < GRIDMAP_SIZE; j++) {
         const plane = MeshBuilder.CreateGround(
-          `plane_${i},${j}`,
+          'plane',
           { width: PLANE_SIZE, height: PLANE_SIZE },
-          scene
-        );
-        plane.material = new StandardMaterial(
-          `plane_${i},${j}_material`,
           scene
         );
         plane.position = new Vector3(
@@ -93,30 +167,18 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
           0,
           (j - offset) * PLANE_SIZE
         );
-        const base64 =
-          'iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAIAAADZrBkAAAAACXBIWXMAAA06AAANOgEDIh6FAAABVklEQVQokZ2RTUoDQRCFX3V3pp3EmIQBV0ZCcgZx4QEigoIQ0RN4Aw8hJHoHIS4kO1dZegOJIC5dzUJCfsboaJzpcjFOBCFNTFGLftV81KsquqnX8f8QSzDLY1StVpfA1GltCAFIkACSTN+USqRfj76+e8oCUMdbG1AgCVKABCSgAJlUOJGU1idTerigwWhCnesr0B/jNvnxRc1mSw3fPufOTcTMMyml1FoTwfM8dd66XHANGSVPjhqVSsUYoxpxH0Cf1a0pRFYsGo183y+Xy8ysztw+gBDiPsw9G8fGERljoihiZkEapJHV5mAlIBsEAL8YNJLcy43XRGxrBmLmH4wdsAPSqOWm2+77ot167PbYTaweFseaeCGsHZTaQYkdJod3ipNNPbW4ZOY4jgGIbpDvBvkXypDGqmv2vbFlMQnGzCI0IjSiMyywBjR211+9zNz7zUx+Azspotv+7FefAAAAAElFTkSuQmCC';
 
-        // use svg image
-        const oneTexture = new Babylon.Texture(
-          'data:image/png;base64,' + base64,
-          scene
-        );
-        oneTexture.hasAlpha = false; // enables transparency
-        (plane.material as StandardMaterial).diffuseTexture = oneTexture;
+        plane.material = new Babylon.StandardMaterial('road', scene);
+        (plane.material as StandardMaterial).diffuseColor = hexToRgb(COLOR_BACKGROUND);
+        (plane.material as StandardMaterial).specularColor = new Babylon.Color3(0.1, 0.1, 0.1);
 
         planeList.current[i].push(plane);
       }
     }
 
     // lights
-    const light = new HemisphericLight('light', new Vector3(0, 1, 0), scene);
+    const light = new HemisphericLight('light', new Vector3(5, 10, 0), scene);
     light.intensity = 0.7;
-    const dirLight = new DirectionalLight(
-      'dirlight',
-      new Vector3(0, -1, -0.5),
-      scene
-    );
-    dirLight.position = new Vector3(0, 5, -5);
 
     console.log('Scene created');
     setScene(scene);
@@ -140,11 +202,22 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       mapInfo?.getUpdatedTiles()
     );
 
+
     // iterate through updated tiles
     let mapBundle: iMapBundleVertexData | null;
+    const gridOffset = (GRIDMAP_SIZE - 1) / 2 +0.5;
 
+    console.log(mapInfo?.getUpdatedTiles());
     mapInfo?.getUpdatedTiles().forEach((tilePos: iGridPosition) => {
       console.log('Checking inside tiles', tilePos);
+
+      let gridOffset2 = 0.0
+      let path2 = [
+          new Vector3((tilePos.x - gridOffset2 -1) * PLANE_SIZE, 0, (tilePos.y + gridOffset2 -1) * PLANE_SIZE),
+          new Vector3((tilePos.x - gridOffset2 -1) * PLANE_SIZE, 10, (tilePos.y + gridOffset2 -1) * PLANE_SIZE),
+      ];
+      // create marquers
+      Babylon.MeshBuilder.CreateTube("tube", {path: path2, radius: 1}, scene);
 
       // check if texture exists
       mapBundle = mapInfo.getGridImageB64Pos(tilePos);
@@ -153,51 +226,45 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       if (!mapBundle) return;
 
       // Create different elements
-      // roads
 
-      let roadsMesh = Babylon.MeshBuilder.CreateBox('box', { size: 0 }, scene);
+      // ROADS
+      //const roads = generateRoad(mapBundle.roads, COLOR_ROAD_FILL, scene);
+      const roads = generateRoad(mapBundle.roads, DEBUG_COLORS[tilePos.x][0], scene);
+      roads.position.y = ROAD_HEIGHT;
 
-      console.log('ROADS ', mapBundle.roads.length);
-      mapBundle.roads.forEach((vertexData: VertexData) => {
-        // create mesh
-        const newMesh = new Babylon.Mesh('road', scene);
+      // ROADS BORDER
+      const roadsBorder = generateRoad(mapBundle.roadsBorder, COLOR_ROAD_BORDER, scene);
+      roadsBorder.position.y = ROAD_BORDER_HEIGHT;
 
-        // apply vertexData to custom mesh
-        vertexData.applyToMesh(newMesh);
-
-        // merge
-        const newMergedMesh = Babylon.Mesh.MergeMeshes(
-          [roadsMesh, newMesh],
-          true
+      // merge them
+      const mergedMesh = Babylon.Mesh.MergeMeshes([roads, roadsBorder], true, true, undefined, false, true);
+      if (mergedMesh){
+        //mergedMesh.position.x = tilePos.x;
+        //mergedMesh.position.z = tilePos.y;
+        mergedMesh.position = new Vector3(
+          (tilePos.x - gridOffset) * PLANE_SIZE,
+          0,
+          (tilePos.y - gridOffset) * PLANE_SIZE
         );
-        if (newMergedMesh) roadsMesh = newMergedMesh;
-        //roadsMesh = Babylon.Mesh.MergeMeshes([roadsMesh, newMesh], true);
-      });
-      roadsMesh.position.y = 1;
+      }
 
-      // roads border
-      let roadsBorderMesh = Babylon.MeshBuilder.CreateBox(
-        'box',
-        { size: 0 },
-        scene
-      );
+      // define boundaries
+      let path = [
+          new Vector3((tilePos.x - gridOffset) * PLANE_SIZE, 3, (tilePos.y - gridOffset) * PLANE_SIZE),
+          new Vector3((tilePos.x - gridOffset +1) * PLANE_SIZE, 3, (tilePos.y - gridOffset) * PLANE_SIZE),
+          new Vector3((tilePos.x - gridOffset +1) * PLANE_SIZE, 3, (tilePos.y - gridOffset +1) * PLANE_SIZE),
+          new Vector3((tilePos.x - gridOffset) * PLANE_SIZE, 3, (tilePos.y - gridOffset +1) * PLANE_SIZE),
+          new Vector3((tilePos.x - gridOffset) * PLANE_SIZE, 3, (tilePos.y - gridOffset) * PLANE_SIZE),
+      ]
+      const tube = Babylon.MeshBuilder.CreateTube("tube", {path: path, radius: 1}, scene);
 
-      console.log('ROADS BORDER ', mapBundle.roadsBorder.length);
-      mapBundle.roadsBorder.forEach((vertexData: VertexData) => {
-        // create mesh
-        const newMesh = new Babylon.Mesh('road', scene);
 
-        // apply vertexData to custom mesh
-        vertexData.applyToMesh(newMesh);
-
-        // merge
-        const newMergedMesh = Babylon.Mesh.MergeMeshes(
-          [roadsBorderMesh, newMesh],
-          true
-        );
-        if (newMergedMesh) roadsBorderMesh = newMergedMesh;
-      });
-      roadsBorderMesh.position.y = 0.9;
+      //path = [
+          //new Vector3(0,0,0),
+          //new Vector3(0,10,0)
+      //];
+      //// create marquers
+      //Babylon.MeshBuilder.CreateTube("tube", {path: path, radius: 1}, scene);
 
       // finish ticket
       mapInfo.removeFromUpdatedTiles(tilePos);
