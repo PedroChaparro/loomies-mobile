@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React, { createContext, useEffect, useState } from 'react';
-import { whoamiRequest } from '../services/session';
+import { whoamiRequest } from '../services/session.services';
 import { TUser } from '../typescript/types';
 
 // Create the context and set the initial values

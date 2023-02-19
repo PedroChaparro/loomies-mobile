@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { loginRequest } from '../services/session';
-import { saveStorageData } from '../services/storage';
+import { loginRequest } from '../services/session.services';
+import { saveStorageData } from '../services/storage.services';
 
 export const useAuth = () => {
   const { user, setUser, isLoading, setIsLoading } = useContext(AuthContext);

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Axios from 'axios';
-import { CONFIG } from './config';
-import { getStorageData, saveStorageData } from './storage';
+import { CONFIG } from './config.services';
+import { getStorageData, saveStorageData } from './storage.services';
 const { API_URL } = CONFIG;
 
 // Returns the user data and a boolean indicating if there was an error
@@ -9,6 +9,7 @@ export const loginRequest = async (
   email: string,
   password: string
 ): Promise<[any, boolean]> => {
+  console.log({ API_URL });
   try {
     const response = await Axios.post(`${API_URL}/login`, {
       email,
