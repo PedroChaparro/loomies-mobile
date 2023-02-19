@@ -107,7 +107,6 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
   const [scene, setScene] = useState<Scene>();
 
   // map drawing
-  const planeList = useRef<Array<Array<Babylon.GroundMesh>>>([]);
   const playerNode = useRef<Babylon.Mesh>();
 
   const meshGrid = useRef<Array<Array<Babylon.Mesh | null>>>([]);
@@ -119,12 +118,10 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
   // startup
   useEffect(() => {
-    if (planeList.current.length) return;
 
+    if (meshGrid.current.length) return;
     if (!engine) return;
-
     const scene = new Scene(engine);
-
     if (!scene) return;
 
     new Babylon.AxesViewer(scene, 5);
@@ -161,6 +158,9 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       camera.radius = 10;
 
       setCamera(scene.activeCamera);
+
+      // lock to player
+      camera.lockedTarget = playerNode.current;
     }
 
     // initialize planes
@@ -282,6 +282,9 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
       // consume
       consumeMapApplyingOffset();
+
+      // update player position
+      updatePlayerPos();
     }
 
     console.log(
@@ -351,7 +354,8 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     });
   };
 
-  useEffect(() => {
+  // move player physical representation in the map
+  const updatePlayerPos = () => {
     console.log('Enter moving player');
 
     if (!userPosition) return;
@@ -366,8 +370,10 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       0,
       ((userPosition.lat - mapOrigin.lat) / (BBOX_SIZE * 2)) * PLANE_SIZE
     );
+  }
 
-    // move pivot
+  useEffect(() => {
+    updatePlayerPos();
   }, [userPosition]);
 
   return (
