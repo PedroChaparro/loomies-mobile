@@ -55,6 +55,7 @@ export const Login = ({ navigation }: LoginProps) => {
         <View style={Styles.form}>
           <TextInput
             style={Styles.formField}
+            autoCapitalize='none'
             placeholder='email'
             value={formik.values.email}
             onChangeText={formik.handleChange('email')}
