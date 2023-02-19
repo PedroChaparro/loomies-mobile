@@ -9,7 +9,6 @@ export const loginRequest = async (
   email: string,
   password: string
 ): Promise<[any, boolean]> => {
-  console.log({ API_URL });
   try {
     const response = await Axios.post(`${API_URL}/login`, {
       email,
