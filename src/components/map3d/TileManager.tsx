@@ -48,13 +48,15 @@ export const TileManager = () => {
               x: i - offset,
               y: j - offset
             });
-            console.log('FETCHED ===========================');
+            console.log('FETCHED 1 ===========================');
 
             // convert to mapBundle
             const mapBundle: iMapBundleVertexData = mapToVertexData(map);
+            console.log('FETCHED 2 ===========================');
 
             // push to context
-            mapInfo?.externalSetGridImageB64({ x: i, y: j }, mapBundle);
+            mapInfo?.externalSetGridImageB64({ x: i, y: GRIDMAP_SIZE-1-j }, mapBundle);
+            console.log('FETCHED 3 ===========================');
           } catch (error) {
             console.log("Couldn't fetch map");
           }

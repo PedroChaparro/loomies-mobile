@@ -52,11 +52,7 @@ export const MapProvider = (props: { children: any }) => {
   const getGridImageB64Pos = (
     pos: iGridPosition
   ): iMapBundleVertexData | null => {
-    console.log(
-      'query map in ',
-      pos,
-      ' result: ',
-      !!gridImageB64.current[pos.x][pos.y]
+    console.log( 'query map in ', pos, ' result: ', !!gridImageB64.current[pos.x][pos.y]
     );
     return gridImageB64.current[pos.x][pos.y];
   };

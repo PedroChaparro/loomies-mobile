@@ -14,7 +14,7 @@ export const createLineVertex = (options: iLineOptions): BABYLON.VertexData => {
   const indices: number[] = [];
   let normals: number[] = [];
 
-  const width = options.width / 2 || 0.5;
+  const width = options.width / 2.0;
   const path = options.path;
   const closed = options.closed || false;
 
@@ -200,7 +200,7 @@ export const createLineVertex = (options: iLineOptions): BABYLON.VertexData => {
 
   BABYLON.VertexData.ComputeNormals(positions, indices, normals);
   BABYLON.VertexData._ComputeSides(
-    BABYLON.Mesh.DOUBLESIDE,
+    BABYLON.Mesh.FRONTSIDE,
     positions,
     indices,
     normals,
