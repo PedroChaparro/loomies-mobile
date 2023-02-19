@@ -10,8 +10,8 @@ import { MapProvider } from '@src/context/MapProvider';
 
 const Stack = createStackNavigator();
 export const StackNavigation = () => {
+  // Map provider at the top so that the map data is kept between screens
   return (
-    // Map provider at the top so that the map data is kept between screens
     <MapProvider>
       <Stack.Navigator
         initialRouteName='Map'
