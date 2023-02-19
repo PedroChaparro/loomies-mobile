@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Text, View, Button, StyleSheet } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
 import { useToastAlert } from '../hooks/useToastAlert';
+import { Map3D } from '@src/components/Map3D/Map3D';
 
 interface MapViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,7 +30,7 @@ export const MapView = ({ navigation }: MapViewProps) => {
 
   return (
     <View style={Styles.container}>
-      <Text>Map view</Text>
+      <Map3D/>
       {Screens.map((screen) => (
         <Button
           key={screen.name}
@@ -46,7 +47,7 @@ export const MapView = ({ navigation }: MapViewProps) => {
 const Styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    gap: 12
+    //alignItems: 'center',
+    //gap: 12
   }
 });
