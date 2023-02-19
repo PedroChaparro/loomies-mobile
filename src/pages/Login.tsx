@@ -40,8 +40,8 @@ export const Login = ({ navigation }: LoginProps) => {
     onSubmit: async (values) => {
       const [response, error] = await login(values.email, values.password);
 
-      if (error && response.message) {
-        showErrorToast(response.message);
+      if (error && response?.message) {
+        showErrorToast(response?.message);
       }
     }
   });
