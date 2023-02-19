@@ -55,8 +55,9 @@ export const Login = ({ navigation }: LoginProps) => {
         <View style={Styles.form}>
           <TextInput
             style={Styles.formField}
+            placeholderTextColor={'#9C9C9C'}
+            placeholder='Email'
             autoCapitalize='none'
-            placeholder='email'
             value={formik.values.email}
             onChangeText={formik.handleChange('email')}
           />
@@ -66,8 +67,9 @@ export const Login = ({ navigation }: LoginProps) => {
           )}
           <TextInput
             style={{ ...Styles.formField, marginTop: 8 }}
-            secureTextEntry={true}
+            placeholderTextColor={'#9C9C9C'}
             placeholder='********'
+            secureTextEntry={true}
             value={formik.values.password}
             onChangeText={formik.handleChange('password')}
           />
