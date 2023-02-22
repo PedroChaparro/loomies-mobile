@@ -23,12 +23,6 @@ export const createLineVertex = (options: iLineOptions): BABYLON.VertexData => {
     standardUV = options.standardUV;
   }
 
-  //let interiorIndex;
-
-  ////Arrays to hold wall corner data
-  //const innerBaseCorners = [];
-  //const outerBaseCorners = [];
-
   const outerData = [];
   const innerData = [];
   let angle = 0;
@@ -217,4 +211,46 @@ export const createLineVertex = (options: iLineOptions): BABYLON.VertexData => {
   vertexData.uvs = uvs;
 
   return vertexData;
+};
+
+export const createGradientPlane = (
+  SIZE: number,
+  color1: BABYLON.Color3,
+  color2: BABYLON.Color4,
+  scene: BABYLON.Scene
+): BABYLON.Mesh => {
+  // colors
+  const top = [color1.r, color1.g, color1.b];
+  const bot = [color2.r, color2.g, color2.b];
+  const mid = [
+    (top[0] + bot[0]) / 2,
+    (top[1] + bot[1]) / 2,
+    (top[2] + bot[2]) / 2,
+    1
+  ];
+
+  let positions = [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0];
+  const normals: number[] = [];
+  const indices = [0, 1, 2, 3, 4, 5];
+  const colors = [...top, ...mid, ...mid, ...mid, ...mid, ...bot];
+
+  positions = positions.map((x) => {
+    return x * (SIZE / 2);
+  });
+  BABYLON.VertexData.ComputeNormals(positions, indices, normals);
+
+  // assign data to vertexData
+  const vertexData = new BABYLON.VertexData();
+  vertexData.positions = positions;
+  vertexData.indices = indices;
+  vertexData.normals = normals;
+  vertexData.colors = colors;
+
+  // create a mesh
+  const plane = new BABYLON.Mesh('custom', scene);
+  vertexData.applyToMesh(plane);
+  plane.position.y = 0;
+  plane.rotation.x = Math.PI / 2;
+
+  return plane;
 };
