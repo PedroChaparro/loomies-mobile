@@ -1,4 +1,4 @@
-import * as BABYLON from '@babylonjs/core';
+import * as Babylon from '@babylonjs/core';
 import { Vector3 } from '@babylonjs/core';
 
 export interface iLineOptions {
@@ -8,7 +8,7 @@ export interface iLineOptions {
   standardUV?: boolean | Vector3[];
 }
 
-export const createLineVertex = (options: iLineOptions): BABYLON.VertexData => {
+export const createLineVertex = (options: iLineOptions): Babylon.VertexData => {
   //Arrays for vertex positions and indices
   const positions: number[] = [];
   const indices: number[] = [];
@@ -28,8 +28,8 @@ export const createLineVertex = (options: iLineOptions): BABYLON.VertexData => {
   let angle = 0;
 
   const nbPoints = path.length;
-  let line = BABYLON.Vector3.Zero();
-  const nextLine = BABYLON.Vector3.Zero();
+  let line = Babylon.Vector3.Zero();
+  const nextLine = Babylon.Vector3.Zero();
   path[1].subtractToRef(path[0], line);
 
   if (nbPoints > 2 && closed) {
@@ -38,11 +38,11 @@ export const createLineVertex = (options: iLineOptions): BABYLON.VertexData => {
       angle =
         Math.PI -
         Math.acos(
-          BABYLON.Vector3.Dot(line, nextLine) /
+          Babylon.Vector3.Dot(line, nextLine) /
             (line.length() * nextLine.length())
         );
-      const direction = BABYLON.Vector3.Cross(line, nextLine).normalize().y;
-      const lineNormal = new BABYLON.Vector3(
+      const direction = Babylon.Vector3.Cross(line, nextLine).normalize().y;
+      const lineNormal = new Babylon.Vector3(
         -line.z,
         0,
         1 * line.x
@@ -61,7 +61,7 @@ export const createLineVertex = (options: iLineOptions): BABYLON.VertexData => {
       );
     }
   } else {
-    let lineNormal = new BABYLON.Vector3(-line.z, 0, 1 * line.x).normalize();
+    let lineNormal = new Babylon.Vector3(-line.z, 0, 1 * line.x).normalize();
     line.normalize();
     innerData[0] = path[0].subtract(lineNormal.scale(width));
     outerData[0] = path[0].add(lineNormal.scale(width));
@@ -71,11 +71,11 @@ export const createLineVertex = (options: iLineOptions): BABYLON.VertexData => {
       angle =
         Math.PI -
         Math.acos(
-          BABYLON.Vector3.Dot(line, nextLine) /
+          Babylon.Vector3.Dot(line, nextLine) /
             (line.length() * nextLine.length())
         );
-      const direction = BABYLON.Vector3.Cross(line, nextLine).normalize().y;
-      lineNormal = new BABYLON.Vector3(-line.z, 0, 1 * line.x).normalize();
+      const direction = Babylon.Vector3.Cross(line, nextLine).normalize().y;
+      lineNormal = new Babylon.Vector3(-line.z, 0, 1 * line.x).normalize();
       line.normalize();
       innerData[p + 1] = path[p + 1]
         .subtract(lineNormal.scale(width))
@@ -87,7 +87,7 @@ export const createLineVertex = (options: iLineOptions): BABYLON.VertexData => {
     }
     if (nbPoints > 2) {
       path[nbPoints - 1].subtractToRef(path[nbPoints - 2], line);
-      lineNormal = new BABYLON.Vector3(-line.z, 0, 1 * line.x).normalize();
+      lineNormal = new Babylon.Vector3(-line.z, 0, 1 * line.x).normalize();
       line.normalize();
       innerData[nbPoints - 1] = path[nbPoints - 1].subtract(
         lineNormal.scale(width)
@@ -152,9 +152,9 @@ export const createLineVertex = (options: iLineOptions): BABYLON.VertexData => {
     let axis = v1.clone();
     axis.normalize();
 
-    p1 = BABYLON.Vector3.Dot(axis, v1);
-    p2 = BABYLON.Vector3.Dot(axis, v2);
-    p3 = BABYLON.Vector3.Dot(axis, v3);
+    p1 = Babylon.Vector3.Dot(axis, v1);
+    p2 = Babylon.Vector3.Dot(axis, v2);
+    p3 = Babylon.Vector3.Dot(axis, v3);
     const minX = Math.min(0, p1, p2, p3);
     const maxX = Math.max(0, p1, p2, p3);
 
@@ -177,9 +177,9 @@ export const createLineVertex = (options: iLineOptions): BABYLON.VertexData => {
       axis = v1.clone();
       axis.normalize();
 
-      p1 = BABYLON.Vector3.Dot(axis, v1);
-      p2 = BABYLON.Vector3.Dot(axis, v2);
-      p3 = BABYLON.Vector3.Dot(axis, v3);
+      p1 = Babylon.Vector3.Dot(axis, v1);
+      p2 = Babylon.Vector3.Dot(axis, v2);
+      p3 = Babylon.Vector3.Dot(axis, v3);
       const minX = Math.min(0, p1, p2, p3);
       const maxX = Math.max(0, p1, p2, p3);
 
@@ -192,9 +192,9 @@ export const createLineVertex = (options: iLineOptions): BABYLON.VertexData => {
     }
   }
 
-  BABYLON.VertexData.ComputeNormals(positions, indices, normals);
-  BABYLON.VertexData._ComputeSides(
-    BABYLON.Mesh.FRONTSIDE,
+  Babylon.VertexData.ComputeNormals(positions, indices, normals);
+  Babylon.VertexData._ComputeSides(
+    Babylon.Mesh.FRONTSIDE,
     positions,
     indices,
     normals,
@@ -202,7 +202,7 @@ export const createLineVertex = (options: iLineOptions): BABYLON.VertexData => {
   );
 
   //Create a vertexData object
-  const vertexData = new BABYLON.VertexData();
+  const vertexData = new Babylon.VertexData();
 
   //Assign positions and indices to vertexData
   vertexData.positions = positions;
@@ -215,13 +215,13 @@ export const createLineVertex = (options: iLineOptions): BABYLON.VertexData => {
 
 export const createGradientPlane = (
   SIZE: number,
-  color1: BABYLON.Color3,
-  color2: BABYLON.Color4,
-  scene: BABYLON.Scene
-): BABYLON.Mesh => {
+  color1: Babylon.Color3,
+  color2: Babylon.Color3,
+  scene: Babylon.Scene
+): Babylon.Mesh => {
   // colors
-  const top = [color1.r, color1.g, color1.b];
-  const bot = [color2.r, color2.g, color2.b];
+  const top = [color1.r, color1.g, color1.b, 1];
+  const bot = [color2.r, color2.g, color2.b, 1];
   const mid = [
     (top[0] + bot[0]) / 2,
     (top[1] + bot[1]) / 2,
@@ -237,20 +237,27 @@ export const createGradientPlane = (
   positions = positions.map((x) => {
     return x * (SIZE / 2);
   });
-  BABYLON.VertexData.ComputeNormals(positions, indices, normals);
+  Babylon.VertexData.ComputeNormals(positions, indices, normals);
 
   // assign data to vertexData
-  const vertexData = new BABYLON.VertexData();
+  const vertexData = new Babylon.VertexData();
   vertexData.positions = positions;
   vertexData.indices = indices;
   vertexData.normals = normals;
   vertexData.colors = colors;
 
   // create a mesh
-  const plane = new BABYLON.Mesh('custom', scene);
+  const plane = new Babylon.Mesh('custom', scene);
   vertexData.applyToMesh(plane);
   plane.position.y = 0;
   plane.rotation.x = Math.PI / 2;
+
+  plane.material = new Babylon.StandardMaterial('road', scene);
+  (plane.material as Babylon.StandardMaterial).specularColor = new Babylon.Color3(
+    0.1,
+    0.1,
+    0.1
+  );
 
   return plane;
 };

@@ -30,7 +30,9 @@ import { iMapBundleVertexData } from './mapMeshBuilder';
 import { VertexData } from '@babylonjs/core';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { BBOX_SIZE } from '@src/services/mapAPI.services';
+import { createGradientPlane } from './vertexUtils';
 
+const DEBUG = false;
 const DEBUG_MOVE_DISTANCE = 0.0001;
 
 // drawing constants
@@ -39,7 +41,9 @@ export const PLANE_SIZE = 20;
 const ROAD_HEIGHT = 0.1;
 const ROAD_BORDER_HEIGHT = 0.05;
 
-const COLOR_BACKGROUND = '#C8FACC';
+const COLOR_BACKGROUND_BOT = [0.74, 1, 0.42];
+const COLOR_BACKGROUND_TOP = [0.03, 0.53, 0.18];
+
 const COLOR_ROAD_BORDER = '#C6C6C5';
 const COLOR_ROAD_FILL = '#FFFFFF';
 const COLOR_BUILDING_STROKE = '#BFB1A5';
@@ -72,10 +76,11 @@ const generateRoad = (
   colorHex: string,
   scene: Babylon.Scene
 ): Babylon.Mesh => {
+  // create mesh
   const newMesh = new Babylon.Mesh('road', scene);
-  vertexData.applyToMesh(newMesh); // apply vertexData
+  vertexData.applyToMesh(newMesh);
 
-  // material
+  // add material
   newMesh.material = new Babylon.StandardMaterial('road', scene);
   (newMesh.material as StandardMaterial).diffuseColor = hexToRgb(colorHex);
   (newMesh.material as StandardMaterial).specularColor = new Babylon.Color3(
@@ -108,7 +113,6 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
   // map drawing
   const playerNode = useRef<Babylon.Mesh>();
-
   const meshGrid = useRef<Array<Array<Babylon.Mesh | null>>>([]);
 
   // expose methods such as
@@ -145,7 +149,8 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       camera.panningSensibility = 0;
 
       // limit camera zoom
-      camera.lowerRadiusLimit = 20;
+      camera.lowerRadiusLimit = 10;
+      //camera.lowerRadiusLimit = 20;
       //camera.upperRadiusLimit = 30;
 
       // limit camera angle
@@ -153,7 +158,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       camera.upperBetaLimit = Math.PI / 4;
 
       camera.setTarget(Babylon.Vector3.Zero());
-      //camera.alpha = Math.PI / 8;
+      camera.alpha = Math.PI / 8;
       camera.beta = Math.PI / 8;
       camera.radius = 10;
 
@@ -163,51 +168,38 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       camera.lockedTarget = playerNode.current;
     }
 
-    // initialize planes
+    // create ground plane
+    const planeGround = createGradientPlane(PLANE_SIZE * 3, new Babylon.Color3(...COLOR_BACKGROUND_BOT), new Babylon.Color3(...COLOR_BACKGROUND_TOP), scene);
+    planeGround.position.y = 0;
+    planeGround.rotation.x = Math.PI / 2
 
-    const gridOffset = (GRIDMAP_SIZE - 1) / 2 + 0.5;
 
     // initialize gridmap
+    const gridOffset = (GRIDMAP_SIZE - 1) / 2 + 0.5;
+
     for (let i = 0; i < GRIDMAP_SIZE; i++) {
       meshGrid.current.push([]);
       for (let j = 0; j < GRIDMAP_SIZE; j++) {
         meshGrid.current[i].push(null);
 
-        // define boundaries
-        const boundariesPath = [
-          new Vector3(
-            (i - gridOffset) * PLANE_SIZE,
-            3,
-            (j - gridOffset) * PLANE_SIZE
-          ),
-          new Vector3(
-            (i - gridOffset + 1) * PLANE_SIZE,
-            3,
-            (j - gridOffset) * PLANE_SIZE
-          ),
-          new Vector3(
-            (i - gridOffset + 1) * PLANE_SIZE,
-            3,
-            (j - gridOffset + 1) * PLANE_SIZE
-          ),
-          new Vector3(
-            (i - gridOffset) * PLANE_SIZE,
-            3,
-            (j - gridOffset + 1) * PLANE_SIZE
-          ),
-          new Vector3(
-            (i - gridOffset) * PLANE_SIZE,
-            3,
-            (j - gridOffset) * PLANE_SIZE
-          )
-        ];
-        Babylon.MeshBuilder.CreateTube(
-          'tube',
-          { path: boundariesPath, radius: 1 },
-          scene
-        );
+        // draw debug boundarie separators
+        if (DEBUG){
+          const boundariesPath = [
+            new Vector3( (i - gridOffset) * PLANE_SIZE, 3, (j - gridOffset) * PLANE_SIZE),
+            new Vector3( (i - gridOffset + 1) * PLANE_SIZE, 3, (j - gridOffset) * PLANE_SIZE),
+            new Vector3( (i - gridOffset + 1) * PLANE_SIZE, 3, (j - gridOffset + 1) * PLANE_SIZE),
+            new Vector3( (i - gridOffset) * PLANE_SIZE, 3, (j - gridOffset + 1) * PLANE_SIZE),
+            new Vector3( (i - gridOffset) * PLANE_SIZE, 3, (j - gridOffset) * PLANE_SIZE)
+          ];
+          Babylon.MeshBuilder.CreateTube(
+            'tube',
+            { path: boundariesPath, radius: 1 },
+            scene
+          );
+        }
       }
     }
+
     // lights
     const light = new HemisphericLight('light', new Vector3(5, 10, 0), scene);
     light.intensity = 0.7;
@@ -216,15 +208,9 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     setScene(scene);
   }, [engine]);
 
-  // update textures
 
-  useEffect(() => {
-    console.log('TILES HAS BEEN UPDATED, AWAIT CHANGES');
-    UpdateTextures();
-  }, [updateCount]);
-
-  const UpdateTextures = () => {
-    // check everything is initialized
+  const UpdateTileMesh = () => {
+    // everything is initialized
     if (!engine) return;
     if (!scene) return;
     if (!meshGrid.current.length) return;
@@ -249,6 +235,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
         }
       }
 
+      // apply offset
       for (let i = 0; i < GRIDMAP_SIZE; i++) {
         for (let j = 0; j < GRIDMAP_SIZE; j++) {
           mesh = gridCopy[i][j];
@@ -263,11 +250,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
             newPos.y >= 0 &&
             newPos.y < GRIDMAP_SIZE
           ) {
-            mesh.position = new Vector3(
-              mesh.position.x + PLANE_SIZE * offset.x,
-              0,
-              mesh.position.z + PLANE_SIZE * offset.y
-            );
+            mesh.position = new Vector3( mesh.position.x + PLANE_SIZE * offset.x, 0, mesh.position.z + PLANE_SIZE * offset.y);
 
             // reparent
             meshGrid.current[newPos.x][newPos.y] = gridCopy[i][j];
@@ -288,12 +271,13 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     }
 
     console.log(
-      'Entered UpdateTextures ',
+      'Entered UpdateTileMesh ',
       getUpdatedTiles().length,
       getUpdatedTiles()
     );
 
     // iterate through updated tiles
+
     let mapBundle: iMapBundleVertexData | null;
     const gridOffset = (GRIDMAP_SIZE - 1) / 2 + 0.5;
 
@@ -316,7 +300,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       // ROADS
       const roads = generateRoad(
         mapBundle.roads,
-        DEBUG_COLORS[tilePos.x][tilePos.y],
+        COLOR_ROAD_FILL,
         scene
       );
       roads.position.y = ROAD_HEIGHT;
@@ -372,6 +356,12 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     );
   }
 
+  // update meshes
+  useEffect(() => {
+    UpdateTileMesh();
+  }, [updateCount]);
+
+  // update player
   useEffect(() => {
     updatePlayerPos();
   }, [userPosition]);
@@ -380,41 +370,39 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     <>
       <SafeAreaView style={{ flex: 1, backgroundColor: 'red' }}>
         <View style={{ flex: 1 }}>
-          <Button
-            title={'Move x+'}
-            onPress={() => {
-              debugMovePosition({ lon: DEBUG_MOVE_DISTANCE, lat: 0 });
-            }}
-          />
-          <Button
-            title={'Move x-'}
-            onPress={() => {
-              debugMovePosition({ lon: -DEBUG_MOVE_DISTANCE, lat: 0 });
-            }}
-          />
-          <Button
-            title={'Move y+'}
-            onPress={() => {
-              debugMovePosition({ lon: 0, lat: DEBUG_MOVE_DISTANCE });
-            }}
-          />
-          <Button
-            title={'Move y-'}
-            onPress={() => {
-              debugMovePosition({ lon: 0, lat: -DEBUG_MOVE_DISTANCE });
-            }}
-          />
+          { !!DEBUG &&
+            <>
+              <Button
+                title={'Move x+'}
+                onPress={() => {
+                  debugMovePosition({ lon: DEBUG_MOVE_DISTANCE, lat: 0 });
+                }}
+              />
+              <Button
+                title={'Move x-'}
+                onPress={() => {
+                  debugMovePosition({ lon: -DEBUG_MOVE_DISTANCE, lat: 0 });
+                }}
+              />
+              <Button
+                title={'Move y+'}
+                onPress={() => {
+                  debugMovePosition({ lon: 0, lat: DEBUG_MOVE_DISTANCE });
+                }}
+              />
+              <Button
+                title={'Move y-'}
+                onPress={() => {
+                  debugMovePosition({ lon: 0, lat: -DEBUG_MOVE_DISTANCE });
+                }}
+              />
+            </>
+          }
           <View style={{ flex: 1 }}>
             <EngineView camera={camera} displayFrameRate={true} />
           </View>
         </View>
       </SafeAreaView>
-      {(() => {
-        //mapInfo?.gridImageB64.find((_el) => {
-        //console.log("GRID CHANGED");
-        //return true;
-        //})
-      })()}
     </>
   );
 };
