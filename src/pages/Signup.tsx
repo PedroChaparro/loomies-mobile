@@ -1,10 +1,38 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-/* import { useFormik } from 'formik'; */
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { NavigationProp } from '@react-navigation/core';
 import { CustomButton } from '../components/CustomButton';
 
+interface SignupProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  navigation: NavigationProp<any, any>;
+}
 
-export const Signup = () => {
+export const Signup = ({ navigation }: SignupProps) => {
+  //TODO
+  const redirectToLogin = () => {
+    navigation.navigate('Login');
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      username: '',
+      password: ''
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().email().required(),
+      username: Yup.string().required(),
+      password: Yup.string().required()
+    }),
+    onSubmit: async (values) => {
+      //TODO 
+      console.log("submiting", values.email, values.password, values.username);
+      
+    }
+  });
   return (
     <View style={Styles.container}>
       <View style={Styles.header}>
@@ -17,34 +45,43 @@ export const Signup = () => {
             placeholderTextColor={'#9C9C9C'}
             placeholder='Email'
             autoCapitalize='none'
-            /* value={formik.values.email} */
-            /* onChangeText={formik.handleChange('email')} */
+            value={formik.values.email}
+            onChangeText={formik.handleChange('email')}
           />
+          {formik.errors.email && (
+            <Text style={Styles.formError}>*{formik.errors.email}</Text>
+          )}
           <TextInput
             style={{ ...Styles.formField, marginTop: 8 }}
             placeholderTextColor={'#9C9C9C'}
             placeholder='Username'
             autoCapitalize='none'
-            /* value={formik.values.password}
-            onChangeText={formik.handleChange('password')} */
+            value={formik.values.username}
+            onChangeText={formik.handleChange('username')}
           />
+          {formik.errors.email && (
+            <Text style={Styles.formError}>*{formik.errors.username}</Text>
+          )}
           <TextInput
             style={{ ...Styles.formField, marginTop: 8 }}
             placeholderTextColor={'#9C9C9C'}
             placeholder='********'
             secureTextEntry={true}
-            /* value={formik.values.password}
-            onChangeText={formik.handleChange('password')} */
+            value={formik.values.password}
+            onChangeText={formik.handleChange('password')}
           />
+          {formik.errors.password && (
+            <Text style={Styles.formError}>*{formik.errors.password}</Text>
+          )}
           <CustomButton
             title='Create account'
             type='primary'
-            callback={() => {console.log("object");}}
+            callback={formik.handleSubmit}
           />
           
         </View>
         <View style={Styles.redirect}>
-          <Pressable>
+          <Pressable onPress={redirectToLogin}>
             <Text>Already have an account? Login</Text>
           </Pressable>
         </View>
@@ -87,12 +124,12 @@ const Styles = StyleSheet.create({
     color: '#6C6C6C',
     paddingHorizontal: 16
   },
-  /* formError: {
+  formError: {
     color: '#ED4A5F',
     fontSize: 12,
     fontWeight: 'bold',
     textTransform: 'capitalize'
-  }, */
+  },
   redirect: {
     alignSelf: 'center',
     flex: 1,
