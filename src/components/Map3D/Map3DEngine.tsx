@@ -21,6 +21,7 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 
 import * as Babylon from '@babylonjs/core';
 
+
 // map
 import { GRIDMAP_SIZE, iGridPosition } from '@src/context/MapProvider';
 
@@ -32,7 +33,8 @@ import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { BBOX_SIZE } from '@src/services/mapAPI.services';
 import { createGradientPlane } from './vertexUtils';
 
-const DEBUG = false;
+import { CONFIG } from '@src/services/config.services';
+const { MAP_DEBUG } = CONFIG;
 const DEBUG_MOVE_DISTANCE = 0.0001;
 
 // drawing constants
@@ -183,7 +185,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
         meshGrid.current[i].push(null);
 
         // draw debug boundarie separators
-        if (DEBUG){
+        if (MAP_DEBUG){
           const boundariesPath = [
             new Vector3( (i - gridOffset) * PLANE_SIZE, 3, (j - gridOffset) * PLANE_SIZE),
             new Vector3( (i - gridOffset + 1) * PLANE_SIZE, 3, (j - gridOffset) * PLANE_SIZE),
@@ -370,7 +372,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     <>
       <SafeAreaView style={{ flex: 1, backgroundColor: 'red' }}>
         <View style={{ flex: 1 }}>
-          { !!DEBUG &&
+          { !!MAP_DEBUG &&
             <>
               <Button
                 title={'Move x+'}

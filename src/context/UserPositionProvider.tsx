@@ -1,14 +1,13 @@
 import React, { createContext, useEffect, useState } from 'react';
-import { Text } from 'react-native';
 import { iPosition, getPosition } from '@src/services/geolocation.services';
+import { CONFIG } from '@src/services/config.services';
+const { MAP_DEBUG } = CONFIG;
 
 export interface iUserPositionContext {
   userPosition: iPosition | null;
   cachedUserPosition: iPosition | null;
   debugMovePosition: (_deltaPos: iPosition) => void;
 }
-
-const DEBUG = true;
 
 export const UserPositionContext = createContext<iUserPositionContext>({
   userPosition: null,
@@ -34,7 +33,7 @@ export const UserPositionProvider = (props: { children: any }) => {
     }
 
     // wait 5 seconds
-    if (DEBUG) return;
+    if (MAP_DEBUG) return;
 
     await delay(5000);
     updateUserPosition();
@@ -63,9 +62,6 @@ export const UserPositionProvider = (props: { children: any }) => {
     <UserPositionContext.Provider
       value={{ userPosition, cachedUserPosition, debugMovePosition }}
     >
-      <Text>
-        lon {userPosition?.lon} , lat {userPosition?.lat}
-      </Text>
       {props.children}
     </UserPositionContext.Provider>
   );

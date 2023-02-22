@@ -1,5 +1,6 @@
-import { API_URL } from '@env';
+import { API_URL, MAP_DEBUG } from '@env';
 
 export const CONFIG = {
-  API_URL
+  API_URL,
+  MAP_DEBUG: MAP_DEBUG == 'true'
 };
