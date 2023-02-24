@@ -3,7 +3,10 @@ module.exports = {
   plugins: [
     [ 'module-resolver',
       {
-        alias: { '@src': './src', },
+        alias: {
+          '@src': './src',
+          '@assets': './assets',
+        },
       },
     ],
     ['module:react-native-dotenv', { moduleName: '@env', path: '.env' }]

@@ -12,7 +12,7 @@ import { SafeAreaView, View, Button, ViewProps } from 'react-native';
 import { EngineView, useEngine } from '@babylonjs/react-native';
 import { Camera } from '@babylonjs/core/Cameras/camera';
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
-import '@babylonjs/loaders/glTF';
+
 import { Scene } from '@babylonjs/core/scene';
 
 import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
@@ -20,7 +20,10 @@ import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 
 import * as Babylon from '@babylonjs/core';
+import '@babylonjs/loaders/glTF';
 
+import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
+import { LoadModel, MODEL } from '@src/services/modelLoader.services';
 
 // map
 import { GRIDMAP_SIZE, iGridPosition } from '@src/context/MapProvider';
@@ -40,8 +43,9 @@ const DEBUG_MOVE_DISTANCE = 0.0001;
 // drawing constants
 //export const PLANE_SIZE = 20;
 export const PLANE_SIZE = 20;
-const ROAD_HEIGHT = 0.1;
+const ROAD_HEIGHT = 0.07;
 const ROAD_BORDER_HEIGHT = 0.05;
+const CIRCLE_INDICATOR_HEIGHT = 0.09;
 
 const COLOR_BACKGROUND_BOT = [0.74, 1, 0.42];
 const COLOR_BACKGROUND_TOP = [0.03, 0.53, 0.18];
@@ -124,23 +128,28 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
   // startup
   useEffect(() => {
-
     if (meshGrid.current.length) return;
     if (!engine) return;
     const scene = new Scene(engine);
     if (!scene) return;
 
+    // debug
     new Babylon.AxesViewer(scene, 5);
+    //scene.debugLayer.show();
+    scene.debugLayer.show({
+      embedMode: true
+    });
 
     console.log('Creating scene');
 
     // create player
-    const playerMesh: Babylon.Mesh = Babylon.MeshBuilder.CreateBox(
-      'box',
+    const playerRootMesh: Babylon.Mesh = Babylon.MeshBuilder.CreateBox(
+      'playerRootMesh',
       { size: 1 },
       scene
     );
-    playerNode.current = playerMesh;
+    playerRootMesh.isVisible = false;
+    playerNode.current = playerRootMesh;
 
     // create camera
     scene.createDefaultCamera(true, true, true);
@@ -171,10 +180,14 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     }
 
     // create ground plane
-    const planeGround = createGradientPlane(PLANE_SIZE * 3, new Babylon.Color3(...COLOR_BACKGROUND_BOT), new Babylon.Color3(...COLOR_BACKGROUND_TOP), scene);
+    const planeGround = createGradientPlane(
+      PLANE_SIZE * 3,
+      new Babylon.Color3(...COLOR_BACKGROUND_BOT),
+      new Babylon.Color3(...COLOR_BACKGROUND_TOP),
+      scene
+    );
     planeGround.position.y = 0;
-    planeGround.rotation.x = Math.PI / 2
-
+    planeGround.rotation.x = Math.PI / 2;
 
     // initialize gridmap
     const gridOffset = (GRIDMAP_SIZE - 1) / 2 + 0.5;
@@ -185,7 +198,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
         meshGrid.current[i].push(null);
 
         // draw debug boundarie separators
-        if (MAP_DEBUG){
+        if (MAP_DEBUG) {
           const boundariesPath = [
             new Vector3( (i - gridOffset) * PLANE_SIZE, 3, (j - gridOffset) * PLANE_SIZE),
             new Vector3( (i - gridOffset + 1) * PLANE_SIZE, 3, (j - gridOffset) * PLANE_SIZE),
@@ -207,9 +220,33 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     light.intensity = 0.7;
 
     console.log('Scene created');
+
+    // load player model
+    (async () => {
+      try {
+        await LoadModel(MODEL.MAP_PLAYER, scene);
+        await LoadModel(MODEL.MAP_CIRCLE_INDICATOR, scene);
+
+        const playerModel = scene.getTransformNodeByName('root_player');
+        const circleIndicatorModel = scene.getTransformNodeByName(
+          'root_circle_indicator'
+        );
+
+        if (playerModel && playerNode.current) {
+          playerModel.setParent(playerNode.current);
+        }
+
+        if (circleIndicatorModel && playerNode.current) {
+          circleIndicatorModel.position.y = CIRCLE_INDICATOR_HEIGHT;
+          circleIndicatorModel.setParent(playerNode.current);
+        }
+      } catch (error) {
+        console.log("ERROR: Couldn't load model.");
+      }
+    })();
+
     setScene(scene);
   }, [engine]);
-
 
   const UpdateTileMesh = () => {
     // everything is initialized
@@ -252,7 +289,11 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
             newPos.y >= 0 &&
             newPos.y < GRIDMAP_SIZE
           ) {
-            mesh.position = new Vector3( mesh.position.x + PLANE_SIZE * offset.x, 0, mesh.position.z + PLANE_SIZE * offset.y);
+            mesh.position = new Vector3(
+              mesh.position.x + PLANE_SIZE * offset.x,
+              0,
+              mesh.position.z + PLANE_SIZE * offset.y
+            );
 
             // reparent
             meshGrid.current[newPos.x][newPos.y] = gridCopy[i][j];
@@ -300,11 +341,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       // Create different elements
 
       // ROADS
-      const roads = generateRoad(
-        mapBundle.roads,
-        COLOR_ROAD_FILL,
-        scene
-      );
+      const roads = generateRoad(mapBundle.roads, COLOR_ROAD_FILL, scene);
       roads.position.y = ROAD_HEIGHT;
 
       // ROADS BORDER
@@ -356,7 +393,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       0,
       ((userPosition.lat - mapOrigin.lat) / (BBOX_SIZE * 2)) * PLANE_SIZE
     );
-  }
+  };
 
   // update meshes
   useEffect(() => {
@@ -372,7 +409,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     <>
       <SafeAreaView style={{ flex: 1, backgroundColor: 'red' }}>
         <View style={{ flex: 1 }}>
-          { !!MAP_DEBUG &&
+          {!!MAP_DEBUG && (
             <>
               <Button
                 title={'Move x+'}
@@ -399,7 +436,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
                 }}
               />
             </>
-          }
+          )}
           <View style={{ flex: 1 }}>
             <EngineView camera={camera} displayFrameRate={true} />
           </View>
