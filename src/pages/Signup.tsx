@@ -61,6 +61,7 @@ export const Signup = ({ navigation }: SignupProps) => {
             value={formik.values.email}
             onChangeText={formik.handleChange('email')}
           />
+          {/* Shows the email validation error if exists */}
           {formik.errors.email && (
             <Text style={Styles.formError}>*{formik.errors.email}</Text>
           )}
@@ -72,7 +73,8 @@ export const Signup = ({ navigation }: SignupProps) => {
             value={formik.values.username}
             onChangeText={formik.handleChange('username')}
           />
-          {formik.errors.email && (
+          {/* Shows the username validation error if exists */}
+          {formik.errors.username && (
             <Text style={Styles.formError}>*{formik.errors.username}</Text>
           )}
           <TextInput
@@ -83,6 +85,7 @@ export const Signup = ({ navigation }: SignupProps) => {
             value={formik.values.password}
             onChangeText={formik.handleChange('password')}
           />
+          {/* Shows the password validation error if exists */}
           {formik.errors.password && (
             <Text style={Styles.formError}>*{formik.errors.password}</Text>
           )}
@@ -95,7 +98,7 @@ export const Signup = ({ navigation }: SignupProps) => {
         </View>
         <View style={Styles.redirect}>
           <Pressable onPress={redirectToLogin}>
-            <Text>Already have an account? Login</Text>
+            <Text style={Styles.redirectText}>Already have an account? Login</Text>
           </Pressable>
         </View>
       </View>
@@ -148,5 +151,8 @@ const Styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     padding: 16
+  },
+  redirectText: {
+    color: '#5C5C5C'
   }
 });
