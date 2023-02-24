@@ -4,6 +4,8 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { NavigationProp } from '@react-navigation/core';
 import { CustomButton } from '../components/CustomButton';
+import { signupRequest } from '../services/user.services';
+import { useToastAlert } from '../hooks/useToastAlert';
 
 interface SignupProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -11,7 +13,9 @@ interface SignupProps {
 }
 
 export const Signup = ({ navigation }: SignupProps) => {
-  //TODO
+
+  const { showInfoToast, showErrorToast } = useToastAlert();
+  
   const redirectToLogin = () => {
     navigation.navigate('Login');
   };
@@ -25,12 +29,21 @@ export const Signup = ({ navigation }: SignupProps) => {
     validationSchema: Yup.object({
       email: Yup.string().email().required(),
       username: Yup.string().required(),
-      password: Yup.string().required()
+      password: Yup.string().matches(
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[$!%*#?&/%])[A-Za-z\d$!%*#?&/%]{8,}$/,
+        'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+      ).required()
     }),
+    
     onSubmit: async (values) => {
-      //TODO 
-      console.log("submiting", values.email, values.password, values.username);
       
+      const [response, error] = await signupRequest(values.email, values.username, values.password);
+      if (error && response?.message) {
+        showErrorToast(response?.message);
+      } else {
+        showInfoToast('User created succesfully, now confirm your Email');
+        redirectToLogin();
+      }
     }
   });
   return (
