@@ -85,7 +85,9 @@ export const Login = ({ navigation }: LoginProps) => {
         </View>
         <View style={Styles.redirect}>
           <Pressable onPress={redirectToSignup}>
-            <Text style={Styles.redirectText}>Does not have an account? Sign-up</Text>
+            <Text style={Styles.redirectText}>
+              Does not have an account? Sign-up
+            </Text>
           </Pressable>
         </View>
       </View>

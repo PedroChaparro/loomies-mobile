@@ -9,7 +9,7 @@
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "format": "prettier --write src/**/*.{ts,tsx,js,jsx} --no-error-on-unmatched-pattern",
-    "format:check": "prettier --check src/**/*.{ts,tsx,js,jsx} --no-error-on-unmatched-pattern"
+    "format:check": "prettier --config ./.prettierrc --check src/**/*.{ts,tsx,js,jsx} --no-error-on-unmatched-pattern"
   },
   "dependencies": {
     "@babylonjs/core": "^5.46.0",

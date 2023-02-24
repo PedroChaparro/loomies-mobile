@@ -13,9 +13,8 @@ interface SignupProps {
 }
 
 export const Signup = ({ navigation }: SignupProps) => {
-
   const { showInfoToast, showErrorToast } = useToastAlert();
-  
+
   const redirectToLogin = () => {
     navigation.navigate('Login');
   };
@@ -29,15 +28,20 @@ export const Signup = ({ navigation }: SignupProps) => {
     validationSchema: Yup.object({
       email: Yup.string().email().required(),
       username: Yup.string().required(),
-      password: Yup.string().matches(
-        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[$!%*#?&/%])[A-Za-z\d$!%*#?&/%]{8,}$/,
-        'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character'
-      ).required()
+      password: Yup.string()
+        .matches(
+          /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[$!%*#?&/%])[A-Za-z\d$!%*#?&/%]{8,}$/,
+          'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+        )
+        .required()
     }),
-    
+
     onSubmit: async (values) => {
-      
-      const [response, error] = await signupRequest(values.email, values.username, values.password);
+      const [response, error] = await signupRequest(
+        values.email,
+        values.username,
+        values.password
+      );
       if (error && response?.message) {
         showErrorToast(response?.message);
       } else {
@@ -94,11 +98,12 @@ export const Signup = ({ navigation }: SignupProps) => {
             type='primary'
             callback={formik.handleSubmit}
           />
-          
         </View>
         <View style={Styles.redirect}>
           <Pressable onPress={redirectToLogin}>
-            <Text style={Styles.redirectText}>Already have an account? Login</Text>
+            <Text style={Styles.redirectText}>
+              Already have an account? Login
+            </Text>
           </Pressable>
         </View>
       </View>
