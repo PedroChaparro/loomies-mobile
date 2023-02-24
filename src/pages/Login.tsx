@@ -85,7 +85,7 @@ export const Login = ({ navigation }: LoginProps) => {
         </View>
         <View style={Styles.redirect}>
           <Pressable onPress={redirectToSignup}>
-            <Text>Does not have an account? Sign-up</Text>
+            <Text style={Styles.redirectText}>Does not have an account? Sign-up</Text>
           </Pressable>
         </View>
       </View>
@@ -138,5 +138,8 @@ const Styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     padding: 16
+  },
+  redirectText: {
+    color: '#5C5C5C'
   }
 });
