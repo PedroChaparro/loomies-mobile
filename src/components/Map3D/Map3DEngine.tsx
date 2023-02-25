@@ -55,6 +55,11 @@ const COLOR_ROAD_FILL = '#FFFFFF';
 const COLOR_BUILDING_STROKE = '#BFB1A5';
 const COLOR_BUILDING_FILL = '#D9D0C9';
 
+// animation
+const ANI_LERP_SPEED = 0.2;
+const ANI_LERP_MERGE_DISTANCE = 0.1;
+const ANI_STEP_TIME = 1000/30; // milliseconds
+
 const DEBUG_COLORS = [
   ['#FF0000', '#00FF00', '#0000FF'],
   ['#FFFF00', '#000000', '#FF00FF'],
@@ -119,6 +124,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
   // map drawing
   const playerNode = useRef<Babylon.Mesh>();
+  const playerNodeTargetPos = useRef<Babylon.Vector3>(Vector3.Zero());
   const meshGrid = useRef<Array<Array<Babylon.Mesh | null>>>([]);
 
   // expose methods such as
@@ -310,7 +316,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       consumeMapApplyingOffset();
 
       // update player position
-      updatePlayerPos();
+      updatePlayerPos(true);
     }
 
     console.log(
@@ -378,7 +384,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
   };
 
   // move player physical representation in the map
-  const updatePlayerPos = () => {
+  const updatePlayerPos = (absolute = false) => {
     console.log('Enter moving player');
 
     if (!userPosition) return;
@@ -388,12 +394,56 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
     console.log('Moving player');
 
-    playerNode.current.position = new Vector3(
-      ((userPosition.lon - mapOrigin.lon) / (BBOX_SIZE * 2)) * PLANE_SIZE,
-      0,
-      ((userPosition.lat - mapOrigin.lat) / (BBOX_SIZE * 2)) * PLANE_SIZE
-    );
+    // translate smoothly to new position
+
+    if (absolute){
+
+      const currPos = playerNode.current.position;
+      const targPos = playerNodeTargetPos.current;
+      const newPos = new Vector3(
+        ((userPosition.lon - mapOrigin.lon) / (BBOX_SIZE * 2)) * PLANE_SIZE,
+        0,
+        ((userPosition.lat - mapOrigin.lat) / (BBOX_SIZE * 2)) * PLANE_SIZE
+      );
+
+      playerNode.current.position = new Vector3(
+        newPos.x + (currPos.x - targPos.x), 0,
+        newPos.z + (currPos.z - targPos.z),
+      );
+
+      playerNodeTargetPos.current = newPos;
+
+    }
+
+    // set lerp target position
+    else{
+
+      playerNodeTargetPos.current = new Vector3(
+        ((userPosition.lon - mapOrigin.lon) / (BBOX_SIZE * 2)) * PLANE_SIZE,
+        0,
+        ((userPosition.lat - mapOrigin.lat) / (BBOX_SIZE * 2)) * PLANE_SIZE
+      );
+
+      // start lerp animation
+      lerpPlayerPos();
+    }
   };
+
+  const lerpPlayerPos = () => {
+    if (!engine) return;
+    if (!playerNode.current) return;
+
+    const currPos = playerNode.current.position;
+    const targPos = playerNodeTargetPos.current;
+
+    if (Vector3.Distance(currPos, targPos) < ANI_LERP_MERGE_DISTANCE){
+      playerNode.current.position = targPos;
+    }
+    else{
+      playerNode.current.position = Vector3.Lerp(currPos, targPos, ANI_LERP_SPEED);
+      setTimeout(lerpPlayerPos, ANI_STEP_TIME);
+    }
+  }
 
   // update meshes
   useEffect(() => {
