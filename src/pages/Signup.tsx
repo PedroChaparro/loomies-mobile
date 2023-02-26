@@ -13,7 +13,7 @@ interface SignupProps {
 }
 
 export const Signup = ({ navigation }: SignupProps) => {
-  const { showInfoToast, showErrorToast } = useToastAlert();
+  const { showSuccessToast, showErrorToast } = useToastAlert();
 
   const redirectToLogin = () => {
     navigation.navigate('Login');
@@ -30,7 +30,7 @@ export const Signup = ({ navigation }: SignupProps) => {
       username: Yup.string().required(),
       password: Yup.string()
         .matches(
-          /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[$!%*#?&/%])[A-Za-z\d$!%*#?&/%]{8,}$/,
+          /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[)(;.,\][}{_=@$!¡#%*?¿&^+-/<>|~'"])[A-Za-z\d)(;.,\][}{_=@$!¡#%*?¿&^+-/<>|~'"]{8,}$/,
           'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character'
         )
         .required()
@@ -45,7 +45,7 @@ export const Signup = ({ navigation }: SignupProps) => {
       if (error && response?.message) {
         showErrorToast(response?.message);
       } else {
-        showInfoToast('User created succesfully, now confirm your Email');
+        showSuccessToast('User created succesfully, now confirm your Email');
         redirectToLogin();
       }
     }
