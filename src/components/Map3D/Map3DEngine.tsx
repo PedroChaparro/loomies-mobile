@@ -1,4 +1,3 @@
-// clean me
 import React, {
   FunctionComponent,
   useEffect,
@@ -6,44 +5,34 @@ import React, {
   useRef,
   useContext
 } from 'react';
-
 import { SafeAreaView, View, Button, ViewProps } from 'react-native';
-
 import { EngineView, useEngine } from '@babylonjs/react-native';
-import { Camera } from '@babylonjs/core/Cameras/camera';
-import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
-
-import { Scene } from '@babylonjs/core/scene';
-
-import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
-import { Vector3 } from '@babylonjs/core/Maths/math.vector';
-import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
-import { Tools } from '@babylonjs/core/Misc';
 
 import * as Babylon from '@babylonjs/core';
+import { Tools } from '@babylonjs/core/Misc';
+import { Scene } from '@babylonjs/core/scene';
+import { Camera } from '@babylonjs/core/Cameras/camera';
+import { Vector3 } from '@babylonjs/core/Maths/math.vector';
+import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
+import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
 import '@babylonjs/loaders/glTF';
 
-import { LoadModel, MODEL } from '@src/services/modelLoader.services';
-
 import { SensorContext } from '@src/context/SensorProvider';
-
-// map
-import { GRIDMAP_SIZE, iGridPosition } from '@src/context/MapProvider';
-
-// grid map context
-import { MapContext } from '@src/context/MapProvider';
-import { iMapBundleVertexData } from './mapMeshBuilder';
-import { VertexData } from '@babylonjs/core';
+import { LoadModel, MODEL } from '@src/services/modelLoader.services';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
-import { BBOX_SIZE } from '@src/services/mapAPI.services';
-import { createGradientPlane } from './vertexUtils';
 
+import { GRIDMAP_SIZE, iGridPosition } from '@src/context/MapProvider';
+import { BBOX_SIZE } from '@src/services/mapAPI.services';
+import { MapContext } from '@src/context/MapProvider';
+import { createGradientPlane } from './vertexUtils';
+import { iMapBundleVertexData, generateRoad } from './mapMeshBuilder';
+
+// debug
 import { CONFIG } from '@src/services/config.services';
 const { MAP_DEBUG } = CONFIG;
 const DEBUG_MOVE_DISTANCE = 0.0002;
 
 // drawing constants
-//export const PLANE_SIZE = 20;
 export const PLANE_SIZE = 20;
 const ROAD_HEIGHT = 0.07;
 const ROAD_BORDER_HEIGHT = 0.05;
@@ -54,56 +43,11 @@ const COLOR_BACKGROUND_TOP = [0.03, 0.53, 0.18];
 
 const COLOR_ROAD_BORDER = '#C6C6C5';
 const COLOR_ROAD_FILL = '#FFFFFF';
-const COLOR_BUILDING_STROKE = '#BFB1A5';
-const COLOR_BUILDING_FILL = '#D9D0C9';
 
-// animation
+// animation constants
 const ANI_LERP_SPEED = 0.2;
 const ANI_LERP_MERGE_DISTANCE_POSITION = 0.1;
 const ANI_LERP_MERGE_DISTANCE_ROTATION = Tools.ToRadians(1);
-const ANI_STEP_TIME = 1000 / 30; // milliseconds
-
-const DEBUG_COLORS = [
-  ['#FF0000', '#00FF00', '#0000FF'],
-  ['#FFFF00', '#000000', '#FF00FF'],
-  ['#FF00FF', '#00FFFF', '#FFFFFF']
-];
-
-const hexToRgb = (hex: string): Babylon.Color3 => {
-  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-  hex = hex.replace(shorthandRegex, function (_m, r, g, b) {
-    return r + r + g + g + b + b;
-  });
-
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result
-    ? new Babylon.Color3(
-        parseInt(result[1], 16) / 255,
-        parseInt(result[2], 16) / 255,
-        parseInt(result[3], 16) / 255
-      )
-    : new Babylon.Color3(0, 0, 0);
-};
-
-const generateRoad = (
-  vertexData: VertexData,
-  colorHex: string,
-  scene: Babylon.Scene
-): Babylon.Mesh => {
-  // create mesh
-  const newMesh = new Babylon.Mesh('road', scene);
-  vertexData.applyToMesh(newMesh);
-
-  // add material
-  newMesh.material = new Babylon.StandardMaterial('road', scene);
-  (newMesh.material as StandardMaterial).diffuseColor = hexToRgb(colorHex);
-  (newMesh.material as StandardMaterial).specularColor = new Babylon.Color3(
-    0.1,
-    0.1,
-    0.1
-  );
-  return newMesh;
-};
 
 export const Map3DEngine: FunctionComponent<ViewProps> = () => {
   // user position debug method
@@ -143,9 +87,6 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     const scene = new Scene(engine);
     if (!scene) return;
 
-    // debug
-    new Babylon.AxesViewer(scene, 5);
-
     console.log('Creating scene');
 
     // create player
@@ -157,6 +98,10 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     playerRootMesh.isVisible = false;
     playerNode.current = playerRootMesh;
 
+    // create lights
+    const light = new HemisphericLight('light', new Vector3(5, 10, 0), scene);
+    light.intensity = 0.7;
+
     // create camera
     scene.createDefaultCamera(true, true, true);
 
@@ -166,9 +111,10 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       camera.panningSensibility = 0;
 
       // limit camera zoom
-      camera.lowerRadiusLimit = 10;
-      //camera.lowerRadiusLimit = 20;
-      //camera.upperRadiusLimit = 30;
+      if (!MAP_DEBUG) {
+        camera.lowerRadiusLimit = 20;
+        camera.upperRadiusLimit = 30;
+      } else camera.lowerRadiusLimit = 10;
 
       // limit camera angle
       camera.lowerBetaLimit = (Math.PI * 1) / 16;
@@ -241,12 +187,6 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       }
     }
 
-    // lights
-    const light = new HemisphericLight('light', new Vector3(5, 10, 0), scene);
-    light.intensity = 0.7;
-
-    console.log('Scene created');
-
     // load player model
     (async () => {
       try {
@@ -271,16 +211,19 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       }
     })();
 
+    // (debug) map axes
+    if (MAP_DEBUG) new Babylon.AxesViewer(scene, 5);
+
+    console.log('Scene created');
     setScene(scene);
   }, [engine]);
 
   const UpdateTileMesh = () => {
     // everything is initialized
-    if (!engine) return;
     if (!scene) return;
     if (!meshGrid.current.length) return;
 
-    // if there is an offset -> apply it
+    // apply offset if any
     const offset: iGridPosition | null = getMapApplyingOffset();
     if (offset) {
       offset.x = -offset.x;
