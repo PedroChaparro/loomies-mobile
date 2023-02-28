@@ -1,6 +1,6 @@
 import { NavigationProp } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import { Text, View, Button, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
 import { useToastAlert } from '../hooks/useToastAlert';
 import { Map3D } from '@src/components/Map3D/Map3D';
@@ -10,12 +10,6 @@ interface MapViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   navigation: NavigationProp<any, any>;
 }
-
-const Screens = [
-  { name: 'Profile' },
-  { name: 'Loomies' },
-  { name: 'Inventory' }
-];
 
 export const MapView = ({ navigation }: MapViewProps) => {
   const { isLoading, isAuthenticated } = useAuth();
@@ -59,7 +53,5 @@ export const MapView = ({ navigation }: MapViewProps) => {
 const Styles = StyleSheet.create({
   container: {
     flex: 1
-    //alignItems: 'center',
-    //gap: 12
   }
 });
