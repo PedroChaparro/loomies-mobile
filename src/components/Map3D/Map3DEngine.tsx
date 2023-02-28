@@ -40,7 +40,7 @@ import { createGradientPlane } from './vertexUtils';
 
 import { CONFIG } from '@src/services/config.services';
 const { MAP_DEBUG } = CONFIG;
-const DEBUG_MOVE_DISTANCE = 0.0001;
+const DEBUG_MOVE_DISTANCE = 0.0002;
 
 // drawing constants
 //export const PLANE_SIZE = 20;

@@ -39,8 +39,6 @@ export const TileManager = () => {
       for (let j = 0; j < GRIDMAP_SIZE; j++) {
         // check if it is missing
 
-        //console.log('Check tile ', i, ' ', j, ' ', userPosition);
-
         if (getGridMeshAtPos({ x: i, y: j })) continue;
 
         (async () => {
@@ -52,28 +50,22 @@ export const TileManager = () => {
               x: i - offset,
               y: GRIDMAP_SIZE - 1 - j - offset // compensate for inversed z
             });
-            console.log('FETCHED 1 ===========================');
 
             // convert to mapBundle
             const mapBundle: iMapBundleVertexData = mapToVertexData(map);
-            console.log('FETCHED 2 ===========================');
 
             // push to context
-            externalSetGridImageB64(
-              { x: i, y: j },
-              mapBundle
-            );
-            console.log('FETCHED 3 ===========================');
+            externalSetGridImageB64({ x: i, y: j }, mapBundle);
           } catch (error) {
-            console.log("Couldn't fetch map");
+            console.log("Error: Couldn't fetch map");
           }
         })();
       }
     }
   };
 
+  // calculate user offset from central tile
   useEffect(() => {
-    //console.log('User position changed');
     if (!userPosition) return;
     if (!cachedUserPosition) return;
 
@@ -84,31 +76,37 @@ export const TileManager = () => {
     const mapOrigin = getMapOrigin();
     if (!mapOrigin) return;
 
-    // TODO: check it's outside boundaries
+    let outOfBoundaries = false;
     const userOffset: iGridPosition = {
       x: 0,
       y: 0
     };
 
-    let outOfBoundaries = false;
-
     if (userPosition.lon > mapOrigin.lon + BBOX_SIZE + BOUNDARY_MARGIN) {
-      userOffset.x = 1;
+      userOffset.x = Math.floor(
+        (userPosition.lon - (mapOrigin.lon - BBOX_SIZE)) / (BBOX_SIZE * 2)
+      );
       outOfBoundaries = true;
     } else if (userPosition.lon < mapOrigin.lon - BBOX_SIZE - BOUNDARY_MARGIN) {
-      userOffset.x = -1;
-      outOfBoundaries = true;
-    }
-    // y offset is flipped vecause our map index is
-    if (userPosition.lat > mapOrigin.lat + BBOX_SIZE + BOUNDARY_MARGIN) {
-      userOffset.y = 1;
-      outOfBoundaries = true;
-    } else if (userPosition.lat < mapOrigin.lat - BBOX_SIZE - BOUNDARY_MARGIN) {
-      userOffset.y = -1;
+      userOffset.x = -Math.floor(
+        (mapOrigin.lon + BBOX_SIZE - userPosition.lon) / (BBOX_SIZE * 2)
+      );
       outOfBoundaries = true;
     }
 
-    if (outOfBoundaries){
+    if (userPosition.lat > mapOrigin.lat + BBOX_SIZE + BOUNDARY_MARGIN) {
+      userOffset.y = Math.floor(
+        (userPosition.lat - (mapOrigin.lat - BBOX_SIZE)) / (BBOX_SIZE * 2)
+      );
+      outOfBoundaries = true;
+    } else if (userPosition.lat < mapOrigin.lat - BBOX_SIZE - BOUNDARY_MARGIN) {
+      userOffset.y = -Math.floor(
+        (mapOrigin.lat + BBOX_SIZE - userPosition.lat) / (BBOX_SIZE * 2)
+      );
+      outOfBoundaries = true;
+    }
+
+    if (outOfBoundaries) {
       console.log('OUT OF BOUNDARIES ', userOffset);
       // offset the whole source grid
       offsetGrid(userOffset);
