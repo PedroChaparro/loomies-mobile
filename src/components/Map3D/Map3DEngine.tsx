@@ -34,6 +34,7 @@ const DEBUG_MOVE_DISTANCE = 0.0002;
 
 // drawing constants
 export const PLANE_SIZE = 20;
+const GROUND_SCALE = 3.5;
 const ROAD_HEIGHT = 0.07;
 const ROAD_BORDER_HEIGHT = 0.05;
 const CIRCLE_INDICATOR_HEIGHT = 0.09;
@@ -41,7 +42,7 @@ const CIRCLE_INDICATOR_HEIGHT = 0.09;
 const COLOR_BACKGROUND_BOT = [0.74, 1, 0.42];
 const COLOR_BACKGROUND_TOP = [0.03, 0.53, 0.18];
 
-const COLOR_ROAD_BORDER = '#C6C6C5';
+const COLOR_ROAD_BORDER = '#658298';
 const COLOR_ROAD_FILL = '#FFFFFF';
 
 // animation constants
@@ -100,7 +101,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
     // create lights
     const light = new HemisphericLight('light', new Vector3(5, 10, 0), scene);
-    light.intensity = 0.7;
+    light.intensity = 0.9;
 
     // create camera
     scene.createDefaultCamera(true, true, true);
@@ -133,7 +134,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
     // create ground plane
     const planeGround = createGradientPlane(
-      PLANE_SIZE * 3,
+      PLANE_SIZE * GROUND_SCALE,
       new Babylon.Color3(...COLOR_BACKGROUND_BOT),
       new Babylon.Color3(...COLOR_BACKGROUND_TOP),
       scene
@@ -479,7 +480,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
             </>
           )}
           <View style={{ flex: 1 }}>
-            <EngineView camera={camera} displayFrameRate={true} />
+            <EngineView camera={camera} displayFrameRate={MAP_DEBUG} />
           </View>
         </View>
       </SafeAreaView>

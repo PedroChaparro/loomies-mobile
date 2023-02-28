@@ -6,11 +6,8 @@ import { Vector3, VertexData } from '@babylonjs/core';
 import { createLineVertex, iLineOptions } from './vertexUtils';
 import { PLANE_SIZE } from './Map3DEngine';
 
-//const MAP_SIZE = 500;
-const ROAD_WIDTH = 0.5;
-const ROAD_WIDTH_BORDER = 0.6;
-//const ROAD_WIDTH = 1;
-//const ROAD_WIDTH_BORDER = 1.3;
+const ROAD_WIDTH = 0.4;
+const ROAD_WIDTH_BORDER = 0.7;
 
 export interface iMapBundleVertexData {
   roads: VertexData;
