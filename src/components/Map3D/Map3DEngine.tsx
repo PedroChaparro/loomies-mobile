@@ -18,12 +18,14 @@ import { Scene } from '@babylonjs/core/scene';
 import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
+import { Tools } from '@babylonjs/core/Misc';
 
 import * as Babylon from '@babylonjs/core';
 import '@babylonjs/loaders/glTF';
 
-import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 import { LoadModel, MODEL } from '@src/services/modelLoader.services';
+
+import { SensorContext } from '@src/context/SensorProvider';
 
 // map
 import { GRIDMAP_SIZE, iGridPosition } from '@src/context/MapProvider';
@@ -57,8 +59,9 @@ const COLOR_BUILDING_FILL = '#D9D0C9';
 
 // animation
 const ANI_LERP_SPEED = 0.2;
-const ANI_LERP_MERGE_DISTANCE = 0.1;
-const ANI_STEP_TIME = 1000/30; // milliseconds
+const ANI_LERP_MERGE_DISTANCE_POSITION = 0.1;
+const ANI_LERP_MERGE_DISTANCE_ROTATION = Tools.ToRadians(1);
+const ANI_STEP_TIME = 1000 / 30; // milliseconds
 
 const DEBUG_COLORS = [
   ['#FF0000', '#00FF00', '#0000FF'],
@@ -105,6 +108,7 @@ const generateRoad = (
 export const Map3DEngine: FunctionComponent<ViewProps> = () => {
   // user position debug method
   const { userPosition, debugMovePosition } = useContext(UserPositionContext);
+  const { deviceYaw } = useContext(SensorContext);
 
   // map info
   const {
@@ -141,10 +145,6 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
     // debug
     new Babylon.AxesViewer(scene, 5);
-    //scene.debugLayer.show();
-    scene.debugLayer.show({
-      embedMode: true
-    });
 
     console.log('Creating scene');
 
@@ -206,11 +206,31 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
         // draw debug boundarie separators
         if (MAP_DEBUG) {
           const boundariesPath = [
-            new Vector3( (i - gridOffset) * PLANE_SIZE, 3, (j - gridOffset) * PLANE_SIZE),
-            new Vector3( (i - gridOffset + 1) * PLANE_SIZE, 3, (j - gridOffset) * PLANE_SIZE),
-            new Vector3( (i - gridOffset + 1) * PLANE_SIZE, 3, (j - gridOffset + 1) * PLANE_SIZE),
-            new Vector3( (i - gridOffset) * PLANE_SIZE, 3, (j - gridOffset + 1) * PLANE_SIZE),
-            new Vector3( (i - gridOffset) * PLANE_SIZE, 3, (j - gridOffset) * PLANE_SIZE)
+            new Vector3(
+              (i - gridOffset) * PLANE_SIZE,
+              3,
+              (j - gridOffset) * PLANE_SIZE
+            ),
+            new Vector3(
+              (i - gridOffset + 1) * PLANE_SIZE,
+              3,
+              (j - gridOffset) * PLANE_SIZE
+            ),
+            new Vector3(
+              (i - gridOffset + 1) * PLANE_SIZE,
+              3,
+              (j - gridOffset + 1) * PLANE_SIZE
+            ),
+            new Vector3(
+              (i - gridOffset) * PLANE_SIZE,
+              3,
+              (j - gridOffset + 1) * PLANE_SIZE
+            ),
+            new Vector3(
+              (i - gridOffset) * PLANE_SIZE,
+              3,
+              (j - gridOffset) * PLANE_SIZE
+            )
           ];
           Babylon.MeshBuilder.CreateTube(
             'tube',
@@ -396,8 +416,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
     // translate smoothly to new position
 
-    if (absolute){
-
+    if (absolute) {
       const currPos = playerNode.current.position;
       const targPos = playerNodeTargetPos.current;
       const newPos = new Vector3(
@@ -407,50 +426,79 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       );
 
       playerNode.current.position = new Vector3(
-        newPos.x + (currPos.x - targPos.x), 0,
-        newPos.z + (currPos.z - targPos.z),
+        newPos.x + (currPos.x - targPos.x),
+        0,
+        newPos.z + (currPos.z - targPos.z)
       );
 
       playerNodeTargetPos.current = newPos;
-
     }
 
     // set lerp target position
-    else{
-
+    else {
       playerNodeTargetPos.current = new Vector3(
         ((userPosition.lon - mapOrigin.lon) / (BBOX_SIZE * 2)) * PLANE_SIZE,
         0,
         ((userPosition.lat - mapOrigin.lat) / (BBOX_SIZE * 2)) * PLANE_SIZE
       );
-
-      // start lerp animation
-      lerpPlayerPos();
     }
   };
 
-  const lerpPlayerPos = () => {
-    if (!engine) return;
+  // runs every frame
+  const frameUpdate = () => {
     if (!playerNode.current) return;
 
+    // position
     const currPos = playerNode.current.position;
     const targPos = playerNodeTargetPos.current;
 
-    if (Vector3.Distance(currPos, targPos) < ANI_LERP_MERGE_DISTANCE){
+    if (Vector3.Distance(currPos, targPos) < ANI_LERP_MERGE_DISTANCE_POSITION) {
       playerNode.current.position = targPos;
+    } else {
+      playerNode.current.position = Vector3.Lerp(
+        currPos,
+        targPos,
+        ANI_LERP_SPEED
+      );
     }
-    else{
-      playerNode.current.position = Vector3.Lerp(currPos, targPos, ANI_LERP_SPEED);
-      setTimeout(lerpPlayerPos, ANI_STEP_TIME);
+
+    // rotation
+    if (
+      Math.abs(playerNode.current.rotation.y - deviceYaw) <
+      ANI_LERP_MERGE_DISTANCE_ROTATION
+    ) {
+      playerNode.current.rotation.y = deviceYaw;
+    } else {
+      playerNode.current.rotation.y = Tools.ToRadians(
+        Babylon.Scalar.LerpAngle(
+          Tools.ToDegrees(playerNode.current.rotation.y),
+          Tools.ToDegrees(deviceYaw),
+          ANI_LERP_SPEED
+        )
+      );
     }
-  }
+  };
+
+  // move / rotate player
+  useEffect(() => {
+    if (scene) {
+      const handler = () => {
+        frameUpdate();
+      };
+      scene.registerBeforeRender(handler);
+
+      return () => {
+        scene.unregisterBeforeRender(handler);
+      };
+    }
+  }, [playerNodeTargetPos.current, deviceYaw, scene]);
 
   // update meshes
   useEffect(() => {
     UpdateTileMesh();
   }, [updateCount]);
 
-  // update player
+  // update player position
   useEffect(() => {
     updatePlayerPos();
   }, [userPosition]);

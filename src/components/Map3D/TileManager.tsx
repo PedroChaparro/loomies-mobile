@@ -39,7 +39,7 @@ export const TileManager = () => {
       for (let j = 0; j < GRIDMAP_SIZE; j++) {
         // check if it is missing
 
-        console.log('Check tile ', i, ' ', j, ' ', userPosition);
+        //console.log('Check tile ', i, ' ', j, ' ', userPosition);
 
         if (getGridMeshAtPos({ x: i, y: j })) continue;
 
