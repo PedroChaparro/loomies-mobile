@@ -5,9 +5,6 @@
  * @format
  */
 
-const defaultAssetExts =
-  require('metro-config/src/defaults/defaults').assetExts;
-
 module.exports = {
   transformer: {
     getTransformOptions: async () => ({
@@ -18,6 +15,35 @@ module.exports = {
     })
   },
   resolver: {
-    assetExts: [...defaultAssetExts, 'glb', 'jpg', 'env', 'dds']
+    assetExts: [
+      'bmp', // Image formats
+      'gif',
+      'jpg',
+      'jpeg',
+      'png',
+      'psd',
+      'svg',
+      'webp', // Video formats
+      'm4v',
+      'mov',
+      'mp4',
+      'mpeg',
+      'mpg',
+      'webm', // Audio formats
+      'aac',
+      'aiff',
+      'caf',
+      'm4a',
+      'mp3',
+      'wav', // Document formats
+      'html',
+      'pdf',
+      'yaml',
+      'yml', // Font formats
+      'otf',
+      'ttf', // Archives (virtual files)
+      'zip',
+      'glb' // 3D
+    ]
   }
 };

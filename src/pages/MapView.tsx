@@ -41,7 +41,7 @@ export const MapView = ({ navigation }: MapViewProps) => {
           borderRadius: 200
         }}
         onPress={() => {
-          navigation.navigate('Application', { screen: 'Loomies' })
+          navigation.navigate('Application', { screen: 'Loomies' });
         }}
       >
         <FeatherIcon name={'briefcase'} size={28} color={'white'} />

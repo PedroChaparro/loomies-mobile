@@ -289,7 +289,6 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     const gridOffset = (GRIDMAP_SIZE - 1) / 2 + 0.5;
 
     getUpdatedTiles().forEach((tilePos: iGridPosition) => {
-
       // Delete current tile mesh if exists
       const oldMesh = meshGrid.current[tilePos.x][tilePos.y];
       if (oldMesh) {
@@ -341,7 +340,6 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
   // move player physical representation in the map
   const updatePlayerPos = (absolute = false) => {
-
     if (!userPosition) return;
     const mapOrigin = getMapOrigin();
     if (!mapOrigin) return;

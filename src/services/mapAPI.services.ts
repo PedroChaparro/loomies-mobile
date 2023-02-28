@@ -36,7 +36,7 @@ export async function fetchMap(
     pos.lon + BBOX_SIZE + BBOX_SIZE * 2 * offset.x
   },${pos.lat + BBOX_SIZE + BBOX_SIZE * 2 * -offset.y}`;
 
-  console.log("INFO: fetching from ", url);
+  console.log('INFO: fetching from ', url);
 
   const res = await fetch(url, {
     method: 'GET',
