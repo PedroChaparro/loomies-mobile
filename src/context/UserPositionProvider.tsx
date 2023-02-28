@@ -17,6 +17,7 @@ export const UserPositionContext = createContext<iUserPositionContext>({
   }
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const UserPositionProvider = (props: { children: any }) => {
   const [cachedUserPosition, setCachedUserPosition] =
     useState<iPosition | null>(null);

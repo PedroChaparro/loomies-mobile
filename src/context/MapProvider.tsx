@@ -56,6 +56,7 @@ export const MapContext = createContext<iMapProvider>({
 
 // in charge of caching map data in order to be reused
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const MapProvider = (props: { children: any }) => {
   const [updateCount, setUpdateCount] = useState<number>(0);
   const mapOrigin = useRef<iPosition | null>(null);

@@ -14,6 +14,7 @@ export const SensorContext = createContext<iSensorContext>({
   deviceYaw: 0
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const SensorProvider = (props: { children: any }) => {
   const [deviceYaw, setDeviceYaw] = useState<number>(0);
   const [sensorSubscription, setSensorSubscription] =

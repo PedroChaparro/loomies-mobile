@@ -58,8 +58,10 @@ export async function fetchMap(
 
 // get ways
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getWays(map: iMap, osm: any): iMap {
   // loop trough all nodes
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   osm.elements.forEach((ele: any) => {
     // index all nodes
     if (ele['type'] === 'node') {
@@ -102,23 +104,27 @@ function getWays(map: iMap, osm: any): iMap {
   return map;
 }
 
-// debug retrieved map
+// For debugging retreived map
 export function debugPrintMap(map: iMap) {
   for (const prop in map.dicNodes) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     console.log((map.dicNodes as any)[prop]);
   }
 
   console.log('roads');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   map.roads.forEach((el: any) => {
     console.log(el);
   });
 
   console.log('paths');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   map.paths.forEach((el: any) => {
     console.log(el);
   });
 
   console.log('buildings');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   map.buildings.forEach((el: any) => {
     console.log(el);
   });

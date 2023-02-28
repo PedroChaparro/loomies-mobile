@@ -40,6 +40,7 @@ export const getPosition = async (): Promise<iPosition | null> => {
     );
 
   try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const position: any = await getCurrentPosition();
     return {
       lat: position.coords.latitude,

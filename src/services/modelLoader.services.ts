@@ -3,7 +3,9 @@ import '@babylonjs/loaders/glTF';
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 
 export enum MODEL {
+  // eslint-disable-next-line no-unused-vars
   MAP_PLAYER = require('@assets/models/map/player.glb'),
+  // eslint-disable-next-line no-unused-vars
   MAP_CIRCLE_INDICATOR = require('@assets/models/map/circleIndicator.glb')
 }
 
