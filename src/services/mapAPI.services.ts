@@ -22,7 +22,7 @@ export async function fetchMap(
     origin: {
       lon: pos.lon - BBOX_SIZE + BBOX_SIZE * 2 * offset.x,
       //lat: pos.lat + BBOX_SIZE + BBOX_SIZE * 2 * -offset.y
-      lat: pos.lat - BBOX_SIZE + BBOX_SIZE * 2 * -offset.y,
+      lat: pos.lat - BBOX_SIZE + BBOX_SIZE * 2 * -offset.y
     },
     dicNodes: {},
     roads: [],

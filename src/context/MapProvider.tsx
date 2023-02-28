@@ -70,7 +70,7 @@ export const MapProvider = (props: { children: any }) => {
     mapBundle: iMapBundleVertexData
   ) => {
     gridImageB64.current[pos.x][pos.y] = mapBundle;
-    console.log("settet grid ", pos, " to ", !!mapBundle);
+    console.log('settet grid ', pos, ' to ', !!mapBundle);
 
     // trigger update
     updatedTiles.current.push(pos);
@@ -85,10 +85,10 @@ export const MapProvider = (props: { children: any }) => {
     pos: iGridPosition
   ): iMapBundleVertexData | null => {
     //console.log(
-      //'query map in ',
-      //pos,
-      //' result: ',
-      //!!gridImageB64.current[pos.x][pos.y]
+    //'query map in ',
+    //pos,
+    //' result: ',
+    //!!gridImageB64.current[pos.x][pos.y]
     //);
     if (gridImageB64.current.length) return gridImageB64.current[pos.x][pos.y];
     else return null;
@@ -158,12 +158,12 @@ export const MapProvider = (props: { children: any }) => {
         }
       }
     }
-    console.log("=========\nWhat we have:");
-    let str = "";
+    console.log('=========\nWhat we have:');
+    let str = '';
     for (let i = 0; i < GRIDMAP_SIZE; i++) {
-      str ="";
+      str = '';
       for (let j = 0; j < GRIDMAP_SIZE; j++) {
-        str += (+(!!gridImageB64.current[i][j])).toString();
+        str += (+!!gridImageB64.current[i][j]).toString();
       }
       console.log(str);
     }

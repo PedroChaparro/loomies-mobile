@@ -253,11 +253,8 @@ export const createGradientPlane = (
   plane.rotation.x = Math.PI / 2;
 
   plane.material = new Babylon.StandardMaterial('road', scene);
-  (plane.material as Babylon.StandardMaterial).specularColor = new Babylon.Color3(
-    0.1,
-    0.1,
-    0.1
-  );
+  (plane.material as Babylon.StandardMaterial).specularColor =
+    new Babylon.Color3(0.1, 0.1, 0.1);
 
   return plane;
 };

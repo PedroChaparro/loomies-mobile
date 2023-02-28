@@ -5,21 +5,19 @@
  * @format
  */
 
-const defaultAssetExts = require("metro-config/src/defaults/defaults").assetExts
+const defaultAssetExts =
+  require('metro-config/src/defaults/defaults').assetExts;
 
 module.exports = {
   transformer: {
     getTransformOptions: async () => ({
       transform: {
         experimentalImportSupport: false,
-        inlineRequires: true,
-      },
-    }),
+        inlineRequires: true
+      }
+    })
   },
   resolver: {
-    assetExts: [
-        ...defaultAssetExts,
-        'glb', 'jpg', 'env', 'dds'
-    ]
+    assetExts: [...defaultAssetExts, 'glb', 'jpg', 'env', 'dds']
   }
 };

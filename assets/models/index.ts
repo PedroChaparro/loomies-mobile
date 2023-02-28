@@ -1,2 +1,1 @@
-export const MODEL_PLAYER = require("./map/player.glb")
-
+export const MODEL_PLAYER = require('./map/player.glb');
