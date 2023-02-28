@@ -1,4 +1,4 @@
-import { iNode, iWay, iMap } from '@src/typescript/mapInterfaces';
+import { iNode, iWay, iMap } from '@src/types/mapInterfaces';
 import { BBOX_SIZE } from '@src/services/mapAPI.services';
 
 import * as Babylon from '@babylonjs/core';

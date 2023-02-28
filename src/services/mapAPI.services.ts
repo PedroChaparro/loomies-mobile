@@ -1,4 +1,4 @@
-import { iPosition, iMap } from '@src/typescript/mapInterfaces';
+import { iPosition, iMap } from '@src/types/mapInterfaces';
 import { iGridPosition } from '@src/context/MapProvider';
 
 /*
