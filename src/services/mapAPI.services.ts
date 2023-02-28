@@ -36,7 +36,7 @@ export async function fetchMap(
     pos.lon + BBOX_SIZE + BBOX_SIZE * 2 * offset.x
   },${pos.lat + BBOX_SIZE + BBOX_SIZE * 2 * -offset.y}`;
 
-  console.log(url);
+  console.log("INFO: fetching from ", url);
 
   const res = await fetch(url, {
     method: 'GET',
@@ -102,6 +102,7 @@ function getWays(map: iMap, osm: any): iMap {
   return map;
 }
 
+// debug retrieved map
 export function debugPrintMap(map: iMap) {
   for (const prop in map.dicNodes) {
     console.log((map.dicNodes as any)[prop]);

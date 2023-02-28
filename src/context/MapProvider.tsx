@@ -70,7 +70,6 @@ export const MapProvider = (props: { children: any }) => {
     mapBundle: iMapBundleVertexData
   ) => {
     gridImageB64.current[pos.x][pos.y] = mapBundle;
-    console.log('settet grid ', pos, ' to ', !!mapBundle);
 
     // trigger update
     updatedTiles.current.push(pos);
@@ -84,12 +83,6 @@ export const MapProvider = (props: { children: any }) => {
   const getGridMeshAtPos = (
     pos: iGridPosition
   ): iMapBundleVertexData | null => {
-    //console.log(
-    //'query map in ',
-    //pos,
-    //' result: ',
-    //!!gridImageB64.current[pos.x][pos.y]
-    //);
     if (gridImageB64.current.length) return gridImageB64.current[pos.x][pos.y];
     else return null;
   };
@@ -109,12 +102,10 @@ export const MapProvider = (props: { children: any }) => {
 
     // update map origin
 
-    console.log('old map origin ', mapOrigin.current);
     setMapOrigin({
       lon: mapOrigin.current.lon + BBOX_SIZE * 2 * offset.x,
       lat: mapOrigin.current.lat + BBOX_SIZE * 2 * offset.y
     });
-    console.log('new map origin ', mapOrigin.current);
 
     mapApplyingOffset.current = offset;
 
@@ -145,20 +136,11 @@ export const MapProvider = (props: { children: any }) => {
           newPos.y < GRIDMAP_SIZE
         ) {
           gridImageB64.current[newPos.x][newPos.y] = gridCopy[i][j];
-          console.log(
-            'offset accepted ',
-            newPos,
-            !!gridImageB64.current[newPos.x][newPos.y]
-          );
-        }
-
-        // delete if outside
-        else {
-          console.log('offset outside of accepted range ', newPos);
         }
       }
     }
-    console.log('=========\nWhat we have:');
+
+    console.log('INFO: Tile map grid status:');
     let str = '';
     for (let i = 0; i < GRIDMAP_SIZE; i++) {
       str = '';
@@ -208,7 +190,6 @@ export const MapProvider = (props: { children: any }) => {
       }
     }
 
-    console.log('GRID initialized');
     gridImageB64.current = grid;
   }, []);
 

@@ -25,7 +25,6 @@ export const SensorProvider = (props: { children: any }) => {
 
     // subscribe to service
     const sub = orientation.subscribe(({ yaw }) => {
-      console.log({ yaw });
       setDeviceYaw(yaw);
     });
 

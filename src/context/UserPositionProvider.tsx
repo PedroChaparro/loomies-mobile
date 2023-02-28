@@ -23,7 +23,6 @@ export const UserPositionProvider = (props: { children: any }) => {
   const [userPosition, setUserPosition] = useState<iPosition | null>(null);
 
   const updateUserPosition = async () => {
-    console.log('Checking pos');
     // try to request position
     const newPos = await getPosition();
     if (newPos) {
@@ -40,7 +39,6 @@ export const UserPositionProvider = (props: { children: any }) => {
   };
 
   const debugMovePosition = async (deltaPos: iPosition) => {
-    console.log('New position ', userPosition);
     setUserPosition((pos) => {
       if (pos) {
         return {
@@ -50,7 +48,6 @@ export const UserPositionProvider = (props: { children: any }) => {
       }
       return pos;
     });
-    console.log('New position ', userPosition);
   };
 
   useEffect(() => {

@@ -26,8 +26,6 @@ export const mapToVertexData = (map: iMap): iMapBundleVertexData => {
     width: 1
   });
 
-  console.log('mapToVertexData: Starting');
-
   // buildings disabled
 
   // roads
@@ -46,8 +44,6 @@ export const mapToVertexData = (map: iMap): iMapBundleVertexData => {
     true
   );
 
-  console.log('mapToVertexData: Succesfully built');
-
   return {
     roads: roads,
     roadsBorder: roadsBorder
@@ -61,7 +57,6 @@ const waysToBundleVector3 = (map: iMap, ways: iWay[]): Array<Vector3[]> => {
   let nodeMapYCoord = 0;
   let node: iNode | null = null;
 
-  console.log('WAYS found ', ways.length);
   ways.forEach((way: iWay) => {
     //
     // start vertex path
@@ -87,7 +82,6 @@ const waysToBundleVector3 = (map: iMap, ways: iWay[]): Array<Vector3[]> => {
     wayVertexCollection.push(vertexList);
   });
 
-  console.log('WAYS retreived ', wayVertexCollection.length);
   return wayVertexCollection;
 };
 

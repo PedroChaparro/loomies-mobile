@@ -88,7 +88,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     const scene = new Scene(engine);
     if (!scene) return;
 
-    console.log('Creating scene');
+    console.log('INFO: Creating scene');
 
     // create player
     const playerRootMesh: Babylon.Mesh = Babylon.MeshBuilder.CreateBox(
@@ -215,7 +215,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     // (debug) map axes
     if (MAP_DEBUG) new Babylon.AxesViewer(scene, 5);
 
-    console.log('Scene created');
+    console.log('INFO: Scene created');
     setScene(scene);
   }, [engine]);
 
@@ -283,24 +283,16 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       updatePlayerPos(true);
     }
 
-    console.log(
-      'Entered UpdateTileMesh ',
-      getUpdatedTiles().length,
-      getUpdatedTiles()
-    );
-
     // iterate through updated tiles
 
     let mapBundle: iMapBundleVertexData | null;
     const gridOffset = (GRIDMAP_SIZE - 1) / 2 + 0.5;
 
     getUpdatedTiles().forEach((tilePos: iGridPosition) => {
-      console.log('Checking inside tiles', tilePos);
 
       // Delete current tile mesh if exists
       const oldMesh = meshGrid.current[tilePos.x][tilePos.y];
       if (oldMesh) {
-        console.log('Diponsing old mesh');
         oldMesh.dispose();
       }
 
@@ -349,14 +341,11 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
   // move player physical representation in the map
   const updatePlayerPos = (absolute = false) => {
-    console.log('Enter moving player');
 
     if (!userPosition) return;
     const mapOrigin = getMapOrigin();
     if (!mapOrigin) return;
     if (!playerNode.current) return;
-
-    console.log('Moving player');
 
     // translate smoothly to new position
 

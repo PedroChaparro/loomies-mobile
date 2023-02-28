@@ -43,7 +43,7 @@ export const TileManager = () => {
 
         (async () => {
           try {
-            console.log('Empty tile ', i, ' ', j);
+            console.log('INFO: Empty tile found at ', i, ' ', j);
 
             // fetch OSM map
             const map: iMap = await fetchMap(mapOrigin, {
@@ -57,7 +57,7 @@ export const TileManager = () => {
             // push to context
             externalSetGridImageB64({ x: i, y: j }, mapBundle);
           } catch (error) {
-            console.log("Error: Couldn't fetch map");
+            console.log("ERROR: Couldn't fetch map");
           }
         })();
       }
@@ -107,7 +107,6 @@ export const TileManager = () => {
     }
 
     if (outOfBoundaries) {
-      console.log('OUT OF BOUNDARIES ', userOffset);
       // offset the whole source grid
       offsetGrid(userOffset);
     }
