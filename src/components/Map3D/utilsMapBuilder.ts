@@ -1,9 +1,14 @@
+/*
+ * utils Map Builder:
+ * Provides methods for generating specific Map 3D meshes.
+ */
+
 import { iNode, iWay, iMap } from '@src/types/mapInterfaces';
 import { BBOX_SIZE } from '@src/services/mapAPI.services';
 
 import * as Babylon from '@babylonjs/core';
 import { Vector3, VertexData } from '@babylonjs/core';
-import { createLineVertex, iLineOptions } from './vertexUtils';
+import { createLineVertex, iLineOptions } from './utilsVertex';
 import { PLANE_SIZE } from './Map3DEngine';
 
 const ROAD_WIDTH = 0.4;

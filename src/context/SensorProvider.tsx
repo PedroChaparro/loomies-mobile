@@ -1,3 +1,8 @@
+/*
+ * Sensor provider:
+ * Provides device sensor information
+ */
+
 import React, { createContext, useEffect, useState } from 'react';
 import {
   setUpdateIntervalForType,

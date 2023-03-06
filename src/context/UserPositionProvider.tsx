@@ -1,3 +1,8 @@
+/*
+ * User position provider:
+ * Provides user position every period of time.
+ */
+
 import React, { createContext, useEffect, useState } from 'react';
 import { iPosition, getPosition } from '@src/services/geolocation.services';
 import { CONFIG } from '@src/services/config.services';

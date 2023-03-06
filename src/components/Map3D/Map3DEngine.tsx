@@ -1,3 +1,9 @@
+/*
+ * Map 3D Engine:
+ * Manages all 3D objects in the map
+ * Manages the Babylon 3D engine
+ */
+
 import React, {
   FunctionComponent,
   useEffect,
@@ -24,8 +30,8 @@ import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { GRIDMAP_SIZE, iGridPosition } from '@src/context/MapProvider';
 import { BBOX_SIZE } from '@src/services/mapAPI.services';
 import { MapContext } from '@src/context/MapProvider';
-import { createGradientPlane } from './vertexUtils';
-import { iMapBundleVertexData, generateRoad } from './mapMeshBuilder';
+import { createGradientPlane } from './utilsVertex';
+import { iMapBundleVertexData, generateRoad } from './utilsMapBuilder';
 
 // debug
 import { CONFIG } from '@src/services/config.services';
@@ -375,7 +381,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     }
   };
 
-  // runs every frame
+  // update animations every frame
   const frameUpdate = () => {
     if (!playerNode.current) return;
 

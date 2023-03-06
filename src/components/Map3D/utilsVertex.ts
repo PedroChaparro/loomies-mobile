@@ -1,3 +1,8 @@
+/*
+ * utils Vertex:
+ * Provides methods for generating common 3D meshes.
+ */
+
 import * as Babylon from '@babylonjs/core';
 import { Vector3 } from '@babylonjs/core';
 

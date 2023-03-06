@@ -1,6 +1,11 @@
+/*
+ * Map provider:
+ * Stores and manages all map data in order to be reused
+ */
+
 import React, { createContext, useEffect, useState, useRef } from 'react';
 import { iPosition } from '@src/services/geolocation.services';
-import { iMapBundleVertexData } from '@src/components/Map3D/mapMeshBuilder';
+import { iMapBundleVertexData } from '@src/components/Map3D/utilsMapBuilder';
 import { BBOX_SIZE } from '@src/services/mapAPI.services';
 
 export interface iGridPosition {
@@ -53,8 +58,6 @@ export const MapContext = createContext<iMapProvider>({
     return;
   }
 });
-
-// in charge of caching map data in order to be reused
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const MapProvider = (props: { children: any }) => {
