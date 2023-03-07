@@ -3,7 +3,13 @@
  * Stores and manages all map data in order to be reused
  */
 
-import React, { createContext, useEffect, useState, useRef, ReactNode } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useState,
+  useRef,
+  ReactNode
+} from 'react';
 import { iPosition } from '@src/services/geolocation.services';
 import { iMapBundleVertexData } from '@src/components/Map3D/utilsMapBuilder';
 import { BBOX_SIZE } from '@src/services/mapAPI.services';
