@@ -3,7 +3,7 @@
  * Provides device sensor information
  */
 
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState, ReactNode } from 'react';
 import {
   setUpdateIntervalForType,
   SensorTypes,
@@ -19,8 +19,7 @@ export const SensorContext = createContext<iSensorContext>({
   deviceYaw: 0
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const SensorProvider = (props: { children: any }) => {
+export const SensorProvider = (props: { children: ReactNode }) => {
   const [deviceYaw, setDeviceYaw] = useState<number>(0);
   const [sensorSubscription, setSensorSubscription] =
     useState<Subscription | null>(null);

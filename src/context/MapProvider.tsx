@@ -3,7 +3,7 @@
  * Stores and manages all map data in order to be reused
  */
 
-import React, { createContext, useEffect, useState, useRef } from 'react';
+import React, { createContext, useEffect, useState, useRef, ReactNode } from 'react';
 import { iPosition } from '@src/services/geolocation.services';
 import { iMapBundleVertexData } from '@src/components/Map3D/utilsMapBuilder';
 import { BBOX_SIZE } from '@src/services/mapAPI.services';
@@ -59,8 +59,7 @@ export const MapContext = createContext<iMapProvider>({
   }
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const MapProvider = (props: { children: any }) => {
+export const MapProvider = (props: { children: ReactNode }) => {
   const [updateCount, setUpdateCount] = useState<number>(0);
   const mapOrigin = useRef<iPosition | null>(null);
 

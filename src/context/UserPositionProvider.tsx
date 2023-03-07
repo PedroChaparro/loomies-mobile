@@ -3,7 +3,7 @@
  * Provides user position every period of time.
  */
 
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState, ReactNode } from 'react';
 import { iPosition, getPosition } from '@src/services/geolocation.services';
 import { CONFIG } from '@src/services/config.services';
 const { MAP_DEBUG } = CONFIG;
@@ -22,8 +22,7 @@ export const UserPositionContext = createContext<iUserPositionContext>({
   }
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const UserPositionProvider = (props: { children: any }) => {
+export const UserPositionProvider = (props: { children: ReactNode }) => {
   const [cachedUserPosition, setCachedUserPosition] =
     useState<iPosition | null>(null);
   const [userPosition, setUserPosition] = useState<iPosition | null>(null);
