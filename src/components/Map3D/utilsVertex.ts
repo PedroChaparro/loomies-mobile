@@ -13,6 +13,11 @@ export interface iLineOptions {
   standardUV?: boolean | Vector3[];
 }
 
+/*
+ * method for creating a 3d line in the XZ plane
+ * extracted from https://doc.babylonjs.com/toolsAndResources/utilities/Line2D
+ */
+
 export const createLineVertex = (options: iLineOptions): Babylon.VertexData => {
   //Arrays for vertex positions and indices
   const positions: number[] = [];
@@ -218,13 +223,15 @@ export const createLineVertex = (options: iLineOptions): Babylon.VertexData => {
   return vertexData;
 };
 
+// creates a plane with a gradient between two colors
+
 export const createGradientPlane = (
   SIZE: number,
   color1: Babylon.Color3,
   color2: Babylon.Color3,
   scene: Babylon.Scene
 ): Babylon.Mesh => {
-  // colors
+  // calculate colors
   const top = [color1.r, color1.g, color1.b, 1];
   const bot = [color2.r, color2.g, color2.b, 1];
   const mid = [
@@ -234,11 +241,13 @@ export const createGradientPlane = (
     1
   ];
 
+  // set data required for a plane
   let positions = [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0];
   const normals: number[] = [];
   const indices = [0, 1, 2, 3, 4, 5];
   const colors = [...top, ...mid, ...mid, ...mid, ...mid, ...bot];
 
+  // scale plane to given size
   positions = positions.map((x) => {
     return x * (SIZE / 2);
   });
