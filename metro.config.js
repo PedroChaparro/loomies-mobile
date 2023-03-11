@@ -10,8 +10,19 @@ module.exports = {
     getTransformOptions: async () => ({
       transform: {
         experimentalImportSupport: false,
-        inlineRequires: true,
-      },
-    }),
+        inlineRequires: true
+      }
+    })
   },
+  resolver: {
+    assetExts: [
+      'jpg',
+      'jpeg',
+      'png',
+      'svg',
+      'wav',
+      'ttf',
+      'glb'
+    ]
+  }
 };
