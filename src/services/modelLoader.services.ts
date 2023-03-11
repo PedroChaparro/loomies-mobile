@@ -4,9 +4,9 @@ import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource'
 
 export enum MODEL {
   // eslint-disable-next-line no-unused-vars
-  MAP_PLAYER = require('@assets/models/map/player.glb'),
+  MAP_PLAYER = require('@assets/models/map/indicator/player.glb'),
   // eslint-disable-next-line no-unused-vars
-  MAP_CIRCLE_INDICATOR = require('@assets/models/map/circleIndicator.glb')
+  MAP_CIRCLE_INDICATOR = require('@assets/models/map/indicator/circleIndicator.glb')
 }
 
 export const LoadModel = async (
