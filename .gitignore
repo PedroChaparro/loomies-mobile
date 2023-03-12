@@ -65,3 +65,6 @@ package-lock.json
 
 # Ignore the .env file
 **/.env
+
+# Ignore blender backup file
+*.blend1
