@@ -1,62 +1,50 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import { NavigationProp } from '@react-navigation/core';
 import { CustomButton } from '../components/CustomButton';
-import { signupRequest } from '../services/user.services';
+import { codeValidationRequest } from '../services/user.services';
 import { useToastAlert } from '../hooks/useToastAlert';
 
-interface SignupProps {
+interface EmailValidationViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   navigation: NavigationProp<any, any>;
 }
 
-export const Signup = ({ navigation }: SignupProps) => {
+export const EmailValidationView = ({
+  navigation
+}: EmailValidationViewProps) => {
   const { showSuccessToast, showErrorToast } = useToastAlert();
 
   const redirectToLogin = () => {
     navigation.navigate('Login');
   };
-  const redirectToEmailValidation = () => {
-    navigation.navigate('EmailValidation');
+  const redirectToNewCode = () => {
+    navigation.navigate('NewCode');
   };
 
   const formik = useFormik({
     initialValues: {
       email: '',
-      username: '',
-      password: ''
+      code: ''
     },
-    validationSchema: Yup.object({
-      email: Yup.string().email().required(),
-      username: Yup.string().required(),
-      password: Yup.string()
-        .matches(
-          /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[)(;.,\][}{_=@$!¡#%*?¿&^+-/<>|~'"])[A-Za-z\d)(;.,\][}{_=@$!¡#%*?¿&^+-/<>|~'"]{8,}$/,
-          'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character'
-        )
-        .required()
-    }),
-
     onSubmit: async (values) => {
-      const [response, error] = await signupRequest(
+      const [response, error] = await codeValidationRequest(
         values.email,
-        values.username,
-        values.password
+        values.code
       );
       if (error && response?.message) {
         showErrorToast(response?.message);
       } else {
-        showSuccessToast('User created succesfully, now confirm your Email');
-        redirectToEmailValidation();
+        showSuccessToast(response?.message);
+        redirectToLogin();
       }
     }
   });
   return (
     <View style={Styles.container}>
       <View style={Styles.header}>
-        <Text style={Styles.headerTitle}>SIGNUP</Text>
+        <Text style={Styles.headerTitle}>INSERT YOUR CODE</Text>
       </View>
       <View style={Styles.footer}>
         <View style={Styles.form}>
@@ -68,44 +56,24 @@ export const Signup = ({ navigation }: SignupProps) => {
             value={formik.values.email}
             onChangeText={formik.handleChange('email')}
           />
-          {/* Shows the email validation error if exists */}
-          {formik.errors.email && (
-            <Text style={Styles.formError}>*{formik.errors.email}</Text>
-          )}
           <TextInput
             style={{ ...Styles.formField, marginTop: 8 }}
             placeholderTextColor={'#9C9C9C'}
-            placeholder='Username'
+            placeholder='Your Code'
             autoCapitalize='none'
-            value={formik.values.username}
-            onChangeText={formik.handleChange('username')}
+            value={formik.values.code}
+            onChangeText={formik.handleChange('code')}
           />
-          {/* Shows the username validation error if exists */}
-          {formik.errors.username && (
-            <Text style={Styles.formError}>*{formik.errors.username}</Text>
-          )}
-          <TextInput
-            style={{ ...Styles.formField, marginTop: 8 }}
-            placeholderTextColor={'#9C9C9C'}
-            placeholder='********'
-            secureTextEntry={true}
-            value={formik.values.password}
-            onChangeText={formik.handleChange('password')}
-          />
-          {/* Shows the password validation error if exists */}
-          {formik.errors.password && (
-            <Text style={Styles.formError}>*{formik.errors.password}</Text>
-          )}
           <CustomButton
-            title='Create account'
+            title='Validate'
             type='primary'
             callback={formik.handleSubmit}
           />
         </View>
         <View style={Styles.redirect}>
-          <Pressable onPress={redirectToLogin}>
+          <Pressable onPress={redirectToNewCode}>
             <Text style={Styles.redirectText}>
-              Already have an account? Login
+              Lost your code? Click here and get another one!
             </Text>
           </Pressable>
         </View>
@@ -147,12 +115,6 @@ const Styles = StyleSheet.create({
     backgroundColor: '#ECECEC',
     color: '#6C6C6C',
     paddingHorizontal: 16
-  },
-  formError: {
-    color: '#ED4A5F',
-    fontSize: 12,
-    fontWeight: 'bold',
-    textTransform: 'capitalize'
   },
   redirect: {
     alignSelf: 'center',
