@@ -44,7 +44,7 @@ export const EmailValidationView = ({
   return (
     <View style={Styles.container}>
       <View style={Styles.header}>
-        <Text style={Styles.headerTitle}>INSERT YOUR CODE</Text>
+        <Text style={Styles.headerTitle}>Validate account</Text>
       </View>
       <View style={Styles.footer}>
         <View style={Styles.form}>

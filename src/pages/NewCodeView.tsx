@@ -14,7 +14,7 @@ interface NewCodeViewProps {
 export const NewCodeView = ({ navigation }: NewCodeViewProps) => {
   const { showSuccessToast, showErrorToast } = useToastAlert();
 
-  const redirectToLogin = () => {
+  const redirectToEmailVal = () => {
     navigation.navigate('EmailValidation');
   };
 
@@ -29,7 +29,7 @@ export const NewCodeView = ({ navigation }: NewCodeViewProps) => {
         showErrorToast(response?.message);
       } else {
         showSuccessToast(response?.message);
-        redirectToLogin();
+        redirectToEmailVal();
       }
     }
   });
@@ -55,7 +55,7 @@ export const NewCodeView = ({ navigation }: NewCodeViewProps) => {
           />
         </View>
         <View style={Styles.redirect}>
-          <Pressable onPress={redirectToLogin}>
+          <Pressable onPress={redirectToEmailVal}>
             <Text style={Styles.redirectText}>
               Found your code? Click here and validate it!
             </Text>
