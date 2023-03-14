@@ -20,3 +20,8 @@ export interface iMap {
   paths: iWay[];
   buildings: iWay[];
 }
+
+export interface iGym {
+  origin: iPosition;
+  name: string;
+}
