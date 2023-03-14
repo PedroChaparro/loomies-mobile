@@ -7,6 +7,8 @@ import { Login } from '../pages/Login';
 import { Signup } from '../pages/Signup';
 import { BottomNavigation } from './BottomNavigation';
 import { MapProvider } from '@src/context/MapProvider';
+import { EmailValidationView } from '../pages/EmailValidationView';
+import { NewCodeView } from '../pages/NewCodeView';
 
 const Stack = createStackNavigator();
 export const StackNavigation = () => {
@@ -23,6 +25,8 @@ export const StackNavigation = () => {
         <Stack.Screen name='Combat' component={CombatView} />
         <Stack.Screen name='Login' component={Login} />
         <Stack.Screen name='Signup' component={Signup} />
+        <Stack.Screen name='EmailValidation' component={EmailValidationView} />
+        <Stack.Screen name='NewCode' component={NewCodeView} />
         {/* Views that includes the bottom tabs navigation */}
         <Stack.Screen name='Application' component={BottomNavigation} />
       </Stack.Navigator>

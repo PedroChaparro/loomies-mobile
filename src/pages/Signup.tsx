@@ -18,6 +18,9 @@ export const Signup = ({ navigation }: SignupProps) => {
   const redirectToLogin = () => {
     navigation.navigate('Login');
   };
+  const redirectToEmailValidation = () => {
+    navigation.navigate('EmailValidation');
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -46,7 +49,7 @@ export const Signup = ({ navigation }: SignupProps) => {
         showErrorToast(response?.message);
       } else {
         showSuccessToast('User created succesfully, now confirm your Email');
-        redirectToLogin();
+        redirectToEmailValidation();
       }
     }
   });

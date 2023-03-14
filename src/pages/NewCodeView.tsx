@@ -1,58 +1,42 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { CustomButton } from '../components/CustomButton';
 import { NavigationProp } from '@react-navigation/core';
-import { useAuth } from '../hooks/useAuth';
+import { CustomButton } from '../components/CustomButton';
+import { newCodeRequest } from '../services/user.services';
 import { useToastAlert } from '../hooks/useToastAlert';
 
-interface LoginProps {
+interface NewCodeViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   navigation: NavigationProp<any, any>;
 }
 
-export const Login = ({ navigation }: LoginProps) => {
-  const { login, isAuthenticated, isLoading } = useAuth();
-  const { showInfoToast, showErrorToast } = useToastAlert();
+export const NewCodeView = ({ navigation }: NewCodeViewProps) => {
+  const { showSuccessToast, showErrorToast } = useToastAlert();
 
-  // Redirects to the map view if the user is already authenticated
-  useEffect(() => {
-    if (!isLoading && isAuthenticated()) {
-      showInfoToast('You are already logged in');
-      navigation.navigate('Map');
-    }
-  }, [isLoading]);
-
-  const redirectToSignup = () => {
-    navigation.navigate('Signup');
-  };
   const redirectToEmailVal = () => {
     navigation.navigate('EmailValidation');
   };
 
   const formik = useFormik({
     initialValues: {
-      email: '',
-      password: ''
+      email: ''
     },
-    validationSchema: Yup.object({
-      email: Yup.string().email().required(),
-      password: Yup.string().required()
-    }),
+    // todo
     onSubmit: async (values) => {
-      const [response, error] = await login(values.email, values.password);
-
+      const [response, error] = await newCodeRequest(values.email);
       if (error && response?.message) {
         showErrorToast(response?.message);
+      } else {
+        showSuccessToast(response?.message);
+        redirectToEmailVal();
       }
     }
   });
-
   return (
     <View style={Styles.container}>
       <View style={Styles.header}>
-        <Text style={Styles.headerTitle}>Login</Text>
+        <Text style={Styles.headerTitle}>INSERT YOUR EMAIL</Text>
       </View>
       <View style={Styles.footer}>
         <View style={Styles.form}>
@@ -64,37 +48,16 @@ export const Login = ({ navigation }: LoginProps) => {
             value={formik.values.email}
             onChangeText={formik.handleChange('email')}
           />
-          {/* Shows the email validation error if exists */}
-          {formik.errors.email && (
-            <Text style={Styles.formError}>*{formik.errors.email}</Text>
-          )}
-          <TextInput
-            style={{ ...Styles.formField, marginTop: 8 }}
-            placeholderTextColor={'#9C9C9C'}
-            placeholder='********'
-            secureTextEntry={true}
-            value={formik.values.password}
-            onChangeText={formik.handleChange('password')}
-          />
-          {/* Shows the password validation error if exists */}
-          {formik.errors.password && (
-            <Text style={Styles.formError}>*{formik.errors.password}</Text>
-          )}
           <CustomButton
-            title='Login'
+            title='Send me a new code!'
             type='primary'
             callback={formik.handleSubmit}
           />
-          <CustomButton
-            title='Validate account'
-            type='primary'
-            callback={redirectToEmailVal}
-          />
         </View>
         <View style={Styles.redirect}>
-          <Pressable onPress={redirectToSignup}>
+          <Pressable onPress={redirectToEmailVal}>
             <Text style={Styles.redirectText}>
-              Does not have an account? Sign-up
+              Found your code? Click here and validate it!
             </Text>
           </Pressable>
         </View>
@@ -136,12 +99,6 @@ const Styles = StyleSheet.create({
     backgroundColor: '#ECECEC',
     color: '#6C6C6C',
     paddingHorizontal: 16
-  },
-  formError: {
-    color: '#ED4A5F',
-    fontSize: 12,
-    fontWeight: 'bold',
-    textTransform: 'capitalize'
   },
   redirect: {
     alignSelf: 'center',
