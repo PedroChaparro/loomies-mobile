@@ -27,6 +27,9 @@ export const Login = ({ navigation }: LoginProps) => {
   const redirectToSignup = () => {
     navigation.navigate('Signup');
   };
+  const redirectToEmailVal = () => {
+    navigation.navigate('EmailValidation');
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -81,6 +84,11 @@ export const Login = ({ navigation }: LoginProps) => {
             title='Login'
             type='primary'
             callback={formik.handleSubmit}
+          />
+          <CustomButton
+            title='Validate account'
+            type='primary'
+            callback={redirectToEmailVal}
           />
         </View>
         <View style={Styles.redirect}>
