@@ -36,7 +36,7 @@ export const NewCodeView = ({ navigation }: NewCodeViewProps) => {
   return (
     <View style={Styles.container}>
       <View style={Styles.header}>
-        <Text style={Styles.headerTitle}>INSERT YOUR EMAIL</Text>
+        <Text style={Styles.headerTitle}>REQUEST A NEW CODE</Text>
       </View>
       <View style={Styles.footer}>
         <View style={Styles.form}>
