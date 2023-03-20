@@ -1,6 +1,6 @@
 import { ImageSourcePropType } from 'react-native';
 
-const colors: {
+export const colors: {
   [key: string]: string;
 } = {
   WATER: '#ABEBEF',
@@ -37,12 +37,3 @@ export const images: {
   '017': require('@assets/images/loomies/017.png'),
   '018': require('@assets/images/loomies/018.png')
 };
-
-/**
- * @param {string} type The loomie type
- * @returns The hex color according to the loomie type or a default color
- */
-export function getLoomieColorFromType(type: string): string {
-  const color = colors[type.toUpperCase()] || '5C5C5C';
-  return color;
-}
