@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFormik } from 'formik';
-import { NavigationProp } from '@react-navigation/core';
+import { NavigationProp, RouteProp } from '@react-navigation/core';
 import { CustomButton } from '../components/CustomButton';
 import { codeValidationRequest } from '../services/user.services';
 import { useToastAlert } from '../hooks/useToastAlert';
@@ -9,23 +9,30 @@ import { useToastAlert } from '../hooks/useToastAlert';
 interface EmailValidationViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   navigation: NavigationProp<any, any>;
+  route: RouteProp<{ params: { email: string } }, 'params'>;
 }
 
 export const EmailValidationView = ({
-  navigation
+  navigation,
+  route
 }: EmailValidationViewProps) => {
   const { showSuccessToast, showErrorToast } = useToastAlert();
 
   const redirectToLogin = () => {
     navigation.navigate('Login');
   };
+
   const redirectToNewCode = () => {
-    navigation.navigate('NewCode');
+    // Redirect to the validation screen and pass the email as a param
+    navigation.navigate('NewCode', { email: formik.values.email });
   };
+
+  // Try to get the email from the params
+  const { email } = route.params;
 
   const formik = useFormik({
     initialValues: {
-      email: '',
+      email: email || '',
       code: ''
     },
     onSubmit: async (values) => {

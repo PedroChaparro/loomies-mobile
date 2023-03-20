@@ -19,7 +19,9 @@ export const Signup = ({ navigation }: SignupProps) => {
     navigation.navigate('Login');
   };
   const redirectToEmailValidation = () => {
-    navigation.navigate('EmailValidation');
+    // Redirect to the validation screen and pass the email as a param
+    // to auto fill the input
+    navigation.navigate('EmailValidation', { email: formik.values.email });
   };
 
   const formik = useFormik({
