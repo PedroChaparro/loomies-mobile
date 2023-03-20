@@ -45,12 +45,14 @@ const Styles = StyleSheet.create({
   },
   spacing: {
     flex: 1,
-    padding: 8
+    padding: 10
   },
   background: {
-    borderRadius: 24,
+    borderRadius: 4,
+    elevation: 6,
     flex: 1,
-    padding: 16
+    padding: 16,
+    shadowColor: '#7c7c7c'
   },
   cardImageBg: {
     alignSelf: 'center',
