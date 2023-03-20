@@ -12,7 +12,6 @@ export const UserLoomies = () => {
   // Request to obtain the loomies
   const fetchLoomies = async () => {
     const [response, err] = await getLoomiesRequest();
-    console.log(response);
 
     if (!err) {
       const { loomies } = response;
