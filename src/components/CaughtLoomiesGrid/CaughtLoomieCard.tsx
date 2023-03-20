@@ -26,9 +26,7 @@ export const LoomieCard = ({ loomie }: IProps) => {
             <View style={Styles.cardImageBg} />
             <Image source={images[loomieSerial]} style={Styles.cardImage} />
             <View style={Styles.cardInfoContainer}>
-              <Text style={{ ...Styles.cardInfoText, ...Styles.loomieLvl }}>
-                Lvl {loomie.lvl}
-              </Text>
+              <Text style={Styles.cardInfoText}>Lvl {loomie.lvl}</Text>
               <Text style={{ ...Styles.cardInfoText, ...Styles.loomieName }}>
                 {loomie.name}
               </Text>
@@ -56,7 +54,7 @@ const Styles = StyleSheet.create({
   },
   cardImageBg: {
     alignSelf: 'center',
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    backgroundColor: 'rgba(0,0,0,0.065)',
     borderRadius: 24,
     height: 110,
     position: 'absolute',
@@ -83,11 +81,8 @@ const Styles = StyleSheet.create({
     right: 12,
     top: 12
   },
-  loomieLvl: {
-    fontWeight: '500'
-  },
   loomieName: {
     color: '#5C5C5C',
-    fontWeight: 'bold'
+    fontWeight: '500'
   }
 });
