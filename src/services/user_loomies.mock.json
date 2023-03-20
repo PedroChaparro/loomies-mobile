@@ -12,7 +12,8 @@
       "attack": 22,
       "defense": 6,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     },
     {
       "_id": "640ddeed250023a581a3f7d4",
@@ -24,7 +25,8 @@
       "attack": 21,
       "defense": 9,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     },
     {
       "_id": "640ddeed250023a581a3f7d5",
@@ -36,7 +38,8 @@
       "attack": 35,
       "defense": 6,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     },
     {
       "_id": "640ddeed250023a581a3f7d6",
@@ -48,7 +51,8 @@
       "attack": 10,
       "defense": 20,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     },
     {
       "_id": "640ddeed250023a581a3f7d7",
@@ -60,7 +64,8 @@
       "attack": 35,
       "defense": 9,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     },
     {
       "_id": "640ddeed250023a581a3f7d8",
@@ -72,7 +77,8 @@
       "attack": 12,
       "defense": 18,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     },
     {
       "_id": "640ddeed250023a581a3f7de",
@@ -84,7 +90,8 @@
       "attack": 31,
       "defense": 10,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     },
     {
       "_id": "640ddeed250023a581a3f7df",
@@ -96,7 +103,8 @@
       "attack": 14,
       "defense": 28,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     },
     {
       "_id": "640ddeed250023a581a3f7e0",
@@ -108,7 +116,8 @@
       "attack": 10,
       "defense": 17,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     },
     {
       "_id": "640ddeed250023a581a3f7e1",
@@ -120,7 +129,8 @@
       "attack": 30,
       "defense": 7,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     },
     {
       "_id": "640ddeed250023a581a3f7e2",
@@ -132,7 +142,8 @@
       "attack": 24,
       "defense": 8,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     },
     {
       "_id": "640ddeed250023a581a3f7e3",
@@ -144,7 +155,8 @@
       "attack": 11,
       "defense": 30,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     },
     {
       "_id": "640ddeed250023a581a3f7e9",
@@ -156,7 +168,8 @@
       "attack": 34,
       "defense": 6,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     },
     {
       "_id": "640ddeed250023a581a3f7ea",
@@ -168,7 +181,8 @@
       "attack": 21,
       "defense": 6,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     },
     {
       "_id": "640ddeed250023a581a3f7eb",
@@ -180,7 +194,8 @@
       "attack": 25,
       "defense": 6,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     },
     {
       "_id": "640ddeed250023a581a3f7ec",
@@ -192,7 +207,8 @@
       "attack": 10,
       "defense": 18,
       "is_busy": true,
-      "owner": null
+      "owner": null,
+      "lvl": 23
     }
   ]
 }

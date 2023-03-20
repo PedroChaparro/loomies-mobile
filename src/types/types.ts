@@ -14,4 +14,5 @@ export type TCaughtLoomies = {
   defense: number;
   is_busy: boolean;
   owner: string;
+  lvl: number;
 };
