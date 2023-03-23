@@ -74,7 +74,7 @@ const Styles = StyleSheet.create({
     marginTop: 16
   },
   cardInfoText: {
-    alignSelf: 'center',
+    textAlign: 'center',
     fontSize: 16,
     textTransform: 'capitalize'
   },
