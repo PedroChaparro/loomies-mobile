@@ -1,6 +1,6 @@
 import { TCaughtLoomies } from '@src/types/types';
 import React from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList } from 'react-native';
 import { LoomieCard } from './CaughtLoomieCard';
 
 interface IProps {
@@ -10,7 +10,6 @@ interface IProps {
 export const LoomiesGrid = ({ loomies }: IProps) => {
   return (
     <FlatList
-      contentContainerStyle={Styles.container}
       data={loomies}
       keyExtractor={(item) => item._id}
       numColumns={2}
@@ -18,9 +17,3 @@ export const LoomiesGrid = ({ loomies }: IProps) => {
     />
   );
 };
-
-const Styles = StyleSheet.create({
-  container: {
-    alignItems: 'center'
-  }
-});
