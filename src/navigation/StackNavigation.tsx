@@ -7,25 +7,31 @@ import { Login } from '../pages/Login';
 import { Signup } from '../pages/Signup';
 import { BottomNavigation } from './BottomNavigation';
 import { MapProvider } from '@src/context/MapProvider';
+import { ModelProvider } from '@src/context/ModelProvider';
 
 const Stack = createStackNavigator();
 export const StackNavigation = () => {
-  // Map provider at the top so that the map data is kept between screens
+  /*
+   * Map provider at the top so map data is kept between screens
+   * Model provider at the top so model data is kept between screens
+   */
   return (
     <MapProvider>
-      <Stack.Navigator
-        initialRouteName='Map'
-        screenOptions={{ headerShown: false }}
-      >
-        {/* Views that are not included in the bottom tabs navigation but are reachable using the navigator hook */}
-        <Stack.Screen name='Map' component={MapView} />
-        <Stack.Screen name='Capture' component={CaptureView} />
-        <Stack.Screen name='Combat' component={CombatView} />
-        <Stack.Screen name='Login' component={Login} />
-        <Stack.Screen name='Signup' component={Signup} />
-        {/* Views that includes the bottom tabs navigation */}
-        <Stack.Screen name='Application' component={BottomNavigation} />
-      </Stack.Navigator>
+      <ModelProvider>
+        <Stack.Navigator
+          initialRouteName='Map'
+          screenOptions={{ headerShown: false }}
+        >
+          {/* Views that are not included in the bottom tabs navigation but are reachable using the navigator hook */}
+          <Stack.Screen name='Map' component={MapView} />
+          <Stack.Screen name='Capture' component={CaptureView} />
+          <Stack.Screen name='Combat' component={CombatView} />
+          <Stack.Screen name='Login' component={Login} />
+          <Stack.Screen name='Signup' component={Signup} />
+          {/* Views that includes the bottom tabs navigation */}
+          <Stack.Screen name='Application' component={BottomNavigation} />
+        </Stack.Navigator>
+      </ModelProvider>
     </MapProvider>
   );
 };
