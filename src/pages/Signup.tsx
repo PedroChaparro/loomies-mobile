@@ -18,6 +18,11 @@ export const Signup = ({ navigation }: SignupProps) => {
   const redirectToLogin = () => {
     navigation.navigate('Login');
   };
+  const redirectToEmailValidation = () => {
+    // Redirect to the validation screen and pass the email as a param
+    // to auto fill the input
+    navigation.navigate('EmailValidation', { email: formik.values.email });
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -46,7 +51,7 @@ export const Signup = ({ navigation }: SignupProps) => {
         showErrorToast(response?.message);
       } else {
         showSuccessToast('User created succesfully, now confirm your Email');
-        redirectToLogin();
+        redirectToEmailValidation();
       }
     }
   });
