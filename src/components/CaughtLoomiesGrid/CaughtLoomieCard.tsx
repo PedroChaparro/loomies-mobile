@@ -26,7 +26,7 @@ export const LoomieCard = ({ loomie }: IProps) => {
             <View style={Styles.cardImageBg} />
             <Image source={images[loomieSerial]} style={Styles.cardImage} />
             <View style={Styles.cardInfoContainer}>
-              <Text style={Styles.cardInfoText}>Lvl {loomie.lvl}</Text>
+              <Text style={Styles.cardInfoText}>Lvl {loomie.level}</Text>
               <Text style={{ ...Styles.cardInfoText, ...Styles.loomieName }}>
                 {loomie.name}
               </Text>
