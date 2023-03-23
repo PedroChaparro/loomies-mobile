@@ -61,3 +61,41 @@ export const getLoomiesRequest = async (
     return [null, true];
   }
 };
+
+export const codeValidationRequest = async (
+  email: string,
+  validationCode: string
+): Promise<[any, boolean]> => {
+  try {
+    const response = await Axios.post(`${API_URL}/code_validation`, {
+      email,
+      validationCode
+    });
+    return [response.data, false];
+  } catch (error) {
+    // Return the custom error message if exists
+    if (Axios.isAxiosError(error)) {
+      return [error.response?.data, true];
+    }
+
+    return [null, true];
+  }
+};
+
+export const newCodeRequest = async (
+  email: string
+): Promise<[any, boolean]> => {
+  try {
+    const response = await Axios.post(`${API_URL}/new_code`, {
+      email
+    });
+    return [response.data, false];
+  } catch (error) {
+    // Return the custom error message if exists
+    if (Axios.isAxiosError(error)) {
+      return [error.response?.data, true];
+    }
+
+    return [null, true];
+  }
+};
