@@ -1,3 +1,5 @@
+import * as Babylon from '@babylonjs/core';
+
 // map
 
 export interface iPosition {
@@ -21,7 +23,16 @@ export interface iMap {
   buildings: iWay[];
 }
 
+// map elements
+
 export interface iGym {
+  id: string;
   origin: iPosition;
   name: string;
+}
+
+export interface iMapObject {
+  id: string;
+  origin: iPosition;
+  mesh: Babylon.Mesh;
 }
