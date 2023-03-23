@@ -48,7 +48,7 @@ const Styles = StyleSheet.create({
     padding: 10
   },
   background: {
-    borderRadius: 4,
+    borderRadius: 12,
     elevation: 6,
     flex: 1,
     padding: 16,
