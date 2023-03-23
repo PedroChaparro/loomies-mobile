@@ -22,7 +22,7 @@ export const UserLoomies = ({ navigation }: IProps) => {
 
     if (!err) {
       const { loomies } = response;
-      setLoomies(loomies);
+      setLoomies(loomies || []);
       setLoading(false);
     }
   };
