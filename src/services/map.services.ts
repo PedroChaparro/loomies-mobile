@@ -12,7 +12,6 @@ export const getNearGyms = async (
   userPos: iPosition
 ): Promise<iGym[] | null> => {
   try {
-
     // get access token from the storage
     const [accessToken, error] = await getStorageData('accessToken');
     if (error || !accessToken) {
@@ -48,7 +47,8 @@ export const getNearGyms = async (
           lat: value.latitude,
           lon: value.longitude
         },
-        name: value.name
+        name: value.name,
+        id: value._id
       };
     });
 

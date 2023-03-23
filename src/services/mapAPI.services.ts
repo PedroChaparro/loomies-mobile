@@ -100,7 +100,6 @@ function getWays(map: iMap, osm: any): iMap {
     }
   });
 
-  //debugPrintMap(map);
   return map;
 }
 
