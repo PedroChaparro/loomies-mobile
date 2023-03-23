@@ -27,7 +27,11 @@ export const LoomieCard = ({ loomie }: IProps) => {
             <Image source={images[loomieSerial]} style={Styles.cardImage} />
             <View style={Styles.cardInfoContainer}>
               <Text style={Styles.cardInfoText}>Lvl {loomie.level}</Text>
-              <Text style={{ ...Styles.cardInfoText, ...Styles.loomieName }}>
+              <Text
+                style={{ ...Styles.cardInfoText, ...Styles.loomieName }}
+                numberOfLines={2}
+                ellipsizeMode='tail'
+              >
                 {loomie.name}
               </Text>
             </View>
@@ -85,6 +89,8 @@ const Styles = StyleSheet.create({
   },
   loomieName: {
     color: '#5C5C5C',
+    // 40pt equals 2 lines with the current font size
+    height: 40,
     fontWeight: '500'
   }
 });
