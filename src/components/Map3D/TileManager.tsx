@@ -28,7 +28,7 @@ export const TileManager = () => {
     getMapOrigin,
     setMapOrigin,
     getGridMeshAtPos,
-    externalSetGridImageB64,
+    externalSetTile,
     offsetGrid
   } = useContext(MapContext);
 
@@ -60,7 +60,7 @@ export const TileManager = () => {
             const mapBundle: iMapBundleVertexData = mapToVertexData(map);
 
             // push to context
-            externalSetGridImageB64({ x: i, y: j }, mapBundle);
+            externalSetTile({ x: i, y: j }, mapBundle);
           } catch (error) {
             console.log("ERROR: Couldn't fetch map");
           }

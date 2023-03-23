@@ -64,7 +64,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
   // map info
   const {
     getMapOrigin,
-    updateCount,
+    updateCountTiles,
     getUpdatedTiles,
     getMapApplyingOffset,
     consumeMapApplyingOffset,
@@ -433,12 +433,17 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
   // update meshes
   useEffect(() => {
     UpdateTileMesh();
-  }, [updateCount]);
+  }, [updateCountTiles]);
 
   // update player position
   useEffect(() => {
     updatePlayerPos();
   }, [userPosition]);
+
+  // check tiles at creation
+  useEffect(() => {
+    UpdateTileMesh();
+  }, []);
 
   return (
     <>
