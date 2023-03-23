@@ -14,6 +14,8 @@ import { iPosition } from '@src/services/geolocation.services';
 import { iMapBundleVertexData } from '@src/components/Map3D/utilsMapBuilder';
 import { BBOX_SIZE } from '@src/services/mapAPI.services';
 import { iGym } from '@src/types/mapInterfaces';
+import { Vector3 } from '@babylonjs/core';
+import { PLANE_SIZE } from '@src/components/Map3D/Map3DEngine';
 
 export interface iGridPosition {
   x: number;
@@ -25,6 +27,7 @@ export const GRIDMAP_SIZE = 3; // only uneven numbers
 interface iMapProvider {
   getMapOrigin: () => iPosition | null;
   setMapOrigin: (_pos: iPosition) => void;
+  coordsGlobalToMap: (_pos: iPosition) => Vector3;
   updateCountTiles: number;
 
   getMapApplyingOffset: () => iGridPosition | null;
@@ -48,6 +51,9 @@ interface iMapProvider {
 export const MapContext = createContext<iMapProvider>({
   getMapOrigin: () => null,
   setMapOrigin: (_pos: iPosition) => null,
+  coordsGlobalToMap: (_pos: iPosition) => {
+    return new Vector3(0, 0, 0);
+  },
   updateCountTiles: 0,
 
   getMapApplyingOffset: () => null,
@@ -59,10 +65,7 @@ export const MapContext = createContext<iMapProvider>({
   },
 
   getGridMeshAtPos: (_pos: iGridPosition) => null,
-  externalSetTile: (
-    _pos: iGridPosition,
-    _mapBundle: iMapBundleVertexData
-  ) => {
+  externalSetTile: (_pos: iGridPosition, _mapBundle: iMapBundleVertexData) => {
     return;
   },
   offsetGrid: (_offset: iGridPosition) => {
@@ -188,6 +191,15 @@ export const MapProvider = (props: { children: ReactNode }) => {
     mapOrigin.current = pos;
   };
 
+  const coordsGlobalToMap = (pos: iPosition) => {
+    if (!mapOrigin.current) return new Vector3(0, 0, 0);
+    return new Vector3(
+      ((pos.lon - mapOrigin.current.lon) / (BBOX_SIZE * 2)) * PLANE_SIZE,
+      0,
+      ((pos.lat - mapOrigin.current.lat) / (BBOX_SIZE * 2)) * PLANE_SIZE
+    );
+  };
+
   // map offset
 
   const getMapApplyingOffset = (): iGridPosition | null => {
@@ -234,6 +246,7 @@ export const MapProvider = (props: { children: ReactNode }) => {
       value={{
         getMapOrigin,
         setMapOrigin,
+        coordsGlobalToMap,
         updateCountTiles,
 
         getMapApplyingOffset,
