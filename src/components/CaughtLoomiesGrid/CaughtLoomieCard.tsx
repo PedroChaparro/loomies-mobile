@@ -17,8 +17,8 @@ export const LoomieCard = ({ loomie }: IProps) => {
   const loomieSerial = `${loomie.serial.toString().padStart(3, '0')}`;
 
   return (
-    <TouchableWithoutFeedback onPress={handleCardClick}>
-      <View style={Styles.card}>
+    <View style={Styles.card}>
+      <TouchableWithoutFeedback onPress={handleCardClick}>
         {/* Inner spacing to create a gap between the elements */}
         <View style={Styles.spacing}>
           <View style={{ ...Styles.background, backgroundColor: typeColor }}>
@@ -37,15 +37,17 @@ export const LoomieCard = ({ loomie }: IProps) => {
             </View>
           </View>
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </View>
   );
 };
 
 const Styles = StyleSheet.create({
   card: {
+    // Take the entire width of the column but prevent
+    // columns with the same width of the screen.
     flex: 1,
-    width: 200
+    maxWidth: '50%'
   },
   spacing: {
     flex: 1,
