@@ -28,7 +28,7 @@ export const EmailValidationView = ({
   };
 
   // Try to get the email from the params
-  const { email } = route.params;
+  const { email } = route.params || {};
 
   const formik = useFormik({
     initialValues: {

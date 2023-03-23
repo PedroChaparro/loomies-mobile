@@ -28,7 +28,7 @@ export const Login = ({ navigation }: LoginProps) => {
     navigation.navigate('Signup');
   };
   const redirectToEmailVal = () => {
-    navigation.navigate('EmailValidation');
+    navigation.navigate('EmailValidation', { email: formik.values.email });
   };
 
   const formik = useFormik({
