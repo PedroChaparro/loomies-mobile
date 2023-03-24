@@ -8,9 +8,16 @@ import React, { useEffect, useContext, useRef } from 'react';
 import { iGym, iMapObject } from '@src/types/mapInterfaces';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { MapContext } from '@src/context/MapProvider';
-import { getNearGyms } from '@src/services/map.services';
+import {
+  requestNearGyms,
+  requestWildLoomies
+} from '@src/services/map.services';
 import * as Babylon from '@babylonjs/core';
 import { ModelContext } from '@src/context/ModelProvider';
+import { TWildLoomies } from '@src/types/types';
+import { useInterval } from '@src/hooks/useInterval';
+
+const DELAY_FETCH_WILD_LOOMIES = 4000; // 4 seconds
 
 export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
   props
@@ -19,20 +26,24 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
   const {
     setGyms,
     getGyms,
-    updateCountGym,
     updateCountTiles,
     coordsGlobalToMap
   } = useContext(MapContext);
   const { userPosition } = useContext(UserPositionContext);
   const mapGyms = useRef<iMapObject[]>([]);
+  const mapWildLoomies = useRef<iMapObject[]>([]);
+
+  // fetch gyms
 
   const fetchGyms = async () => {
+    console.log(userPosition);
     if (!userPosition) return;
 
-    const gyms: iGym[] | null = await getNearGyms(userPosition);
+    const gyms: iGym[] | null = await requestNearGyms(userPosition);
 
     if (gyms != null) {
       setGyms(gyms);
+      drawGyms();
     }
   };
 
@@ -87,24 +98,16 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
     });
   };
 
-  // update gyms when tiles change
   useEffect(() => {
     // update object coordinates
+
     mapGyms.current.forEach((obj) => {
       obj.mesh.position = coordsGlobalToMap(obj.origin);
     });
 
+    // update gyms when tiles change
     fetchGyms();
   }, [updateCountTiles]);
-
-  useEffect(() => {
-    drawGyms();
-  }, [updateCountGym]);
-
-  // update at start
-  useEffect(() => {
-    //importModels();
-  }, []);
 
   return <></>;
 };
