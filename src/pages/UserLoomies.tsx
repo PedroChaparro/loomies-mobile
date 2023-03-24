@@ -43,7 +43,7 @@ export const UserLoomies = ({ navigation }: IProps) => {
         <EmptyMessage
           text="You don't have any Loomies yet..."
           showButton={true}
-          buttonText={'Catch loomies'}
+          buttonText={'Catch Loomies'}
           buttonCallback={goToMap}
         />
       );
