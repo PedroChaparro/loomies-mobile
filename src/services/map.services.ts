@@ -1,16 +1,22 @@
 import Axios from 'axios';
 
-import { iRequestGym, iRequestNearGyms, iRequestNearLoomies } from '@src/types/requestInterfaces';
+import {
+  iRequestGym,
+  iRequestNearGyms,
+  iRequestNearLoomies
+} from '@src/types/requestInterfaces';
 import { iGym, iPosition } from '@src/types/mapInterfaces';
 import { getStorageData } from './storage.services';
 import { CONFIG } from './config.services';
 import { TWildLoomies } from '@src/types/types';
+import { refreshRequest } from './session.services';
 const { API_URL } = CONFIG;
 
 // Returns an array of iGyms
 
 export const requestNearGyms = async (
-  userPos: iPosition
+  userPos: iPosition,
+  failed = false
 ): Promise<iGym[] | null> => {
   try {
     // get access token from the storage
@@ -55,6 +61,16 @@ export const requestNearGyms = async (
 
     return gyms;
   } catch (error) {
+    // If 401, try to refresh the access token and retry the request
+    if (
+      Axios.isAxiosError(error) &&
+      error.response?.status === 401 &&
+      !failed
+    ) {
+      await refreshRequest();
+      return await requestNearGyms(userPos, true);
+    }
+
     return null;
   }
 };
@@ -62,7 +78,8 @@ export const requestNearGyms = async (
 // Returns an array of iGyms
 
 export const requestWildLoomies = async (
-  userPos: iPosition
+  userPos: iPosition,
+  failed = false
 ): Promise<TWildLoomies[] | null> => {
   try {
     // get access token from the storage
@@ -96,6 +113,16 @@ export const requestWildLoomies = async (
     // return wild loomies
     return data.loomies;
   } catch (error) {
+    // If 401, try to refresh the access token and retry the request
+    if (
+      Axios.isAxiosError(error) &&
+      error.response?.status === 401 &&
+      !failed
+    ) {
+      await refreshRequest();
+      return await requestWildLoomies(userPos, true);
+    }
+
     return null;
   }
 };
