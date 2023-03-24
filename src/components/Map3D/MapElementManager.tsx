@@ -57,19 +57,19 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
     console.log(userPosition);
     if (!userPosition) return;
 
-
     const wildLoomies: TWildLoomies[] | null = await requestWildLoomies(
       userPosition
     );
 
-    console.log(wildLoomies);
+    console.log(wildLoomies?.length);
 
     if (wildLoomies != null) {
       setWildLoomies(wildLoomies);
+      drawWildLoomies();
     }
   };
 
-  // import the gym model
+  // create and update gym models
 
   const drawGyms = async () => {
     if (!props.scene) return;
@@ -77,14 +77,14 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
     const newGyms = getGyms();
 
     // clean old gyms
-    const addedGyms: Array<iMapObject> = [];
+    const uniqueObjs: Array<iMapObject> = [];
     mapGyms.current = mapGyms.current.filter((obj) => {
       // delete if not exists or if it has already been added
       if (
         !newGyms.filter((gym) => {
           return gym.id == obj.id;
         }).length ||
-        addedGyms.filter((gym) => {
+        uniqueObjs.filter((gym) => {
           return gym.id == obj.id;
         }).length
       ) {
@@ -92,18 +92,18 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
         return false;
       }
 
-      addedGyms.push(obj);
+      uniqueObjs.push(obj);
       return true;
     });
 
     // create new ones
     newGyms.forEach(async (gym) => {
       // already exists
-      const existingGym = mapGyms.current.filter((obj) => {
+      const existingObj = mapGyms.current.filter((obj) => {
         return gym.id == obj.id;
       });
-      if (existingGym.length) {
-        existingGym[0].mesh.position = coordsGlobalToMap(existingGym[0].origin);
+      if (existingObj.length) {
+        existingObj[0].mesh.position = coordsGlobalToMap(existingObj[0].origin);
         return;
       }
 
@@ -116,6 +116,61 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
         mesh: mesh,
         origin: gym.origin,
         id: gym.id
+      });
+    });
+  };
+
+  // create and update Loomies models
+
+  const drawWildLoomies = async () => {
+    if (!props.scene) return;
+    const scene = props.scene;
+    const newLoomies = getWildLoomies();
+
+    // clean old loomies
+    const uniqueObjs: Array<iMapObject> = [];
+    mapWildLoomies.current = mapWildLoomies.current.filter((obj) => {
+
+      // delete if not exists or if it has already been added
+      if (
+        !newLoomies.filter((loomie) => {
+          return loomie._id == obj.id;
+        }).length ||
+        uniqueObjs.filter((loomie) => {
+          return loomie.id == obj.id;
+        }).length
+      ) {
+        obj.mesh.dispose();
+        return false;
+      }
+
+      uniqueObjs.push(obj);
+      return true;
+    });
+
+    // create new ones
+    newLoomies.forEach(async (loomie) => {
+      // already exists
+      const existingObj = mapWildLoomies.current.filter((obj) => {
+        return loomie._id == obj.id;
+      });
+      if (existingObj.length) {
+        existingObj[0].mesh.position = coordsGlobalToMap(existingObj[0].origin);
+        return;
+      }
+
+      // clone model mesh
+      const mesh = await instantiateModel('MAP_GYM', scene);
+      if (!mesh) return;
+
+      mesh.position = coordsGlobalToMap({lat: loomie.latitude, lon: loomie.longitude});
+      mapWildLoomies.current.push({
+        mesh: mesh,
+        origin: {
+          lat: loomie.latitude,
+          lon: loomie.longitude
+        },
+        id: loomie._id
       });
     });
   };
