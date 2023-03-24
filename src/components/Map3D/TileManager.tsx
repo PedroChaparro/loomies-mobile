@@ -28,7 +28,7 @@ export const TileManager = () => {
     getMapOrigin,
     setMapOrigin,
     getGridMeshAtPos,
-    externalSetGridImageB64,
+    externalSetTile,
     offsetGrid
   } = useContext(MapContext);
 
@@ -48,7 +48,7 @@ export const TileManager = () => {
 
         (async () => {
           try {
-            console.log('INFO: Empty tile found at ', i, ' ', j);
+            console.log('INFO: Empty tile found at', i, j);
 
             // fetch OSM map
             const map: iMap = await fetchMap(mapOrigin, {
@@ -60,8 +60,9 @@ export const TileManager = () => {
             const mapBundle: iMapBundleVertexData = mapToVertexData(map);
 
             // push to context
-            externalSetGridImageB64({ x: i, y: j }, mapBundle);
+            externalSetTile({ x: i, y: j }, mapBundle);
           } catch (error) {
+            console.error(error);
             console.log("ERROR: Couldn't fetch map");
           }
         })();

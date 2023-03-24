@@ -24,7 +24,6 @@ import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
 import '@babylonjs/loaders/glTF';
 
 import { SensorContext } from '@src/context/SensorProvider';
-import { LoadModel, MODEL } from '@src/services/modelLoader.services';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
 
 import { GRIDMAP_SIZE, iGridPosition } from '@src/context/MapProvider';
@@ -33,8 +32,12 @@ import { MapContext } from '@src/context/MapProvider';
 import { createGradientPlane } from './utilsVertex';
 import { iMapBundleVertexData, generateRoad } from './utilsMapBuilder';
 
+// modules
+import { MapElementManager } from './MapElementManager';
+
 // debug
 import { CONFIG } from '@src/services/config.services';
+import { ModelContext } from '@src/context/ModelProvider';
 const { MAP_DEBUG } = CONFIG;
 const DEBUG_MOVE_DISTANCE = 0.0002;
 
@@ -64,12 +67,14 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
   // map info
   const {
     getMapOrigin,
-    updateCount,
-    getUpdatedTiles,
-    getMapApplyingOffset,
-    consumeMapApplyingOffset,
     removeFromUpdatedTiles,
-    getGridMeshAtPos
+
+    updateCountTiles,
+    getUpdatedTiles,
+    getGridMeshAtPos,
+
+    getMapApplyingOffset,
+    consumeMapApplyingOffset
   } = useContext(MapContext);
 
   // engine related
@@ -78,6 +83,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
   const [scene, setScene] = useState<Scene>();
 
   // map drawing
+  const { instantiateModel } = useContext(ModelContext);
   const playerNode = useRef<Babylon.Mesh>();
   const playerNodeTargetPos = useRef<Babylon.Vector3>(Vector3.Zero());
   const meshGrid = useRef<Array<Array<Babylon.Mesh | null>>>([]);
@@ -197,12 +203,10 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     // load player model
     (async () => {
       try {
-        await LoadModel(MODEL.MAP_PLAYER, scene);
-        await LoadModel(MODEL.MAP_CIRCLE_INDICATOR, scene);
-
-        const playerModel = scene.getTransformNodeByName('root_player');
-        const circleIndicatorModel = scene.getTransformNodeByName(
-          'root_circle_indicator'
+        const playerModel = await instantiateModel('MAP_PLAYER', scene);
+        const circleIndicatorModel = await instantiateModel(
+          'MAP_CIRCLE_INDICATOR',
+          scene
         );
 
         if (playerModel && playerNode.current) {
@@ -433,12 +437,17 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
   // update meshes
   useEffect(() => {
     UpdateTileMesh();
-  }, [updateCount]);
+  }, [updateCountTiles]);
 
   // update player position
   useEffect(() => {
     updatePlayerPos();
   }, [userPosition]);
+
+  // check tiles at creation
+  useEffect(() => {
+    UpdateTileMesh();
+  }, []);
 
   return (
     <>
@@ -477,6 +486,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
           </View>
         </View>
       </SafeAreaView>
+      {!!scene && <MapElementManager scene={scene} />}
     </>
   );
 };

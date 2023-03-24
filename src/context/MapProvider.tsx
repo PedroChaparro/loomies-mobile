@@ -13,6 +13,9 @@ import React, {
 import { iPosition } from '@src/services/geolocation.services';
 import { iMapBundleVertexData } from '@src/components/Map3D/utilsMapBuilder';
 import { BBOX_SIZE } from '@src/services/mapAPI.services';
+import { iGym } from '@src/types/mapInterfaces';
+import { Vector3 } from '@babylonjs/core';
+import { PLANE_SIZE } from '@src/components/Map3D/Map3DEngine';
 
 export interface iGridPosition {
   x: number;
@@ -24,7 +27,8 @@ export const GRIDMAP_SIZE = 3; // only uneven numbers
 interface iMapProvider {
   getMapOrigin: () => iPosition | null;
   setMapOrigin: (_pos: iPosition) => void;
-  updateCount: number;
+  coordsGlobalToMap: (_pos: iPosition) => Vector3;
+  updateCountTiles: number;
 
   getMapApplyingOffset: () => iGridPosition | null;
   consumeMapApplyingOffset: () => void;
@@ -33,17 +37,24 @@ interface iMapProvider {
   removeFromUpdatedTiles: (_pos: iGridPosition) => void;
 
   getGridMeshAtPos: (_pos: iGridPosition) => iMapBundleVertexData | null;
-  externalSetGridImageB64: (
+  externalSetTile: (
     _pos: iGridPosition,
     _mapBundle: iMapBundleVertexData
   ) => void;
   offsetGrid: (_offset: iGridPosition) => void;
+
+  getGyms: () => iGym[];
+  setGyms: (_newGyms: iGym[]) => void;
+  updateCountGym: number;
 }
 
 export const MapContext = createContext<iMapProvider>({
   getMapOrigin: () => null,
   setMapOrigin: (_pos: iPosition) => null,
-  updateCount: 0,
+  coordsGlobalToMap: (_pos: iPosition) => {
+    return new Vector3(0, 0, 0);
+  },
+  updateCountTiles: 0,
 
   getMapApplyingOffset: () => null,
   consumeMapApplyingOffset: () => null,
@@ -54,35 +65,39 @@ export const MapContext = createContext<iMapProvider>({
   },
 
   getGridMeshAtPos: (_pos: iGridPosition) => null,
-  externalSetGridImageB64: (
-    _pos: iGridPosition,
-    _mapBundle: iMapBundleVertexData
-  ) => {
+  externalSetTile: (_pos: iGridPosition, _mapBundle: iMapBundleVertexData) => {
     return;
   },
   offsetGrid: (_offset: iGridPosition) => {
     return;
-  }
+  },
+
+  getGyms: () => [],
+  setGyms: (_newGyms: iGym[]) => null,
+  updateCountGym: 0
 });
 
 export const MapProvider = (props: { children: ReactNode }) => {
-  const [updateCount, setUpdateCount] = useState<number>(0);
   const mapOrigin = useRef<iPosition | null>(null);
 
   const mapApplyingOffset = useRef<iGridPosition | null>(null);
-  const gridImageB64 = useRef<Array<Array<iMapBundleVertexData | null>>>([]);
+  const gridTiles = useRef<Array<Array<iMapBundleVertexData | null>>>([]);
   const updatedTiles = useRef<iGridPosition[]>([]);
+  const [updateCountTiles, setUpdateCountTiles] = useState<number>(0);
+
+  const [updateCountGym, setUpdateCountGym] = useState<number>(0);
+  const gyms = useRef<iGym[]>([]);
 
   // set vertex data
-  const externalSetGridImageB64 = (
+  const externalSetTile = (
     pos: iGridPosition,
     mapBundle: iMapBundleVertexData
   ) => {
-    gridImageB64.current[pos.x][pos.y] = mapBundle;
+    gridTiles.current[pos.x][pos.y] = mapBundle;
 
     // trigger update
     updatedTiles.current.push(pos);
-    setUpdateCount((count) => {
+    setUpdateCountTiles((count) => {
       count += 1;
       count %= 100;
       return count;
@@ -92,7 +107,7 @@ export const MapProvider = (props: { children: ReactNode }) => {
   const getGridMeshAtPos = (
     pos: iGridPosition
   ): iMapBundleVertexData | null => {
-    if (gridImageB64.current.length) return gridImageB64.current[pos.x][pos.y];
+    if (gridTiles.current.length) return gridTiles.current[pos.x][pos.y];
     else return null;
   };
 
@@ -125,8 +140,8 @@ export const MapProvider = (props: { children: ReactNode }) => {
     for (let i = 0; i < GRIDMAP_SIZE; i++) {
       gridCopy.push([]);
       for (let j = 0; j < GRIDMAP_SIZE; j++) {
-        gridCopy[i].push(gridImageB64.current[i][j]);
-        gridImageB64.current[i][j] = null;
+        gridCopy[i].push(gridTiles.current[i][j]);
+        gridTiles.current[i][j] = null;
       }
     }
 
@@ -144,7 +159,7 @@ export const MapProvider = (props: { children: ReactNode }) => {
           newPos.y >= 0 &&
           newPos.y < GRIDMAP_SIZE
         ) {
-          gridImageB64.current[newPos.x][newPos.y] = gridCopy[i][j];
+          gridTiles.current[newPos.x][newPos.y] = gridCopy[i][j];
         }
       }
     }
@@ -154,16 +169,15 @@ export const MapProvider = (props: { children: ReactNode }) => {
     for (let i = 0; i < GRIDMAP_SIZE; i++) {
       str = '';
       for (let j = 0; j < GRIDMAP_SIZE; j++) {
-        str += (+!!gridImageB64.current[i][j]).toString();
+        str += (+!!gridTiles.current[i][j]).toString();
       }
       console.log(str);
     }
 
     // trigger update
-    setUpdateCount((count) => {
+    setUpdateCountTiles((count) => {
       count += 1;
-      count %= 100;
-      return count;
+      return count % 100;
     });
   };
 
@@ -177,6 +191,15 @@ export const MapProvider = (props: { children: ReactNode }) => {
     mapOrigin.current = pos;
   };
 
+  const coordsGlobalToMap = (pos: iPosition) => {
+    if (!mapOrigin.current) return new Vector3(0, 0, 0);
+    return new Vector3(
+      ((pos.lon - mapOrigin.current.lon) / (BBOX_SIZE * 2)) * PLANE_SIZE,
+      0,
+      ((pos.lat - mapOrigin.current.lat) / (BBOX_SIZE * 2)) * PLANE_SIZE
+    );
+  };
+
   // map offset
 
   const getMapApplyingOffset = (): iGridPosition | null => {
@@ -185,6 +208,22 @@ export const MapProvider = (props: { children: ReactNode }) => {
 
   const consumeMapApplyingOffset = () => {
     mapApplyingOffset.current = null;
+  };
+
+  // gyms
+
+  const getGyms = (): iGym[] => {
+    return gyms.current;
+  };
+
+  const setGyms = (newGyms: iGym[]) => {
+    gyms.current = newGyms;
+
+    // trigger update
+    setUpdateCountGym((count) => {
+      count += 1;
+      return count % 100;
+    });
   };
 
   // initialize gridmap
@@ -199,7 +238,7 @@ export const MapProvider = (props: { children: ReactNode }) => {
       }
     }
 
-    gridImageB64.current = grid;
+    gridTiles.current = grid;
   }, []);
 
   return (
@@ -207,7 +246,8 @@ export const MapProvider = (props: { children: ReactNode }) => {
       value={{
         getMapOrigin,
         setMapOrigin,
-        updateCount,
+        coordsGlobalToMap,
+        updateCountTiles,
 
         getMapApplyingOffset,
         consumeMapApplyingOffset,
@@ -216,8 +256,12 @@ export const MapProvider = (props: { children: ReactNode }) => {
         removeFromUpdatedTiles,
 
         getGridMeshAtPos,
-        externalSetGridImageB64,
-        offsetGrid
+        externalSetTile,
+        offsetGrid,
+
+        setGyms,
+        getGyms,
+        updateCountGym
       }}
     >
       {props.children}

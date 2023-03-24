@@ -2,14 +2,10 @@ import * as Babylon from '@babylonjs/core';
 import '@babylonjs/loaders/glTF';
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 
-export enum MODEL {
-  // eslint-disable-next-line no-unused-vars
-  MAP_PLAYER = require('@assets/models/map/indicator/player.glb'),
-  // eslint-disable-next-line no-unused-vars
-  MAP_CIRCLE_INDICATOR = require('@assets/models/map/indicator/circleIndicator.glb')
-}
-
-export const MODEL_LOOMIE = {
+export const MODEL_RESOURCE: { [key: string]: NodeRequire } = {
+  'MAP_CIRCLE_INDICATOR': require('@assets/models/map/indicator/circleIndicator.glb'),
+  'MAP_PLAYER': require('@assets/models/map/indicator/player.glb'),
+  'MAP_GYM': require('@assets/models/map/gym/gym.glb'),
   '1': require('@assets/models/loomies/001/001.glb'),
   '2': require('@assets/models/loomies/002/002.glb'),
   '3': require('@assets/models/loomies/003/003.glb'),
@@ -31,10 +27,19 @@ export const MODEL_LOOMIE = {
 };
 
 export const LoadModel = async (
-  model: MODEL,
-  scene: Babylon.Scene
-): Promise<boolean> => {
-  const sceneGLBUri = resolveAssetSource(model).uri;
-  await Babylon.SceneLoader.AppendAsync('', sceneGLBUri, scene);
-  return true;
+  model: NodeRequire
+): Promise<Babylon.AssetContainer | null> => {
+  try {
+    const sceneGLBUri = resolveAssetSource(model).uri;
+
+    const container = await Babylon.SceneLoader.LoadAssetContainerAsync(
+      '',
+      sceneGLBUri
+    );
+
+    return container;
+  } catch (e) {
+    console.error(e);
+  }
+  return null;
 };
