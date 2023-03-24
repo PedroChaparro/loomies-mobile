@@ -160,7 +160,7 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       }
 
       // clone model mesh
-      const mesh = await instantiateModel('MAP_GYM', scene);
+      const mesh = await instantiateModel(loomie.serial.toString(), scene);
       if (!mesh) return;
 
       mesh.position = coordsGlobalToMap({lat: loomie.latitude, lon: loomie.longitude});
