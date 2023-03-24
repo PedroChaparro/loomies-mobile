@@ -16,6 +16,10 @@ import * as Babylon from '@babylonjs/core';
 import { ModelContext } from '@src/context/ModelProvider';
 import { TWildLoomies } from '@src/types/types';
 import { useInterval } from '@src/hooks/useInterval';
+import {
+  instantiatedEntriesRotate,
+  instantiatedEntriesTranslate
+} from './utilsVertex';
 
 const DELAY_FETCH_WILD_LOOMIES = 4000; // 4 seconds
 
@@ -103,7 +107,10 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
         return gym.id == obj.id;
       });
       if (existingObj.length) {
-        existingObj[0].mesh.position = coordsGlobalToMap(existingObj[0].origin);
+        instantiatedEntriesTranslate(
+          existingObj[0].mesh,
+          coordsGlobalToMap(existingObj[0].origin)
+        );
         return;
       }
 
@@ -112,8 +119,9 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       if (!mesh) return;
 
       // position and rotation
-      mesh.position = coordsGlobalToMap(gym.origin);
-      mesh.rotate(Babylon.Axis.Y, Math.random() * 2 * Math.PI, Babylon.Space.LOCAL);
+      instantiatedEntriesTranslate(mesh, coordsGlobalToMap(gym.origin));
+      instantiatedEntriesRotate(mesh, Math.random() * 2 * Math.PI);
+
       mapGyms.current.push({
         mesh: mesh,
         origin: gym.origin,
@@ -132,7 +140,6 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
     // clean old loomies
     const uniqueObjs: Array<iMapObject> = [];
     mapWildLoomies.current = mapWildLoomies.current.filter((obj) => {
-
       // delete if not exists or if it has already been added
       if (
         !newLoomies.filter((loomie) => {
@@ -157,7 +164,10 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
         return loomie._id == obj.id;
       });
       if (existingObj.length) {
-        existingObj[0].mesh.position = coordsGlobalToMap(existingObj[0].origin);
+        instantiatedEntriesTranslate(
+          existingObj[0].mesh,
+          coordsGlobalToMap(existingObj[0].origin)
+        );
         return;
       }
 
@@ -166,8 +176,12 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       if (!mesh) return;
 
       // position and rotation
-      mesh.position = coordsGlobalToMap({lat: loomie.latitude, lon: loomie.longitude});
-      mesh.rotate(Babylon.Axis.Y, Math.random() * 2 * Math.PI, Babylon.Space.LOCAL);
+      instantiatedEntriesTranslate(
+        mesh,
+        coordsGlobalToMap({ lat: loomie.latitude, lon: loomie.longitude })
+      );
+      instantiatedEntriesRotate(mesh, Math.random() * 2 * Math.PI);
+
       mapWildLoomies.current.push({
         mesh: mesh,
         origin: {
@@ -183,11 +197,11 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
     // update object coordinates
 
     mapGyms.current.forEach((obj) => {
-      obj.mesh.position = coordsGlobalToMap(obj.origin);
+      instantiatedEntriesTranslate(obj.mesh, coordsGlobalToMap(obj.origin));
     });
 
     mapWildLoomies.current.forEach((obj) => {
-      obj.mesh.position = coordsGlobalToMap(obj.origin);
+      instantiatedEntriesTranslate(obj.mesh, coordsGlobalToMap(obj.origin));
     });
 
     // update gyms when tiles change
@@ -196,7 +210,7 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
 
   // update at start
   useInterval(() => {
-    console.log("start interval");
+    console.log('start interval');
     fetchWildLoomies();
   }, DELAY_FETCH_WILD_LOOMIES);
 
