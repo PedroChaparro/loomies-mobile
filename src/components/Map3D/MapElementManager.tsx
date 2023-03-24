@@ -111,7 +111,9 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       const mesh = await instantiateModel('MAP_GYM', scene);
       if (!mesh) return;
 
+      // position and rotation
       mesh.position = coordsGlobalToMap(gym.origin);
+      mesh.rotate(Babylon.Axis.Y, Math.random() * 2 * Math.PI, Babylon.Space.LOCAL);
       mapGyms.current.push({
         mesh: mesh,
         origin: gym.origin,
@@ -163,7 +165,9 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       const mesh = await instantiateModel(loomie.serial.toString(), scene);
       if (!mesh) return;
 
+      // position and rotation
       mesh.position = coordsGlobalToMap({lat: loomie.latitude, lon: loomie.longitude});
+      mesh.rotate(Babylon.Axis.Y, Math.random() * 2 * Math.PI, Babylon.Space.LOCAL);
       mapWildLoomies.current.push({
         mesh: mesh,
         origin: {
