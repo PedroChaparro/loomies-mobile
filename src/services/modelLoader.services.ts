@@ -23,7 +23,8 @@ export const MODEL_RESOURCE: { [key: string]: NodeRequire } = {
   '15': require('@assets/models/loomies/015/015.glb'),
   '16': require('@assets/models/loomies/016/016.glb'),
   '17': require('@assets/models/loomies/017/017.glb'),
-  '18': require('@assets/models/loomies/018/018.glb')
+  '18': require('@assets/models/loomies/018/018.glb'),
+  '19': require('@assets/models/loomies/019/019.glb')
 };
 
 export const LoadModel = async (
