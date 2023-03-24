@@ -30,7 +30,7 @@ export const EmptyMessage = ({
   return (
     <View style={Styles.container}>
       <View style={Styles.box}>
-        <Text>{text}</Text>
+        <Text style={Styles.boxText}>{text}</Text>
         {renderButton()}
       </View>
     </View>
@@ -54,5 +54,8 @@ const Styles = StyleSheet.create({
     borderColor: '#BDBDBD',
     borderWidth: 3
     // Add a separation between the dots of the dotted border
+  },
+  boxText: {
+    color: '#5C5C5C'
   }
 });

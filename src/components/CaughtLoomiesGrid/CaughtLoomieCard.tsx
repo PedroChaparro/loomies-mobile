@@ -22,11 +22,15 @@ export const LoomieCard = ({ loomie }: IProps) => {
         {/* Inner spacing to create a gap between the elements */}
         <View style={Styles.spacing}>
           <View style={{ ...Styles.background, backgroundColor: typeColor }}>
-            <Text style={Styles.loomieSerial}>#{loomieSerial}</Text>
+            <Text style={{ ...Styles.loomieSerial, ...Styles.cardText }}>
+              #{loomieSerial}
+            </Text>
             <View style={Styles.cardImageBg} />
             <Image source={images[loomieSerial]} style={Styles.cardImage} />
             <View style={Styles.cardInfoContainer}>
-              <Text style={Styles.cardInfoText}>Lvl {loomie.level}</Text>
+              <Text style={{ ...Styles.cardInfoText, ...Styles.cardText }}>
+                Lvl {loomie.level}
+              </Text>
               <Text
                 style={{ ...Styles.cardInfoText, ...Styles.loomieName }}
                 numberOfLines={2}
@@ -78,6 +82,9 @@ const Styles = StyleSheet.create({
   },
   cardInfoContainer: {
     marginTop: 16
+  },
+  cardText: {
+    color: '#5C5C5C'
   },
   cardInfoText: {
     textAlign: 'center',
