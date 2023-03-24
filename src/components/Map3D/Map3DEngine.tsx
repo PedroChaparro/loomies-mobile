@@ -43,7 +43,7 @@ const DEBUG_MOVE_DISTANCE = 0.0002;
 
 // drawing constants
 export const PLANE_SIZE = 20;
-const GROUND_SCALE = 3.5;
+const GROUND_SCALE = 4;
 const ROAD_HEIGHT = 0.07;
 const ROAD_BORDER_HEIGHT = 0.05;
 const CIRCLE_INDICATOR_HEIGHT = 0.09;

@@ -62,7 +62,6 @@ export const ModelProvider = (props: { children: ReactNode }) => {
 
       if (container) {
         const instance = container.instantiateModelsToScene();
-        console.log(instance.rootNodes.length);
 
         return instance;
       }

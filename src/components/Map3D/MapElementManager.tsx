@@ -44,7 +44,6 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
   // fetch gyms
 
   const fetchGyms = async () => {
-    console.log(userPosition);
     if (!userPosition) return;
 
     const gyms: iGym[] | null = await requestNearGyms(userPosition);
@@ -58,14 +57,11 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
   // fetch near wild loomies
 
   const fetchWildLoomies = async () => {
-    console.log(userPosition);
     if (!userPosition) return;
 
     const wildLoomies: TWildLoomies[] | null = await requestWildLoomies(
       userPosition
     );
-
-    console.log(wildLoomies?.length);
 
     if (wildLoomies != null) {
       setWildLoomies(wildLoomies);
@@ -210,7 +206,6 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
 
   // update at start
   useInterval(() => {
-    console.log('start interval');
     fetchWildLoomies();
   }, DELAY_FETCH_WILD_LOOMIES);
 
