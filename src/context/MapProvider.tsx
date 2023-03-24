@@ -225,12 +225,6 @@ export const MapProvider = (props: { children: ReactNode }) => {
 
   const setGyms = (newGyms: iGym[]) => {
     gyms.current = newGyms;
-
-    // trigger update
-    setUpdateCountGym((count) => {
-      count += 1;
-      return count % 100;
-    });
   };
 
   // wild loomies
@@ -241,12 +235,6 @@ export const MapProvider = (props: { children: ReactNode }) => {
 
   const setWildLoomies = (newWildLoomies: TWildLoomies[]) => {
     wildLoomies.current = newWildLoomies;
-
-    // trigger update
-    setUpdateCountWildLoomies((count) => {
-      count += 1;
-      return count % 100;
-    });
   };
 
   // initialize gridmap
