@@ -12,18 +12,23 @@ interface iModelProvider {
   instantiateModel: (
     _name: string,
     _scene: Babylon.Scene
+  ) => Promise<Babylon.InstantiatedEntries | null>;
+  cloneModel: (
+    _name: string,
+    _scene: Babylon.Scene
   ) => Promise<Babylon.Mesh | null>;
 }
 
 export const ModelContext = createContext<iModelProvider>({
-  instantiateModel: async (_name: string, _scene: Babylon.Scene) => null
+  instantiateModel: async (_name: string, _scene: Babylon.Scene) => null,
+  cloneModel: async (_name: string, _scene: Babylon.Scene) => null
 });
 
 export const ModelProvider = (props: { children: ReactNode }) => {
   const models = useRef<{ [key: string]: Babylon.AssetContainer }>({});
 
   // return model as Babylon.AssetContainer. If not loaded before then load
-  const getModel = async (
+  const getModelAsset = async (
     name: string
   ): Promise<Babylon.AssetContainer | null> => {
     try {
@@ -47,19 +52,41 @@ export const ModelProvider = (props: { children: ReactNode }) => {
     return null;
   };
 
-  // Adds model to specified scene
+  // Instantiates model to specified scene
   const instantiateModel = async (
+    name: string,
+    _scene: Babylon.Scene
+  ): Promise<Babylon.InstantiatedEntries | null> => {
+    try {
+      const container = await getModelAsset(name);
+
+      if (container) {
+        const instance = container.instantiateModelsToScene();
+        console.log(instance.rootNodes.length);
+
+        return instance;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    return null;
+  };
+
+  // Clones model to specified scene
+  const cloneModel = async (
     name: string,
     _scene: Babylon.Scene
   ): Promise<Babylon.Mesh | null> => {
     try {
-      const container = await getModel(name);
+      const container = await getModelAsset(name);
 
       if (container) {
         // clone from container
         let model = container.createRootMesh();
         model = model.clone(name);
         model.visibility = 0;
+
         return model;
       }
     } catch (e) {
@@ -70,7 +97,7 @@ export const ModelProvider = (props: { children: ReactNode }) => {
   };
 
   return (
-    <ModelContext.Provider value={{ instantiateModel }}>
+    <ModelContext.Provider value={{ instantiateModel, cloneModel }}>
       {props.children}
     </ModelContext.Provider>
   );
