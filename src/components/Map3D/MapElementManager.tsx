@@ -26,6 +26,10 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
   const {
     setGyms,
     getGyms,
+
+    setWildLoomies,
+    getWildLoomies,
+
     updateCountTiles,
     coordsGlobalToMap
   } = useContext(MapContext);
@@ -44,6 +48,24 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
     if (gyms != null) {
       setGyms(gyms);
       drawGyms();
+    }
+  };
+
+  // fetch near wild loomies
+
+  const fetchWildLoomies = async () => {
+    console.log(userPosition);
+    if (!userPosition) return;
+
+
+    const wildLoomies: TWildLoomies[] | null = await requestWildLoomies(
+      userPosition
+    );
+
+    console.log(wildLoomies);
+
+    if (wildLoomies != null) {
+      setWildLoomies(wildLoomies);
     }
   };
 
@@ -105,9 +127,19 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       obj.mesh.position = coordsGlobalToMap(obj.origin);
     });
 
+    mapWildLoomies.current.forEach((obj) => {
+      obj.mesh.position = coordsGlobalToMap(obj.origin);
+    });
+
     // update gyms when tiles change
     fetchGyms();
   }, [updateCountTiles]);
+
+  // update at start
+  useInterval(() => {
+    console.log("start interval");
+    fetchWildLoomies();
+  }, DELAY_FETCH_WILD_LOOMIES);
 
   return <></>;
 };
