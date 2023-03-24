@@ -40,6 +40,7 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
   const { userPosition } = useContext(UserPositionContext);
   const mapGyms = useRef<iMapObject[]>([]);
   const mapWildLoomies = useRef<iMapObject[]>([]);
+  const readyToDrawElements = useRef<boolean>(false);
 
   // fetch gyms
 
@@ -51,6 +52,12 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
     if (gyms != null) {
       setGyms(gyms);
       drawGyms();
+
+      // allow drawing loomies after drawing gyms
+      if (!readyToDrawElements.current) {
+        readyToDrawElements.current = true;
+        fetchWildLoomies();
+      }
     }
   };
 
@@ -201,12 +208,13 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
     });
 
     // update gyms when tiles change
+
     fetchGyms();
   }, [updateCountTiles]);
 
   // update at start
   useInterval(() => {
-    fetchWildLoomies();
+    if (readyToDrawElements.current) fetchWildLoomies();
   }, DELAY_FETCH_WILD_LOOMIES);
 
   return <></>;

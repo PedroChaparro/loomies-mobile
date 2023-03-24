@@ -12,7 +12,7 @@ min Longitude , min Latitude , max Longitude , max Latitude
           v
 */
 
-export const BBOX_SIZE = 0.0010;
+export const BBOX_SIZE = 0.001;
 
 export async function fetchMap(
   pos: iPosition,

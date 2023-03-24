@@ -81,7 +81,7 @@ export const MapContext = createContext<iMapProvider>({
   setGyms: (_newGyms: iGym[]) => null,
 
   getWildLoomies: () => [],
-  setWildLoomies: (_newWildLoomies: TWildLoomies[]) => null,
+  setWildLoomies: (_newWildLoomies: TWildLoomies[]) => null
 });
 
 export const MapProvider = (props: { children: ReactNode }) => {
@@ -274,7 +274,7 @@ export const MapProvider = (props: { children: ReactNode }) => {
         getGyms,
 
         setWildLoomies,
-        getWildLoomies,
+        getWildLoomies
       }}
     >
       {props.children}
