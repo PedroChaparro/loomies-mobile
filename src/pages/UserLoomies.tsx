@@ -41,9 +41,9 @@ export const UserLoomies = ({ navigation }: IProps) => {
     if (!loading && loomies.length === 0)
       return (
         <EmptyMessage
-          text="You don't have any loomie yet..."
+          text="You don't have any Loomies yet..."
           showButton={true}
-          buttonText={'Caught loomies'}
+          buttonText={'Catch loomies'}
           buttonCallback={goToMap}
         />
       );
