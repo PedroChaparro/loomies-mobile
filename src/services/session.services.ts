@@ -10,7 +10,7 @@ export const loginRequest = async (
   password: string
 ): Promise<[any, boolean]> => {
   try {
-    const response = await Axios.post(`${API_URL}/login`, {
+    const response = await Axios.post(`${API_URL}/session/login`, {
       email,
       password
     });
@@ -38,7 +38,7 @@ export const whoamiRequest = async (
     }
 
     // Make the request with the Access-Token header
-    const response = await Axios.get(`${API_URL}/whoami`, {
+    const response = await Axios.get(`${API_URL}/session/whoami`, {
       headers: {
         'Access-Token': accessToken
       }
@@ -79,7 +79,7 @@ export const refreshRequest = async (): Promise<[any, boolean]> => {
     }
 
     // Make the request with the Refresh-Token header
-    const response = await Axios.get(`${API_URL}/refresh`, {
+    const response = await Axios.get(`${API_URL}/session/refresh`, {
       headers: {
         'Refresh-Token': refreshToken
       }

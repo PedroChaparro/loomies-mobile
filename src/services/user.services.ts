@@ -10,7 +10,7 @@ export const signupRequest = async (
   password: string
 ): Promise<[any, boolean]> => {
   try {
-    const response = await Axios.post(`${API_URL}/signup`, {
+    const response = await Axios.post(`${API_URL}/user/signup`, {
       email,
       username,
       password
@@ -33,7 +33,7 @@ export const codeValidationRequest = async (
   validationCode: string
 ): Promise<[any, boolean]> => {
   try {
-    const response = await Axios.post(`${API_URL}/code_validation`, {
+    const response = await Axios.post(`${API_URL}/user/validate`, {
       email,
       validationCode
     });
@@ -52,7 +52,7 @@ export const newCodeRequest = async (
   email: string
 ): Promise<[any, boolean]> => {
   try {
-    const response = await Axios.post(`${API_URL}/new_code`, {
+    const response = await Axios.post(`${API_URL}/user/validate/code`, {
       email
     });
     return [response.data, false];
