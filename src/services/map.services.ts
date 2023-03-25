@@ -27,7 +27,7 @@ export const requestNearGyms = async (
 
     // make request
     const response = await Axios.post(
-      `${API_URL}/near_gyms`,
+      `${API_URL}/gyms/near`,
       {
         latitude: userPos.lat,
         longitude: userPos.lon
