@@ -90,7 +90,7 @@ export const requestWildLoomies = async (
 
     // make request
     const response = await Axios.post(
-      `${API_URL}/near_loomies`,
+      `${API_URL}/loomies/near`,
       {
         latitude: userPos.lat,
         longitude: userPos.lon
