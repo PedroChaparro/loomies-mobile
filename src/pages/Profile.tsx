@@ -26,27 +26,6 @@ export const Profile = ({ navigation }: ProfileProps) => {
           {user?.username}
         </Text>
         <Text style={Styles.mainTitle}>{user?.email}</Text>
-        <TouchableOpacity style={Styles.linkCard}>
-          <View style={Styles.groupIconText}>
-            <FeatherIcon name={'user'} size={20} color={'black'} />
-            <Text style={Styles.linkText}>settings 1</Text>
-          </View>
-          <FeatherIcon name={'chevron-right'} size={20} color={'black'} />
-        </TouchableOpacity>
-        <TouchableOpacity style={Styles.linkCard}>
-          <View style={Styles.groupIconText}>
-            <FeatherIcon name={'user'} size={20} color={'black'} />
-            <Text style={Styles.linkText}>settings 2</Text>
-          </View>
-          <FeatherIcon name={'chevron-right'} size={20} color={'black'} />
-        </TouchableOpacity>
-        <TouchableOpacity style={Styles.linkCard}>
-          <View style={Styles.groupIconText}>
-            <FeatherIcon name={'user'} size={20} color={'black'} />
-            <Text style={Styles.linkText}>settings 3</Text>
-          </View>
-          <FeatherIcon name={'chevron-right'} size={20} color={'black'} />
-        </TouchableOpacity>
         <TouchableOpacity
           style={Styles.linkCard}
           onPress={redirectToResetPassword}
