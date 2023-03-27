@@ -48,7 +48,7 @@ export const UserLoomies = ({ navigation }: IProps) => {
         />
       );
 
-    return <LoomiesGrid loomies={loomies} />;
+    return <LoomiesGrid loomies={loomies} navigation={navigation} />;
   };
 
   return (
