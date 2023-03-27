@@ -8,19 +8,19 @@ import { useToastAlert } from '../hooks/useToastAlert';
 
 interface NewCodeViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  navigation: NavigationProp<any, any>;
-  route: RouteProp<{ params: { email: string } }, 'params'>;
+  navigation?: NavigationProp<any, any>;
+  route?: RouteProp<{ params: { email: string } }, 'params'>;
 }
 
 export const NewCodeView = ({ navigation, route }: NewCodeViewProps) => {
   const { showSuccessToast, showErrorToast } = useToastAlert();
 
   const redirectToEmailVal = () => {
-    navigation.navigate('EmailValidation');
+    navigation?.navigate('EmailValidation');
   };
 
   // Try to get the email from the params
-  const { email } = route.params;
+  const email = route?.params?.email;
 
   const formik = useFormik({
     initialValues: {
