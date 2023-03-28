@@ -9,8 +9,8 @@ import { useToastAlert } from '../hooks/useToastAlert';
 
 interface ChangePasswordViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  navigation: NavigationProp<any, any>;
-  route: RouteProp<{ params: { email: string } }, 'params'>;
+  navigation?: NavigationProp<any, any>;
+  route?: RouteProp<{ params: { email: string } }, 'params'>;
 }
 
 export const ChangePasswordView = ({
@@ -20,11 +20,11 @@ export const ChangePasswordView = ({
   const { showSuccessToast, showErrorToast } = useToastAlert();
 
   const redirectToLogin = () => {
-    navigation.navigate('Login', { email: formik.values.email });
+    navigation?.navigate('Login', { email: formik.values.email });
   };
 
   // Try to get the email from the params
-  const { email } = route.params || {};
+  const email = route?.params?.email || '';
 
   const formik = useFormik({
     initialValues: {
