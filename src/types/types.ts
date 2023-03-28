@@ -16,3 +16,18 @@ export type TCaughtLoomies = {
   owner: string;
   level: number;
 };
+
+export type TWildLoomies = {
+  _id: string;
+  serial: number;
+  name: string;
+  types: string[];
+  rarity: string;
+  hp: number;
+  attack: number;
+  defense: number;
+  zone_id: string;
+  latitude: number;
+  longitude: number;
+  generated_at: number; // timestamp
+};

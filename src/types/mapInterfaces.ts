@@ -34,5 +34,5 @@ export interface iGym {
 export interface iMapObject {
   id: string;
   origin: iPosition;
-  mesh: Babylon.Mesh;
+  mesh: Babylon.InstantiatedEntries;
 }
