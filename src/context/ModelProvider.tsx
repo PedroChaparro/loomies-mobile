@@ -11,7 +11,8 @@ import { LoadModel, MODEL_RESOURCE } from '@src/services/modelLoader.services';
 interface iModelProvider {
   instantiateModel: (
     _name: string,
-    _scene: Babylon.Scene
+    _scene: Babylon.Scene,
+    _reuse: boolean
   ) => Promise<Babylon.Mesh | null>;
 }
 
@@ -24,13 +25,15 @@ export const ModelProvider = (props: { children: ReactNode }) => {
 
   // return model as Babylon.AssetContainer. If not loaded before then load
   const getModel = async (
-    name: string
+    name: string,
+    reuse = true
   ): Promise<Babylon.AssetContainer | null> => {
     try {
       // model is already loaded
       const model: Babylon.AssetContainer | undefined = models.current[name];
 
-      if (!model) {
+      if (!model || !reuse) {
+        console.log('Creating from scratch...');
         // if not, load it
         const container = await LoadModel(MODEL_RESOURCE[name]);
         if (!container) throw "ERROR: Couldn't load model";
@@ -50,10 +53,11 @@ export const ModelProvider = (props: { children: ReactNode }) => {
   // Adds model to specified scene
   const instantiateModel = async (
     name: string,
-    _scene: Babylon.Scene
+    _scene: Babylon.Scene,
+    reuse = true
   ): Promise<Babylon.Mesh | null> => {
     try {
-      const container = await getModel(name);
+      const container = await getModel(name, reuse);
 
       if (container) {
         // clone from container
