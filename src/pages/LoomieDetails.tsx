@@ -72,7 +72,14 @@ export const LoomieDetails = ({ route }: IProps) => {
         const currentCamera = newScene.activeCamera as ArcRotateCamera;
         currentCamera.checkCollisions = false;
         currentCamera.setPosition(new Vector3(0, 1, 5));
+
+        // Set and lock the camera target
         currentCamera.setTarget(new Vector3(0, 1.5, 0));
+        currentCamera.lockedTarget = new Vector3(0, 1.5, 0);
+
+        // Limit camera zoom
+        currentCamera.lowerRadiusLimit = 3;
+        currentCamera.upperRadiusLimit = 5;
 
         instantiateModel(loomie.serial.toString(), newScene, false);
         setScene(newScene);
