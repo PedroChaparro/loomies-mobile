@@ -13,7 +13,6 @@ interface iModelProvider {
     _name: string,
     _scene: Babylon.Scene,
     _reuse: boolean
-    _scene: Babylon.Scene
   ) => Promise<Babylon.InstantiatedEntries | null>;
   cloneModel: (
     _name: string,
@@ -62,7 +61,7 @@ export const ModelProvider = (props: { children: ReactNode }) => {
     reuse = true
   ): Promise<Babylon.InstantiatedEntries | null> => {
     try {
-      const container = await getModelAsset(name);
+      const container = await getModelAsset(name, reuse);
 
       if (container) {
         const instance = container.instantiateModelsToScene();
