@@ -36,5 +36,5 @@ export const images: {
   '016': require('@assets/images/loomies/016.png'),
   '017': require('@assets/images/loomies/017.png'),
   '018': require('@assets/images/loomies/018.png'),
-  '019': require('@assets/images/loomies/018.png')
+  '019': require('@assets/images/loomies/019.png')
 };
