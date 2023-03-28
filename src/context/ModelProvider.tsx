@@ -33,7 +33,6 @@ export const ModelProvider = (props: { children: ReactNode }) => {
       const model: Babylon.AssetContainer | undefined = models.current[name];
 
       if (!model || !reuse) {
-        console.log('Creating from scratch...');
         // if not, load it
         const container = await LoadModel(MODEL_RESOURCE[name]);
         if (!container) throw "ERROR: Couldn't load model";
