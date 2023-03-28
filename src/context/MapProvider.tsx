@@ -16,6 +16,7 @@ import { BBOX_SIZE } from '@src/services/mapAPI.services';
 import { iGym } from '@src/types/mapInterfaces';
 import { Vector3 } from '@babylonjs/core';
 import { PLANE_SIZE } from '@src/components/Map3D/Map3DEngine';
+import { TWildLoomies } from '@src/types/types';
 
 export interface iGridPosition {
   x: number;
@@ -43,9 +44,12 @@ interface iMapProvider {
   ) => void;
   offsetGrid: (_offset: iGridPosition) => void;
 
+  // map elements
   getGyms: () => iGym[];
   setGyms: (_newGyms: iGym[]) => void;
-  updateCountGym: number;
+
+  getWildLoomies: () => TWildLoomies[];
+  setWildLoomies: (_newWildLoomies: TWildLoomies[]) => void;
 }
 
 export const MapContext = createContext<iMapProvider>({
@@ -72,9 +76,12 @@ export const MapContext = createContext<iMapProvider>({
     return;
   },
 
+  // map elements
   getGyms: () => [],
   setGyms: (_newGyms: iGym[]) => null,
-  updateCountGym: 0
+
+  getWildLoomies: () => [],
+  setWildLoomies: (_newWildLoomies: TWildLoomies[]) => null
 });
 
 export const MapProvider = (props: { children: ReactNode }) => {
@@ -85,8 +92,8 @@ export const MapProvider = (props: { children: ReactNode }) => {
   const updatedTiles = useRef<iGridPosition[]>([]);
   const [updateCountTiles, setUpdateCountTiles] = useState<number>(0);
 
-  const [updateCountGym, setUpdateCountGym] = useState<number>(0);
   const gyms = useRef<iGym[]>([]);
+  const wildLoomies = useRef<TWildLoomies[]>([]);
 
   // set vertex data
   const externalSetTile = (
@@ -218,12 +225,16 @@ export const MapProvider = (props: { children: ReactNode }) => {
 
   const setGyms = (newGyms: iGym[]) => {
     gyms.current = newGyms;
+  };
 
-    // trigger update
-    setUpdateCountGym((count) => {
-      count += 1;
-      return count % 100;
-    });
+  // wild loomies
+
+  const getWildLoomies = (): TWildLoomies[] => {
+    return wildLoomies.current;
+  };
+
+  const setWildLoomies = (newWildLoomies: TWildLoomies[]) => {
+    wildLoomies.current = newWildLoomies;
   };
 
   // initialize gridmap
@@ -261,7 +272,9 @@ export const MapProvider = (props: { children: ReactNode }) => {
 
         setGyms,
         getGyms,
-        updateCountGym
+
+        setWildLoomies,
+        getWildLoomies
       }}
     >
       {props.children}

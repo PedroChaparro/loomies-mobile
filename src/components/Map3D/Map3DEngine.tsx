@@ -43,7 +43,7 @@ const DEBUG_MOVE_DISTANCE = 0.0002;
 
 // drawing constants
 export const PLANE_SIZE = 20;
-const GROUND_SCALE = 3.5;
+const GROUND_SCALE = 4;
 const ROAD_HEIGHT = 0.07;
 const ROAD_BORDER_HEIGHT = 0.05;
 const CIRCLE_INDICATOR_HEIGHT = 0.09;
@@ -83,7 +83,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
   const [scene, setScene] = useState<Scene>();
 
   // map drawing
-  const { instantiateModel } = useContext(ModelContext);
+  const { cloneModel } = useContext(ModelContext);
   const playerNode = useRef<Babylon.Mesh>();
   const playerNodeTargetPos = useRef<Babylon.Vector3>(Vector3.Zero());
   const meshGrid = useRef<Array<Array<Babylon.Mesh | null>>>([]);
@@ -203,8 +203,8 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     // load player model
     (async () => {
       try {
-        const playerModel = await instantiateModel('MAP_PLAYER', scene);
-        const circleIndicatorModel = await instantiateModel(
+        const playerModel = await cloneModel('MAP_PLAYER', scene);
+        const circleIndicatorModel = await cloneModel(
           'MAP_CIRCLE_INDICATOR',
           scene
         );
