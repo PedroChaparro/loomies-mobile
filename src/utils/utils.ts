@@ -1,3 +1,4 @@
+import { GAME_MIN_REQUIRED_EXPERIENCE, GAME_EXPERIENCE_FACTOR } from '@env';
 import { ImageSourcePropType } from 'react-native';
 
 export const colors: {
@@ -38,3 +39,9 @@ export const images: {
   '018': require('@assets/images/loomies/018.png'),
   '019': require('@assets/images/loomies/019.png')
 };
+
+export function getRequiredExperienceFromLevel(level: number): number {
+  return (
+    Math.log10(level) * GAME_EXPERIENCE_FACTOR + GAME_MIN_REQUIRED_EXPERIENCE
+  );
+}
