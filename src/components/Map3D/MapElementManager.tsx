@@ -244,7 +244,28 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
         if (!pointerInfo.pickInfo.pickedMesh) return;
         if (!pointerInfo.pickInfo.hit) return;
 
-        console.log(pointerInfo.pickInfo.pickedMesh.name);
+        const meshName = pointerInfo.pickInfo.pickedMesh.name;
+
+        // check if it is a Loomie or a gym
+        if (meshName == "hitbox_loomie"){
+          const loomie = mapWildLoomies.current.find((obj) => {
+            return obj.meshHitbox == pointerInfo.pickInfo?.pickedMesh;
+          });
+
+          if (!loomie) return;
+          console.log("Loomie touched!");
+          console.log(loomie.id);
+        }
+        else if (meshName == "hitbox_gym"){
+          const gym = mapGyms.current.find((obj) => {
+            return obj.meshHitbox == pointerInfo.pickInfo?.pickedMesh;
+          });
+
+          if (!gym) return;
+          console.log("Gym touched!");
+          console.log(gym.id);
+        }
+
       }
     });
 
