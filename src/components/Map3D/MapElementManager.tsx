@@ -217,5 +217,25 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
     if (readyToDrawElements.current) fetchWildLoomies();
   }, DELAY_FETCH_WILD_LOOMIES);
 
+  useEffect(() => {
+    if (!props.scene) return;
+    const scene = props.scene;
+
+    // add click event on TAP
+    const observer = scene.onPointerObservable.add((pointerInfo) => {
+      if (pointerInfo.type == Babylon.PointerEventTypes.POINTERTAP) {
+        if (!pointerInfo.pickInfo) return;
+        if (!pointerInfo.pickInfo.pickedMesh) return;
+        if (!pointerInfo.pickInfo.hit) return;
+
+        console.log(pointerInfo.pickInfo.pickedMesh.name);
+      }
+    });
+
+    return () => {
+      scene.onPointerObservable.remove(observer);
+    }
+  }, []);
+
   return <></>;
 };
