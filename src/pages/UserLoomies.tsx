@@ -6,6 +6,8 @@ import { Container } from '@src/components/Container';
 import { LoomiesGridSkeleton } from '@src/skeletons/CaughtLoomiesGrid/LoomiesGridSkeleton';
 import { NavigationProp } from '@react-navigation/native';
 import { EmptyMessage } from '@src/components/EmptyMessage';
+import { Pressable, StyleSheet } from 'react-native';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface IProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,6 +38,10 @@ export const UserLoomies = ({ navigation }: IProps) => {
     navigation.navigate('Map');
   };
 
+  const goToLoomieTeam = () => {
+    navigation.navigate('UpdateLoomieTeam');
+  };
+
   // Function to render the loomies or show a message if there are no loomies
   const renderLoomies = () => {
     if (!loading && loomies.length === 0)
@@ -48,10 +54,35 @@ export const UserLoomies = ({ navigation }: IProps) => {
         />
       );
 
-    return <LoomiesGrid loomies={loomies} />;
+    return (
+      <>
+        <LoomiesGrid loomies={loomies} />
+        {/* Button to redirect the user to the Loomie Team selection */}
+        <Pressable style={Styles.floatingButton} onPress={goToLoomieTeam}>
+          <MaterialCommunityIcon name='sword' size={32} color={'white'} />
+        </Pressable>
+      </>
+    );
   };
 
   return (
     <Container>{loading ? <LoomiesGridSkeleton /> : renderLoomies()}</Container>
   );
 };
+
+const Styles = StyleSheet.create({
+  /* Ideally the position of this button should be fixed,
+  but in react native the position: 'fixed' attribute doesn't
+  exists. This couldn't be done as in the Map View because
+  the height of this view isn't fixed. */
+  floatingButton: {
+    marginVertical: 12,
+    width: 55,
+    height: 55,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ED4A5F',
+    alignSelf: 'center',
+    borderRadius: 50
+  }
+});

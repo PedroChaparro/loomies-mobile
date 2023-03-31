@@ -17,6 +17,21 @@ export type TCaughtLoomies = {
   level: number;
 };
 
+export type TCaughtLoomiesWithTeam = {
+  _id: string;
+  serial: number;
+  name: string;
+  types: Array<string>;
+  rarity: string;
+  hp: number;
+  attack: number;
+  defense: number;
+  is_busy: boolean;
+  owner: string;
+  level: number;
+  is_in_team?: boolean;
+};
+
 export type TWildLoomies = {
   _id: string;
   serial: number;

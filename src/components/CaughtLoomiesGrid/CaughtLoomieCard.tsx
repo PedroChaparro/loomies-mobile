@@ -1,11 +1,11 @@
-import { TCaughtLoomies } from '@src/types/types';
+import { TCaughtLoomiesWithTeam } from '@src/types/types';
 import { colors, images } from '@src/utils/utils';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 interface IProps {
-  loomie: TCaughtLoomies;
+  loomie: TCaughtLoomiesWithTeam;
 }
 
 export const LoomieCard = ({ loomie }: IProps) => {
@@ -16,12 +16,31 @@ export const LoomieCard = ({ loomie }: IProps) => {
   const typeColor = colors[mainColor];
   const loomieSerial = `${loomie.serial.toString().padStart(3, '0')}`;
 
+  // Function to render a border if the loomie is part of the user's team
+  const renderBorder = () => {
+    if (loomie.is_in_team) {
+      return {
+        borderColor: '#ED4A5F',
+        borderWidth: 2
+      };
+    } else {
+      return {};
+    }
+  };
+
   return (
     <View style={Styles.card}>
       <TouchableWithoutFeedback onPress={handleCardClick}>
         {/* Inner spacing to create a gap between the elements */}
         <View style={Styles.spacing}>
-          <View style={{ ...Styles.background, backgroundColor: typeColor }}>
+          <View
+            style={{
+              ...Styles.background,
+              ...renderBorder(),
+              backgroundColor: typeColor,
+              elevation: loomie.is_in_team ? 6 : 2
+            }}
+          >
             <Text style={{ ...Styles.loomieSerial, ...Styles.cardText }}>
               #{loomieSerial}
             </Text>
@@ -59,7 +78,6 @@ const Styles = StyleSheet.create({
   },
   background: {
     borderRadius: 12,
-    elevation: 6,
     flex: 1,
     padding: 16,
     shadowColor: '#7c7c7c'
