@@ -45,3 +45,11 @@ export function getRequiredExperienceFromLevel(level: number): number {
     Math.log10(level) * GAME_EXPERIENCE_FACTOR + GAME_MIN_REQUIRED_EXPERIENCE
   );
 }
+
+export function incrementStatFromLevel(stat: number, level: number): number {
+  const factor = level > 1 ? 1 / 8 : 0;
+  const largeDecimal = stat + stat * (factor * level);
+
+  // Fix to 2 decimals
+  return Number(largeDecimal.toFixed(2));
+}

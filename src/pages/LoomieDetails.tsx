@@ -40,6 +40,7 @@ export const LoomieDetails = ({ route }: IProps) => {
           color={typeColor}
         />
         <LoomieStatsTable
+          level={loomie.level}
           hp={loomie.hp}
           defense={loomie.defense}
           attack={loomie.attack}

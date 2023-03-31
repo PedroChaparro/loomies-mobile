@@ -1,3 +1,4 @@
+import { incrementStatFromLevel } from '@src/utils/utils';
 import React from 'react';
 import { SectionList, StyleSheet, Text, View } from 'react-native';
 
@@ -5,16 +6,17 @@ interface IProps {
   hp: number;
   defense: number;
   attack: number;
+  level: number;
 }
 
-export const LoomieStatsTable = ({ hp, defense, attack }: IProps) => {
+export const LoomieStatsTable = ({ hp, defense, attack, level }: IProps) => {
   const statsData = [
     {
       title: 'Stats',
       data: [
-        { title: 'HP', value: hp },
-        { title: 'Attack', value: attack },
-        { title: 'Defense', value: defense }
+        { title: 'HP', value: incrementStatFromLevel(hp, level) },
+        { title: 'Attack', value: incrementStatFromLevel(attack, level) },
+        { title: 'Defense', value: incrementStatFromLevel(defense, level) }
       ]
     }
   ];
