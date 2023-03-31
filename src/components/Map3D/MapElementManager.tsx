@@ -215,10 +215,12 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
 
     mapGyms.current.forEach((obj) => {
       instantiatedEntriesTranslate(obj.mesh, coordsGlobalToMap(obj.origin));
+      obj.meshHitbox.position = coordsGlobalToMap(obj.origin);
     });
 
     mapWildLoomies.current.forEach((obj) => {
       instantiatedEntriesTranslate(obj.mesh, coordsGlobalToMap(obj.origin));
+      obj.meshHitbox.position = coordsGlobalToMap(obj.origin);
     });
 
     // update gyms when tiles change
