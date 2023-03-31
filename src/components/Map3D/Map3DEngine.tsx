@@ -153,6 +153,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     );
     planeGround.position.y = 0;
     planeGround.rotation.x = Math.PI / 2;
+    planeGround.isPickable = false;
 
     // initialize gridmap
     const gridOffset = (GRIDMAP_SIZE - 1) / 2 + 0.5;
