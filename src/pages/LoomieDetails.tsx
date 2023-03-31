@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { colors } from '@src/utils/utils';
 import { LoomieLevelBar } from '@src/components/LoomieDetails/LoomieLevelBar';
 import { LoomieStatsTable } from '@src/components/LoomieDetails/LoomieStatsTable';
+import { LoomieTypes } from '@src/components/LoomieDetails/LoomieTypes';
 
 interface IProps {
   route?: RouteProp<{ params: { loomie: TCaughtLoomies } }, 'params'>;
@@ -31,17 +32,7 @@ export const LoomieDetails = ({ route }: IProps) => {
           <Text style={Styles.loomieName}>{loomie.name}</Text>
         </View>
         <View style={Styles.row}>
-          {loomie.types.map((type) => (
-            <Text
-              key={type}
-              style={{
-                ...Styles.loomieType,
-                backgroundColor: colors[type.toUpperCase()]
-              }}
-            >
-              {type}
-            </Text>
-          ))}
+          <LoomieTypes types={loomie.types} />
         </View>
         <LoomieLevelBar
           level={loomie.level}
@@ -83,13 +74,5 @@ const Styles = StyleSheet.create({
     color: '#5C5C5C',
     fontWeight: 'bold',
     fontSize: 24
-  },
-  loomieType: {
-    color: '#5C5C5C',
-    fontWeight: 'bold',
-    paddingVertical: 4,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    marginHorizontal: 4
   }
 });
