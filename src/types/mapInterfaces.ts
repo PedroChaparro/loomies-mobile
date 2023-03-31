@@ -35,4 +35,5 @@ export interface iMapObject {
   id: string;
   origin: iPosition;
   mesh: Babylon.InstantiatedEntries;
+  meshHitbox: Babylon.Mesh;
 }

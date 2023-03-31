@@ -96,6 +96,8 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
         }).length
       ) {
         obj.mesh.dispose();
+        obj.meshHitbox.dispose();
+
         return false;
       }
 
@@ -121,12 +123,17 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       const mesh = await instantiateModel('MAP_GYM', scene);
       if (!mesh) return;
 
+      // create hitbox
+      const hitbox = Babylon.MeshBuilder.CreateSphere("hitbox_gym", { diameter: 2 }, scene);
+
       // position and rotation
       instantiatedEntriesTranslate(mesh, coordsGlobalToMap(gym.origin));
       instantiatedEntriesRotate(mesh, Math.random() * 2 * Math.PI);
+      hitbox.position = coordsGlobalToMap(gym.origin);
 
       mapGyms.current.push({
         mesh: mesh,
+        meshHitbox: hitbox,
         origin: gym.origin,
         id: gym.id
       });
@@ -153,6 +160,8 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
         }).length
       ) {
         obj.mesh.dispose();
+        obj.meshHitbox.dispose();
+
         return false;
       }
 
@@ -178,15 +187,20 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       const mesh = await instantiateModel(loomie.serial.toString(), scene);
       if (!mesh) return;
 
+      // create hitbox
+      const hitbox = Babylon.MeshBuilder.CreateSphere("hitbox_loomie", { diameter: 2 }, scene);
+
       // position and rotation
       instantiatedEntriesTranslate(
         mesh,
         coordsGlobalToMap({ lat: loomie.latitude, lon: loomie.longitude })
       );
       instantiatedEntriesRotate(mesh, Math.random() * 2 * Math.PI);
+      hitbox.position = coordsGlobalToMap({ lat: loomie.latitude, lon: loomie.longitude });
 
       mapWildLoomies.current.push({
         mesh: mesh,
+        meshHitbox: hitbox,
         origin: {
           lat: loomie.latitude,
           lon: loomie.longitude

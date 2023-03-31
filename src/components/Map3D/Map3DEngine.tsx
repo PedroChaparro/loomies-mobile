@@ -338,6 +338,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
           0,
           (tilePos.y - gridOffset) * PLANE_SIZE
         );
+        finalMergedMesh.isPickable = false;
       }
 
       // store
