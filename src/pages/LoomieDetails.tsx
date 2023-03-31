@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { colors } from '@src/utils/utils';
 import { LoomieLevelBar } from '@src/components/LoomieDetails/LoomieLevelBar';
+import { LoomieStatsTable } from '@src/components/LoomieDetails/LoomieStatsTable';
 
 interface IProps {
   route?: RouteProp<{ params: { loomie: TCaughtLoomies } }, 'params'>;
@@ -28,6 +29,8 @@ export const LoomieDetails = ({ route }: IProps) => {
       <View style={Styles.information}>
         <View style={Styles.row}>
           <Text style={Styles.loomieName}>{loomie.name}</Text>
+        </View>
+        <View style={Styles.row}>
           {loomie.types.map((type) => (
             <Text
               key={type}
@@ -45,7 +48,11 @@ export const LoomieDetails = ({ route }: IProps) => {
           experience={loomie.experience}
           color={typeColor}
         />
-        <View style={{ ...Styles.row, ...Styles.stats }}></View>
+        <LoomieStatsTable
+          hp={loomie.hp}
+          defense={loomie.defense}
+          attack={loomie.attack}
+        />
       </View>
     </View>
   );
@@ -75,8 +82,7 @@ const Styles = StyleSheet.create({
   loomieName: {
     color: '#5C5C5C',
     fontWeight: 'bold',
-    fontSize: 24,
-    marginRight: 8
+    fontSize: 24
   },
   loomieType: {
     color: '#5C5C5C',
@@ -85,8 +91,5 @@ const Styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 12,
     marginHorizontal: 4
-  },
-  stats: {
-    flexDirection: 'column'
   }
 });

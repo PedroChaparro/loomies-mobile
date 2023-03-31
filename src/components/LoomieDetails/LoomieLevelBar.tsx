@@ -35,7 +35,7 @@ const Styles = StyleSheet.create({
   levelContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 8
+    marginVertical: 12
   },
   levelLabel: {
     minWidth: 64,
