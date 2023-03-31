@@ -26,8 +26,8 @@ export const LoomieStatsTable = ({ hp, defense, attack }: IProps) => {
         renderItem={({ item }) => {
           return (
             <View style={Styles.statsRow}>
-              <Text>{item.title}</Text>
-              <Text>{item.value}</Text>
+              <Text style={{ color: '#7c7c7c' }}>{item.title}</Text>
+              <Text style={{ color: '#7c7c7c' }}>{item.value}</Text>
             </View>
           );
         }}

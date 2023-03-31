@@ -39,7 +39,8 @@ const Styles = StyleSheet.create({
   },
   levelLabel: {
     minWidth: 64,
-    textAlign: 'center'
+    textAlign: 'center',
+    color: '#7c7c7c'
   },
   levelBackground: {
     flex: 1,
