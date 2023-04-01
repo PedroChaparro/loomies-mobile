@@ -58,21 +58,22 @@ export const UserLoomies = ({ navigation }: IProps) => {
         />
       );
 
-    return (
-      <>
-        <View style={{ paddingHorizontal: 10 }}>
-          <CustomButton
-            title='Update Loomie Team'
-            type='bordered'
-            callback={goToLoomieTeam}
-          />
-        </View>
-        <LoomiesGrid
-          loomies={loomies}
-          avoidNavigation={true}
-          elementsCallback={goToDetails}
+    const redirectionHeader = (
+      <View style={{ paddingHorizontal: 10 }}>
+        <CustomButton
+          title='Update Loomie Team'
+          type='primary'
+          callback={goToLoomieTeam}
         />
-      </>
+      </View>
+    );
+
+    return (
+      <LoomiesGrid
+        loomies={loomies}
+        elementsCallback={goToDetails}
+        listHeaderComponent={redirectionHeader}
+      />
     );
   };
 
