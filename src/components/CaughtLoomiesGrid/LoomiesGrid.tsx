@@ -1,6 +1,6 @@
 import { TCaughtLoomies } from '@src/types/types';
 import React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 import { LoomieCard } from './CaughtLoomieCard';
 
 interface IProps {
@@ -10,6 +10,7 @@ interface IProps {
 export const LoomiesGrid = ({ loomies }: IProps) => {
   return (
     <FlatList
+      style={Styles.container}
       data={loomies}
       keyExtractor={(item) => item._id}
       numColumns={2}
@@ -17,3 +18,10 @@ export const LoomiesGrid = ({ loomies }: IProps) => {
     />
   );
 };
+
+const Styles = StyleSheet.create({
+  container: {
+    // Bottom margin to avoid overlapping with the bottom tab bar
+    marginBottom: 44
+  }
+});
