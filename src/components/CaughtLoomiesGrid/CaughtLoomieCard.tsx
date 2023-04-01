@@ -3,14 +3,15 @@ import { colors, images } from '@src/utils/utils';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface IProps {
   loomie: TCaughtLoomiesWithTeam;
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
+  cardCallback: (a?: any) => void;
 }
 
-export const LoomieCard = ({ loomie }: IProps) => {
-  const handleCardClick = () => console.log('Card clicked!');
-
+export const LoomieCard = ({ loomie, cardCallback }: IProps) => {
   // Get the color from the first type
   const mainColor = loomie.types[0].toUpperCase();
   const typeColor = colors[mainColor];
@@ -20,17 +21,18 @@ export const LoomieCard = ({ loomie }: IProps) => {
   const renderBorder = () => {
     if (loomie.is_in_team) {
       return {
-        borderColor: '#ED4A5F',
-        borderWidth: 2
+        borderColor: '#ED4A5F'
       };
     } else {
-      return {};
+      return {
+        borderColor: 'transparent'
+      };
     }
   };
 
   return (
     <View style={Styles.card}>
-      <TouchableWithoutFeedback onPress={handleCardClick}>
+      <TouchableWithoutFeedback onPress={() => cardCallback(loomie._id)}>
         {/* Inner spacing to create a gap between the elements */}
         <View style={Styles.spacing}>
           <View
@@ -41,6 +43,11 @@ export const LoomieCard = ({ loomie }: IProps) => {
               elevation: loomie.is_in_team ? 6 : 2
             }}
           >
+            {loomie.is_in_team && (
+              <View style={Styles.floatingIconContainer}>
+                <MaterialCommunityIcon name='sword' color={'white'} size={24} />
+              </View>
+            )}
             <Text style={{ ...Styles.loomieSerial, ...Styles.cardText }}>
               #{loomieSerial}
             </Text>
@@ -80,7 +87,20 @@ const Styles = StyleSheet.create({
     borderRadius: 12,
     flex: 1,
     padding: 16,
-    shadowColor: '#7c7c7c'
+    shadowColor: '#7c7c7c',
+    borderWidth: 3
+  },
+  floatingIconContainer: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    width: 36,
+    height: 36,
+    padding: 4,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ED4A5F'
   },
   cardImageBg: {
     alignSelf: 'center',

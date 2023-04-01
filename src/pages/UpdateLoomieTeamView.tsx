@@ -8,7 +8,6 @@ import { LoomiesGrid } from '@src/components/CaughtLoomiesGrid/LoomiesGrid';
 import { Container } from '@src/components/Container';
 import { useIsFocused } from '@react-navigation/native';
 import { LoomiesGridSkeleton } from '@src/skeletons/CaughtLoomiesGrid/LoomiesGridSkeleton';
-import { Title } from '@src/components/Title';
 
 export const UpdateLoomieTeamView = () => {
   const [loomies, setLoomies] = useState(Array<TCaughtLoomiesWithTeam>);
@@ -39,6 +38,23 @@ export const UpdateLoomieTeamView = () => {
     setLoading(false);
   };
 
+  const handleLoomiePress = (loomieId: string) => {
+    if (team.includes(loomieId)) {
+      // If the loomie is already in the team, remove it
+      const newTeam = team.filter((id) => id !== loomieId);
+      setTeam(newTeam);
+      return;
+    } else if (team.length >= 6) {
+      // If the team is full, remove the first loomie and add the new one
+      const newTeam = [...team.slice(1), loomieId];
+      setTeam(newTeam);
+    } else {
+      // If the loomie is not in the team, add it
+      const newTeam = [...team, loomieId];
+      setTeam(newTeam);
+    }
+  };
+
   // First, get the team, then get the loomies
   useEffect(() => {
     if (!focused) return;
@@ -52,8 +68,11 @@ export const UpdateLoomieTeamView = () => {
 
   return (
     <Container>
-      <Title text='Update your Loomie Team:' />
-      {loading ? <LoomiesGridSkeleton /> : <LoomiesGrid loomies={loomies} />}
+      {loading ? (
+        <LoomiesGridSkeleton />
+      ) : (
+        <LoomiesGrid loomies={loomies} elementsCallback={handleLoomiePress} />
+      )}
     </Container>
   );
 };

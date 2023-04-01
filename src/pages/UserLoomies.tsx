@@ -42,6 +42,10 @@ export const UserLoomies = ({ navigation }: IProps) => {
     navigation.navigate('UpdateLoomieTeam');
   };
 
+  const goToDetails = () => {
+    console.log('Go to details pressed...');
+  };
+
   // Function to render the loomies or show a message if there are no loomies
   const renderLoomies = () => {
     if (!loading && loomies.length === 0)
@@ -63,7 +67,11 @@ export const UserLoomies = ({ navigation }: IProps) => {
             callback={goToLoomieTeam}
           />
         </View>
-        <LoomiesGrid loomies={loomies} />
+        <LoomiesGrid
+          loomies={loomies}
+          avoidNavigation={true}
+          elementsCallback={goToDetails}
+        />
       </>
     );
   };
