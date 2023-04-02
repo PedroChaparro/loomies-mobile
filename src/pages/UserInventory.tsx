@@ -1,4 +1,5 @@
 import { NavigationProp } from '@react-navigation/native';
+import { Container } from '@src/components/Container';
 import { EmptyMessage } from '@src/components/EmptyMessage';
 import { ItemGrid } from '@src/components/ItemsGrid/ItemsGrid';
 import { getItemsService } from '@src/services/user.services';
@@ -57,6 +58,7 @@ export const UserInventory = ({ navigation }: IProps) => {
   }, [loading]);
 
   if (loading) return <ItemGridSkeleton />;
+
   if (inventory.length === 0)
     return (
       <EmptyMessage
@@ -67,5 +69,9 @@ export const UserInventory = ({ navigation }: IProps) => {
       />
     );
 
-  return <ItemGrid items={inventory} />;
+  return (
+    <Container>
+      <ItemGrid items={inventory} />
+    </Container>
+  );
 };
