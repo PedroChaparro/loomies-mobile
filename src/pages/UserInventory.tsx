@@ -1,5 +1,6 @@
 import { ItemGrid } from '@src/components/ItemsGrid/ItemsGrid';
 import { getItemsService } from '@src/services/user.services';
+import { ItemGridSkeleton } from '@src/skeletons/ItemsGrid/ItemsGridSkeleton';
 import { TItem, TLoombal, TInventoryItem } from '@src/types/types';
 import React, { useEffect, useState } from 'react';
 
@@ -42,6 +43,8 @@ export const UserInventory = () => {
 
     setInventory(inventory);
   }, [loading]);
+
+  if (loading) return <ItemGridSkeleton />;
 
   return <ItemGrid items={inventory} />;
 };
