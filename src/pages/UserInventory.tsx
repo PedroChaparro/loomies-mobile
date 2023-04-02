@@ -1,14 +1,26 @@
+import { NavigationProp } from '@react-navigation/native';
+import { EmptyMessage } from '@src/components/EmptyMessage';
 import { ItemGrid } from '@src/components/ItemsGrid/ItemsGrid';
 import { getItemsService } from '@src/services/user.services';
 import { ItemGridSkeleton } from '@src/skeletons/ItemsGrid/ItemsGridSkeleton';
 import { TItem, TLoombal, TInventoryItem } from '@src/types/types';
 import React, { useEffect, useState } from 'react';
 
-export const UserInventory = () => {
+interface IProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  navigation: NavigationProp<any, any>;
+}
+
+export const UserInventory = ({ navigation }: IProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [items, setItems] = useState<TItem[]>([]);
   const [loomballs, setLoomballs] = useState<TLoombal[]>([]);
   const [inventory, setInventory] = useState<TInventoryItem[]>([]);
+
+  // Function to redirect to the map view in case the user doesn't have any loomies
+  const goToMap = () => {
+    navigation.navigate('Map');
+  };
 
   const getInventory = async () => {
     const [response, error] = await getItemsService();
@@ -45,6 +57,15 @@ export const UserInventory = () => {
   }, [loading]);
 
   if (loading) return <ItemGridSkeleton />;
+  if (inventory.length === 0)
+    return (
+      <EmptyMessage
+        text="You don't have any items yet..."
+        showButton={true}
+        buttonText={'Claim Rewards'}
+        buttonCallback={goToMap}
+      />
+    );
 
   return <ItemGrid items={inventory} />;
 };
