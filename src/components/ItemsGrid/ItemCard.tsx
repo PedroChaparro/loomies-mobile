@@ -6,16 +6,18 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 interface IProps {
   item: TInventoryItem;
+  handleClickCallback?: (_: TInventoryItem) => void;
 }
 
-export const ItemCard = ({ item }: IProps) => {
+export const ItemCard = ({ item, handleClickCallback }: IProps) => {
   const itemSerial = item.serial.toString().padStart(3, '0');
 
   return (
     <View style={Styles.card}>
       <TouchableWithoutFeedback
         onPress={() => {
-          console.log('Card clicked!');
+          // Call the callback if it exists and pass the item
+          handleClickCallback && handleClickCallback(item);
         }}
       >
         <View style={Styles.spacing}>

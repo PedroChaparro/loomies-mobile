@@ -42,12 +42,14 @@ export const UserInventory = ({ navigation }: IProps) => {
     const inventory: TInventoryItem[] = [
       ...items.map((item) => ({
         _id: item._id,
+        type: 'item',
         serial: item.serial,
         name: item.name,
         quantity: item.quantity
       })),
       ...loomballs.map((loomball) => ({
         _id: loomball._id,
+        type: 'loomball',
         serial: loomball.serial,
         name: loomball.name,
         quantity: loomball.quantity
@@ -71,7 +73,7 @@ export const UserInventory = ({ navigation }: IProps) => {
 
   return (
     <Container>
-      <ItemGrid items={inventory} />
+      <ItemGrid inventory={inventory} items={items} />
     </Container>
   );
 };

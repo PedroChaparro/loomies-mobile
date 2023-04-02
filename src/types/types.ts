@@ -36,6 +36,7 @@ export type TWildLoomies = {
 export type TInventoryItem = {
   _id: string;
   serial: number;
+  type: string;
   name: string;
   quantity: number;
 };
