@@ -17,14 +17,13 @@ export const useScenePointerObservable = (
 
   useEffect(() => {
     savedCallback.current = callback;
-  }, [callback]);
 
-  useEffect(() => {
     if (scene !== null) {
       const observer = scene.onPointerObservable.add(savedCallback.current);
       return () => {
         scene.onPointerObservable.remove(observer);
       };
     }
-  }, [scene]);
+  }, [callback]);
+
 };
