@@ -27,7 +27,7 @@ import { LoomieEnterCaptureView } from './utilsElementInteraction';
 import { CONFIG } from '@src/services/config.services';
 const { MAP_DEBUG } = CONFIG;
 
-const DELAY_FETCH_WILD_LOOMIES = 4000; // 4 seconds
+const DELAY_FETCH_WILD_LOOMIES = 10000; // 4 seconds
 
 export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
   props
