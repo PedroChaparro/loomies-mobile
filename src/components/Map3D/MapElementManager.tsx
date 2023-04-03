@@ -20,6 +20,11 @@ import {
   instantiatedEntriesRotate,
   instantiatedEntriesTranslate
 } from './utilsVertex';
+import { Vector2 } from '@babylonjs/core';
+import { useScenePointerObservable } from '@src/hooks/useScenePointerObservable';
+
+import { CONFIG } from '@src/services/config.services';
+const { PLAYER_REACH_RADIUS } = CONFIG;
 
 const DELAY_FETCH_WILD_LOOMIES = 4000; // 4 seconds
 
@@ -124,7 +129,11 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       if (!mesh) return;
 
       // create hitbox
-      const hitbox = Babylon.MeshBuilder.CreateSphere("hitbox_gym", { diameter: 2 }, scene);
+      const hitbox = Babylon.MeshBuilder.CreateSphere(
+        'hitbox_gym',
+        { diameter: 2 },
+        scene
+      );
 
       // position and rotation
       instantiatedEntriesTranslate(mesh, coordsGlobalToMap(gym.origin));
@@ -188,7 +197,11 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       if (!mesh) return;
 
       // create hitbox
-      const hitbox = Babylon.MeshBuilder.CreateSphere("hitbox_loomie", { diameter: 2 }, scene);
+      const hitbox = Babylon.MeshBuilder.CreateSphere(
+        'hitbox_loomie',
+        { diameter: 2 },
+        scene
+      );
 
       // position and rotation
       instantiatedEntriesTranslate(
@@ -196,7 +209,10 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
         coordsGlobalToMap({ lat: loomie.latitude, lon: loomie.longitude })
       );
       instantiatedEntriesRotate(mesh, Math.random() * 2 * Math.PI);
-      hitbox.position = coordsGlobalToMap({ lat: loomie.latitude, lon: loomie.longitude });
+      hitbox.position = coordsGlobalToMap({
+        lat: loomie.latitude,
+        lon: loomie.longitude
+      });
 
       mapWildLoomies.current.push({
         mesh: mesh,
@@ -228,51 +244,57 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
     fetchGyms();
   }, [updateCountTiles]);
 
-  // update at start
+  // interval fetch wild Loomies
+
   useInterval(() => {
     if (readyToDrawElements.current) fetchWildLoomies();
   }, DELAY_FETCH_WILD_LOOMIES);
 
-  useEffect(() => {
-    if (!props.scene) return;
-    const scene = props.scene;
+  // add event on 3D model click
 
-    // add click event on TAP
-    const observer = scene.onPointerObservable.add((pointerInfo) => {
-      if (pointerInfo.type == Babylon.PointerEventTypes.POINTERTAP) {
-        if (!pointerInfo.pickInfo) return;
-        if (!pointerInfo.pickInfo.pickedMesh) return;
-        if (!pointerInfo.pickInfo.hit) return;
+  useScenePointerObservable(props.scene, (pointerInfo: Babylon.PointerInfo) => {
+    if (pointerInfo.type == Babylon.PointerEventTypes.POINTERTAP) {
+      if (!userPosition) return;
+      if (!pointerInfo.pickInfo) return;
+      if (!pointerInfo.pickInfo.hit) return;
+      if (!pointerInfo.pickInfo.pickedMesh) return;
 
-        const meshName = pointerInfo.pickInfo.pickedMesh.name;
+      const meshName = pointerInfo.pickInfo.pickedMesh.name;
 
-        // check if it is a Loomie or a gym
-        if (meshName == "hitbox_loomie"){
-          const loomie = mapWildLoomies.current.find((obj) => {
-            return obj.meshHitbox == pointerInfo.pickInfo?.pickedMesh;
-          });
+      // it's a Loomie
 
-          if (!loomie) return;
-          console.log("Loomie touched!");
-          console.log(loomie.id);
+      if (meshName == 'hitbox_loomie') {
+        const loomie = mapWildLoomies.current.find((obj) => {
+          return obj.meshHitbox == pointerInfo.pickInfo?.pickedMesh;
+        });
+
+        if (!loomie) return;
+        console.log('Loomie touched!', loomie.id);
+
+        // check distance
+
+        const from = new Vector2(loomie.origin.lon, loomie.origin.lat);
+        const to = new Vector2(userPosition.lon, userPosition.lat);
+
+        console.log(Vector2.Distance(from, to));
+
+        if (Vector2.Distance(from, to) < PLAYER_REACH_RADIUS) {
+          console.log('close enough');
         }
-        else if (meshName == "hitbox_gym"){
-          const gym = mapGyms.current.find((obj) => {
-            return obj.meshHitbox == pointerInfo.pickInfo?.pickedMesh;
-          });
-
-          if (!gym) return;
-          console.log("Gym touched!");
-          console.log(gym.id);
-        }
-
       }
-    });
 
-    return () => {
-      scene.onPointerObservable.remove(observer);
+      // it's a gym
+
+      else if (meshName == 'hitbox_gym') {
+        const gym = mapGyms.current.find((obj) => {
+          return obj.meshHitbox == pointerInfo.pickInfo?.pickedMesh;
+        });
+
+        if (!gym) return;
+        console.log('Gym touched!', gym.id);
+      }
     }
-  }, []);
+  });
 
   return <></>;
 };
