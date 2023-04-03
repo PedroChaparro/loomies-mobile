@@ -23,6 +23,10 @@ import {
 import { useScenePointerObservable } from '@src/hooks/useScenePointerObservable';
 import { LoomieEnterCaptureView } from './utilsElementInteraction';
 
+// debug
+import { CONFIG } from '@src/services/config.services';
+const { MAP_DEBUG } = CONFIG;
+
 const DELAY_FETCH_WILD_LOOMIES = 4000; // 4 seconds
 
 export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
@@ -126,11 +130,13 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       if (!mesh) return;
 
       // create hitbox
-      const hitbox = Babylon.MeshBuilder.CreateSphere(
+      const hitbox = Babylon.MeshBuilder.CreateCylinder(
         'hitbox_gym',
-        { diameter: 2 },
+        { tessellation: 5, height: 2.5, diameter: 2 },
         scene
       );
+
+      if (!MAP_DEBUG) hitbox.visibility = 0;
 
       // position and rotation
       instantiatedEntriesTranslate(mesh, coordsGlobalToMap(gym.origin));
@@ -194,11 +200,13 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       if (!mesh) return;
 
       // create hitbox
-      const hitbox = Babylon.MeshBuilder.CreateSphere(
+      const hitbox = Babylon.MeshBuilder.CreateCylinder(
         'hitbox_loomie',
-        { diameter: 2 },
+        { tessellation: 5, height: 2.5, diameter: 2 },
         scene
       );
+
+      if (!MAP_DEBUG) hitbox.visibility = 0;
 
       // position and rotation
       instantiatedEntriesTranslate(
@@ -257,7 +265,7 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       if (!pointerInfo.pickInfo.pickedMesh) return;
 
       const meshName = pointerInfo.pickInfo.pickedMesh.name;
-      console.log('Touched ', meshName);
+      console.log('Info: Touched', meshName);
 
       // it's a Loomie
 
