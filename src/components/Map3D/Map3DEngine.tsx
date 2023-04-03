@@ -33,7 +33,7 @@ import { createGradientPlane } from './utilsVertex';
 import { iMapBundleVertexData, generateRoad } from './utilsMapBuilder';
 
 // modules
-import { MapElementManager } from './MapElementManager';
+import { MapElementManager } from '@src/components/MapElementManager/MapElementManager';
 
 // debug
 import { CONFIG } from '@src/services/config.services';
