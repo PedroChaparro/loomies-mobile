@@ -272,7 +272,6 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       }
 
       // it's a gym
-
       else if (meshName == 'hitbox_gym') {
         const gym = mapGyms.current.find((obj) => {
           return obj.meshHitbox == pointerInfo.pickInfo?.pickedMesh;

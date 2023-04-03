@@ -142,14 +142,11 @@ export const requestWildLoomieExists = async (
     }
 
     // make request
-    const response = await Axios.get(
-      `${API_URL}/loomies/exists/${loomieId}`,
-      {
-        headers: {
-          'Access-Token': accessToken
-        }
+    const response = await Axios.get(`${API_URL}/loomies/exists/${loomieId}`, {
+      headers: {
+        'Access-Token': accessToken
       }
-    );
+    });
 
     // cast check
     const rawData: object = response.data;
@@ -159,7 +156,6 @@ export const requestWildLoomieExists = async (
 
     // Loomie exists
     return true;
-
   } catch (error) {
     // If 401, try to refresh the access token and retry the request
     if (
