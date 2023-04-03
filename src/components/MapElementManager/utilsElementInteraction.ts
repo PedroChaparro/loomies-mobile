@@ -1,3 +1,5 @@
+import { navigate } from '@src/navigation/RootNavigation';
+
 import { iPosition } from '@src/types/mapInterfaces';
 import { Vector2 } from '@babylonjs/core';
 import { requestWildLoomieExists } from '@src/services/map.services';
@@ -15,21 +17,19 @@ export const LoomieEnterCaptureView = async (
   const from = new Vector2(loomiePosition.lon, loomiePosition.lat);
   const to = new Vector2(userPosition.lon, userPosition.lat);
 
-  console.log(Vector2.Distance(from, to));
-
   if (Vector2.Distance(from, to) >= PLAYER_REACH_RADIUS) {
-    console.log('Too far away');
+    console.log('INFO: Too far away from Loomie ', Vector2.Distance(from, to));
     return;
   }
 
   // check loomie still exists
 
   if (!(await requestWildLoomieExists(loomieId))) {
-    console.log("Loomie doesn't exists");
+    console.log("INFO: Loomie doesn't exists");
     return;
   }
 
-  console.log("Enter capture view");
+  // Navigate to capture view
 
-  // return true to go to capture view
+  navigate('Capture', { loomieId });
 };

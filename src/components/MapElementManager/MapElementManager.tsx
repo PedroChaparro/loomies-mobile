@@ -249,25 +249,15 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
 
   // add event on 3D model click
 
-  useInterval( () => {
-    //console.log(userPosition);
-  }, 1000)
-
   useScenePointerObservable(props.scene, (pointerInfo: Babylon.PointerInfo) => {
-    console.log(userPosition);
     if (pointerInfo.type == Babylon.PointerEventTypes.POINTERTAP) {
-      console.log('A2');
       if (!userPosition) return;
-      console.log('A3');
       if (!pointerInfo.pickInfo) return;
-      console.log('A4');
       if (!pointerInfo.pickInfo.hit) return;
-      console.log('A5');
       if (!pointerInfo.pickInfo.pickedMesh) return;
 
       const meshName = pointerInfo.pickInfo.pickedMesh.name;
-
-      console.log('mememe');
+      console.log('Touched ', meshName);
 
       // it's a Loomie
 
@@ -277,7 +267,6 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
         });
 
         if (!loomie) return;
-        console.log('Loomie touched!', loomie.id);
 
         LoomieEnterCaptureView(userPosition, loomie.origin, loomie.id);
       }
