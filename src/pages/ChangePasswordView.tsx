@@ -30,7 +30,8 @@ export const ChangePasswordView = ({
     initialValues: {
       code: '',
       email: email || '',
-      password: ''
+      password: '',
+      confirm_your_password: ''
     },
     validationSchema: Yup.object({
       password: Yup.string()
@@ -38,7 +39,10 @@ export const ChangePasswordView = ({
           /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[)(;.,\][}{_=@$!¡#%*?¿&^+-/<>|~'"])[A-Za-z\d)(;.,\][}{_=@$!¡#%*?¿&^+-/<>|~'"]{8,}$/,
           'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character'
         )
+        .required(),
+      confirm_your_password: Yup.string()
         .required()
+        .oneOf([Yup.ref('password')], 'Passwords must match')
     }),
     onSubmit: async (values) => {
       const [response, error] = await resetPasswordRequest(
@@ -72,7 +76,7 @@ export const ChangePasswordView = ({
           <TextInput
             style={{ ...Styles.formField, marginTop: 8 }}
             placeholderTextColor={'#9C9C9C'}
-            placeholder='Insert Your Code'
+            placeholder='Security Code Here'
             autoCapitalize='none'
             value={formik.values.code}
             onChangeText={formik.handleChange('code')}
@@ -80,7 +84,7 @@ export const ChangePasswordView = ({
           <TextInput
             style={{ ...Styles.formField, marginTop: 8 }}
             placeholderTextColor={'#9C9C9C'}
-            placeholder='********'
+            placeholder='Insert Your New Password Here'
             secureTextEntry={true}
             value={formik.values.password}
             onChangeText={formik.handleChange('password')}
@@ -88,6 +92,20 @@ export const ChangePasswordView = ({
           {/* Shows the password validation error if exists */}
           {formik.errors.password && (
             <Text style={Styles.formError}>*{formik.errors.password}</Text>
+          )}
+          <TextInput
+            style={{ ...Styles.formField, marginTop: 8 }}
+            placeholderTextColor={'#9C9C9C'}
+            placeholder='Confirm Your New Password Here'
+            secureTextEntry={true}
+            value={formik.values.confirm_your_password}
+            onChangeText={formik.handleChange('confirm_your_password')}
+          />
+          {/* Shows the Confirm password validation error if exists */}
+          {formik.errors.confirm_your_password && (
+            <Text style={Styles.formError}>
+              *{formik.errors.confirm_your_password}
+            </Text>
           )}
           <CustomButton
             title='Change Password'
@@ -125,7 +143,7 @@ const Styles = StyleSheet.create({
   form: {
     alignSelf: 'center',
     backgroundColor: '#fff',
-    marginTop: -64,
+    marginTop: -80,
     padding: 12,
     width: '80%'
   },
