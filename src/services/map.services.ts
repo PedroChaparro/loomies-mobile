@@ -2,6 +2,7 @@ import Axios from 'axios';
 
 import {
   iRequestGym,
+  iRequestWildLoomieExists,
   iRequestNearGyms,
   iRequestNearLoomies
 } from '@src/types/requestInterfaces';
@@ -124,5 +125,53 @@ export const requestWildLoomies = async (
     }
 
     return null;
+  }
+};
+
+// Check wild loomie still exists
+
+export const requestWildLoomieExists = async (
+  loomieId: string,
+  failed = false
+): Promise<boolean> => {
+  try {
+    // get access token from the storage
+    const [accessToken, error] = await getStorageData('accessToken');
+    if (error || !accessToken) {
+      return false;
+    }
+
+    // make request
+    const response = await Axios.get(
+      `${API_URL}/loomies/exists/${loomieId}`,
+      {
+        headers: {
+          'Access-Token': accessToken
+        }
+      }
+    );
+
+    // cast check
+    const rawData: object = response.data;
+    if ((rawData as iRequestWildLoomieExists) === undefined) {
+      return false;
+    }
+
+    // Loomie exists
+    return true;
+
+  } catch (error) {
+    // If 401, try to refresh the access token and retry the request
+    if (
+      Axios.isAxiosError(error) &&
+      error.response?.status === 401 &&
+      !failed
+    ) {
+      await refreshRequest();
+      return await requestWildLoomieExists(loomieId, true);
+    }
+
+    // Loomie doesn't exists
+    return false;
   }
 };

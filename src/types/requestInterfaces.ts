@@ -18,3 +18,9 @@ export interface iRequestNearLoomies {
   message: string;
   loomies: TWildLoomies[];
 }
+
+export interface iRequestWildLoomieExists {
+  error: boolean;
+  message: string;
+  loomie_id: string;
+}
