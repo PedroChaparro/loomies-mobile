@@ -1,22 +1,25 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFormik } from 'formik';
 import { NavigationProp, RouteProp } from '@react-navigation/core';
 import { CustomButton } from '../components/CustomButton';
-import { newCodeRequest } from '../services/user.services';
+import { resetCodePasswordRequest } from '../services/user.services';
 import { useToastAlert } from '../hooks/useToastAlert';
 
-interface NewCodeViewProps {
+interface ResetPasswordViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   navigation?: NavigationProp<any, any>;
-  route?: RouteProp<{ params: { email: string } }, 'params'>;
+  route?: RouteProp<{ params: { email?: string } }, 'params'>;
 }
 
-export const NewCodeView = ({ navigation, route }: NewCodeViewProps) => {
+export const ResetPasswordView = ({
+  navigation,
+  route
+}: ResetPasswordViewProps) => {
   const { showSuccessToast, showErrorToast } = useToastAlert();
 
-  const redirectToEmailVal = () => {
-    navigation?.navigate('EmailValidation');
+  const redirectToChangePassword = () => {
+    navigation?.navigate('ChangePassword', { email: formik.values.email });
   };
 
   // Try to get the email from the params
@@ -26,21 +29,20 @@ export const NewCodeView = ({ navigation, route }: NewCodeViewProps) => {
     initialValues: {
       email: email || ''
     },
-    // todo
     onSubmit: async (values) => {
-      const [response, error] = await newCodeRequest(values.email);
+      const [response, error] = await resetCodePasswordRequest(values.email);
       if (error && response?.message) {
         showErrorToast(response?.message);
       } else {
         showSuccessToast(response?.message);
-        redirectToEmailVal();
+        redirectToChangePassword();
       }
     }
   });
   return (
     <View style={Styles.container}>
       <View style={Styles.header}>
-        <Text style={Styles.headerTitle}>REQUEST A NEW CODE</Text>
+        <Text style={Styles.headerTitle}>Reset Your Password</Text>
       </View>
       <View style={Styles.footer}>
         <View style={Styles.form}>
@@ -53,17 +55,10 @@ export const NewCodeView = ({ navigation, route }: NewCodeViewProps) => {
             onChangeText={formik.handleChange('email')}
           />
           <CustomButton
-            title='Send me a new code!'
+            title='Send me a code!'
             type='primary'
             callback={formik.handleSubmit}
           />
-        </View>
-        <View style={Styles.redirect}>
-          <Pressable onPress={redirectToEmailVal}>
-            <Text style={Styles.redirectText}>
-              Found your code? Click here and validate it!
-            </Text>
-          </Pressable>
         </View>
       </View>
     </View>
@@ -103,14 +98,5 @@ const Styles = StyleSheet.create({
     backgroundColor: '#ECECEC',
     color: '#6C6C6C',
     paddingHorizontal: 16
-  },
-  redirect: {
-    alignSelf: 'center',
-    flex: 1,
-    justifyContent: 'flex-end',
-    padding: 16
-  },
-  redirectText: {
-    color: '#5C5C5C'
   }
 });
