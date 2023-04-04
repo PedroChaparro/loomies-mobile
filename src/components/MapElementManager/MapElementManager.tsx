@@ -29,6 +29,10 @@ const { MAP_DEBUG } = CONFIG;
 
 const DELAY_FETCH_WILD_LOOMIES = 10000; // 4 seconds
 
+const HITBOX_HEIGHT_GYM = 4.2;
+const HITBOX_HEIGHT_LOOMIE = 2.3;
+const HITBOX_DIAMETER = 1.8;
+
 export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
   props
 ) => {
@@ -132,7 +136,7 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       // create hitbox
       const hitbox = Babylon.MeshBuilder.CreateCylinder(
         'hitbox_gym',
-        { tessellation: 5, height: 2.5, diameter: 2 },
+        { tessellation: 5, height: HITBOX_HEIGHT_GYM, diameter: HITBOX_DIAMETER },
         scene
       );
 
@@ -142,6 +146,7 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       instantiatedEntriesTranslate(mesh, coordsGlobalToMap(gym.origin));
       instantiatedEntriesRotate(mesh, Math.random() * 2 * Math.PI);
       hitbox.position = coordsGlobalToMap(gym.origin);
+      hitbox.position.y = HITBOX_HEIGHT_GYM / 2;
 
       mapGyms.current.push({
         mesh: mesh,
@@ -202,7 +207,7 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       // create hitbox
       const hitbox = Babylon.MeshBuilder.CreateCylinder(
         'hitbox_loomie',
-        { tessellation: 5, height: 2.5, diameter: 2 },
+        { tessellation: 5, height: HITBOX_HEIGHT_LOOMIE, diameter: HITBOX_DIAMETER },
         scene
       );
 
@@ -218,6 +223,7 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
         lat: loomie.latitude,
         lon: loomie.longitude
       });
+      hitbox.position.y = HITBOX_HEIGHT_LOOMIE / 2;
 
       mapWildLoomies.current.push({
         mesh: mesh,
@@ -237,11 +243,13 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
     mapGyms.current.forEach((obj) => {
       instantiatedEntriesTranslate(obj.mesh, coordsGlobalToMap(obj.origin));
       obj.meshHitbox.position = coordsGlobalToMap(obj.origin);
+      obj.meshHitbox.position.y = HITBOX_HEIGHT_GYM / 2;
     });
 
     mapWildLoomies.current.forEach((obj) => {
       instantiatedEntriesTranslate(obj.mesh, coordsGlobalToMap(obj.origin));
       obj.meshHitbox.position = coordsGlobalToMap(obj.origin);
+      obj.meshHitbox.position.y = HITBOX_HEIGHT_LOOMIE / 2;
     });
 
     // update gyms when tiles change
