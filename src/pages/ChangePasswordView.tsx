@@ -68,7 +68,7 @@ export const ChangePasswordView = ({
           <TextInput
             style={Styles.formField}
             placeholderTextColor={'#9C9C9C'}
-            placeholder='Email'
+            placeholder='Your email here'
             autoCapitalize='none'
             value={formik.values.email}
             onChangeText={formik.handleChange('email')}
@@ -76,7 +76,7 @@ export const ChangePasswordView = ({
           <TextInput
             style={{ ...Styles.formField, marginTop: 8 }}
             placeholderTextColor={'#9C9C9C'}
-            placeholder='Security Code Here'
+            placeholder='Security code here'
             autoCapitalize='none'
             value={formik.values.code}
             onChangeText={formik.handleChange('code')}
@@ -84,7 +84,7 @@ export const ChangePasswordView = ({
           <TextInput
             style={{ ...Styles.formField, marginTop: 8 }}
             placeholderTextColor={'#9C9C9C'}
-            placeholder='Insert Your New Password Here'
+            placeholder='Your new password here'
             secureTextEntry={true}
             value={formik.values.password}
             onChangeText={formik.handleChange('password')}
@@ -96,7 +96,7 @@ export const ChangePasswordView = ({
           <TextInput
             style={{ ...Styles.formField, marginTop: 8 }}
             placeholderTextColor={'#9C9C9C'}
-            placeholder='Confirm Your New Password Here'
+            placeholder='Confirm your new password here'
             secureTextEntry={true}
             value={formik.values.confirm_your_password}
             onChangeText={formik.handleChange('confirm_your_password')}
@@ -132,7 +132,7 @@ const Styles = StyleSheet.create({
     color: '#fff',
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 96,
+    marginBottom: 145,
     textAlign: 'center',
     textTransform: 'uppercase'
   },
@@ -143,7 +143,7 @@ const Styles = StyleSheet.create({
   form: {
     alignSelf: 'center',
     backgroundColor: '#fff',
-    marginTop: -80,
+    marginTop: -125,
     padding: 12,
     width: '80%'
   },
