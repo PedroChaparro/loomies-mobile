@@ -99,3 +99,75 @@ export const newCodeRequest = async (
     return [null, true];
   }
 };
+
+export const getItemsService = async (
+  callNumber = 1
+): Promise<[any, boolean]> => {
+  try {
+    const [accessToken, error] = await getStorageData('accessToken');
+    if (error || !accessToken) return [null, true];
+
+    const response = await Axios.get(`${API_URL}/user/items`, {
+      headers: {
+        'Access-Token': accessToken
+      }
+    });
+
+    return [response.data, false];
+  } catch (err) {
+    if (
+      Axios.isAxiosError(err) &&
+      err.response?.status === 401 &&
+      callNumber === 1
+    ) {
+      await refreshRequest();
+      return await getItemsService(2);
+    }
+
+    if (Axios.isAxiosError(err)) {
+      return [err.response?.data, true];
+    }
+
+    return [null, true];
+  }
+};
+
+export const resetCodePasswordRequest = async (
+  email: string
+): Promise<[any, boolean]> => {
+  try {
+    const response = await Axios.post(`${API_URL}/user/password/code`, {
+      email
+    });
+    return [response.data, false];
+  } catch (error) {
+    // Return the custom error message if exists
+    if (Axios.isAxiosError(error)) {
+      return [error.response?.data, true];
+    }
+
+    return [null, true];
+  }
+};
+
+export const resetPasswordRequest = async (
+  resetPassCode: string,
+  email: string,
+  password: string
+): Promise<[any, boolean]> => {
+  try {
+    const response = await Axios.put(`${API_URL}/user/password`, {
+      resetPassCode,
+      email,
+      password
+    });
+    return [response.data, false];
+  } catch (error) {
+    // Return the custom error message if exists
+    if (Axios.isAxiosError(error)) {
+      return [error.response?.data, true];
+    }
+
+    return [null, true];
+  }
+};

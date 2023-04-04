@@ -10,6 +10,8 @@ import { MapProvider } from '@src/context/MapProvider';
 import { ModelProvider } from '@src/context/ModelProvider';
 import { EmailValidationView } from '../pages/EmailValidationView';
 import { NewCodeView } from '../pages/NewCodeView';
+import { ResetPasswordView } from '../pages/ResetPasswordView';
+import { ChangePasswordView } from '../pages/ChangePasswordView';
 
 const Stack = createStackNavigator();
 export const StackNavigation = () => {
@@ -35,6 +37,8 @@ export const StackNavigation = () => {
             component={EmailValidationView}
           />
           <Stack.Screen name='NewCode' component={NewCodeView} />
+          <Stack.Screen name='ResetPassword' component={ResetPasswordView} />
+          <Stack.Screen name='ChangePassword' component={ChangePasswordView} />
           {/* Views that includes the bottom tabs navigation */}
           <Stack.Screen name='Application' component={BottomNavigation} />
         </Stack.Navigator>

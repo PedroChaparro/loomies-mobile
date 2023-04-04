@@ -1,68 +1,67 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useFormik } from 'formik';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import * as Yup from 'yup';
-import { NavigationProp } from '@react-navigation/core';
+import { useFormik } from 'formik';
+import { NavigationProp, RouteProp } from '@react-navigation/core';
 import { CustomButton } from '../components/CustomButton';
-import { signupRequest } from '../services/user.services';
+import { resetPasswordRequest } from '../services/user.services';
 import { useToastAlert } from '../hooks/useToastAlert';
 
-interface SignupProps {
+interface ChangePasswordViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  navigation: NavigationProp<any, any>;
+  navigation?: NavigationProp<any, any>;
+  route?: RouteProp<{ params: { email: string } }, 'params'>;
 }
 
-export const Signup = ({ navigation }: SignupProps) => {
+export const ChangePasswordView = ({
+  navigation,
+  route
+}: ChangePasswordViewProps) => {
   const { showSuccessToast, showErrorToast } = useToastAlert();
 
   const redirectToLogin = () => {
-    navigation.navigate('Login');
+    navigation?.navigate('Login', { email: formik.values.email });
   };
-  const redirectToEmailValidation = () => {
-    // Redirect to the validation screen and pass the email as a param
-    // to auto fill the input
-    navigation.navigate('EmailValidation', { email: formik.values.email });
-  };
+
+  // Try to get the email from the params
+  const email = route?.params?.email || '';
 
   const formik = useFormik({
     initialValues: {
-      'email': '',
-      'username': '',
-      'password': '',
-      'password confirmation': ''
+      code: '',
+      email: email || '',
+      password: '',
+      confirm_your_password: ''
     },
     validationSchema: Yup.object({
-      'email': Yup.string().email().required(),
-      'username': Yup.string().required(),
-      'password': Yup.string()
+      password: Yup.string()
         .matches(
           /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[)(;.,\][}{_=@$!¡#%*?¿&^+-/<>|~'"])[A-Za-z\d)(;.,\][}{_=@$!¡#%*?¿&^+-/<>|~'"]{8,}$/,
           'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character'
         )
         .required(),
-      'password confirmation': Yup.string()
+      confirm_your_password: Yup.string()
         .required()
         .oneOf([Yup.ref('password')], 'Passwords must match')
     }),
-
     onSubmit: async (values) => {
-      const [response, error] = await signupRequest(
+      const [response, error] = await resetPasswordRequest(
+        values.code,
         values.email,
-        values.username,
         values.password
       );
       if (error && response?.message) {
         showErrorToast(response?.message);
       } else {
-        showSuccessToast('User created succesfully, now confirm your Email');
-        redirectToEmailValidation();
+        showSuccessToast(response?.message);
+        redirectToLogin();
       }
     }
   });
   return (
     <View style={Styles.container}>
       <View style={Styles.header}>
-        <Text style={Styles.headerTitle}>SIGNUP</Text>
+        <Text style={Styles.headerTitle}>Reset Your Password</Text>
       </View>
       <View style={Styles.footer}>
         <View style={Styles.form}>
@@ -74,26 +73,18 @@ export const Signup = ({ navigation }: SignupProps) => {
             value={formik.values.email}
             onChangeText={formik.handleChange('email')}
           />
-          {/* Shows the email validation error if exists */}
-          {formik.errors.email && (
-            <Text style={Styles.formError}>*{formik.errors.email}</Text>
-          )}
           <TextInput
             style={{ ...Styles.formField, marginTop: 8 }}
             placeholderTextColor={'#9C9C9C'}
-            placeholder='Your username here'
+            placeholder='Security code here'
             autoCapitalize='none'
-            value={formik.values.username}
-            onChangeText={formik.handleChange('username')}
+            value={formik.values.code}
+            onChangeText={formik.handleChange('code')}
           />
-          {/* Shows the username validation error if exists */}
-          {formik.errors.username && (
-            <Text style={Styles.formError}>*{formik.errors.username}</Text>
-          )}
           <TextInput
             style={{ ...Styles.formField, marginTop: 8 }}
             placeholderTextColor={'#9C9C9C'}
-            placeholder='Your password here'
+            placeholder='Your new password here'
             secureTextEntry={true}
             value={formik.values.password}
             onChangeText={formik.handleChange('password')}
@@ -105,29 +96,22 @@ export const Signup = ({ navigation }: SignupProps) => {
           <TextInput
             style={{ ...Styles.formField, marginTop: 8 }}
             placeholderTextColor={'#9C9C9C'}
-            placeholder='Confirm your password here'
+            placeholder='Confirm your new password here'
             secureTextEntry={true}
-            value={formik.values['password confirmation']}
-            onChangeText={formik.handleChange('password confirmation')}
+            value={formik.values.confirm_your_password}
+            onChangeText={formik.handleChange('confirm_your_password')}
           />
-          {/* Shows the password confirmation validation error if exists */}
-          {formik.errors['password confirmation'] && (
+          {/* Shows the Confirm password validation error if exists */}
+          {formik.errors.confirm_your_password && (
             <Text style={Styles.formError}>
-              *{formik.errors['password confirmation']}
+              *{formik.errors.confirm_your_password}
             </Text>
           )}
           <CustomButton
-            title='Create account'
+            title='Change Password'
             type='primary'
             callback={formik.handleSubmit}
           />
-        </View>
-        <View style={Styles.redirect}>
-          <Pressable onPress={redirectToLogin}>
-            <Text style={Styles.redirectText}>
-              Already have an account? Login
-            </Text>
-          </Pressable>
         </View>
       </View>
     </View>
@@ -173,14 +157,5 @@ const Styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
     textTransform: 'capitalize'
-  },
-  redirect: {
-    alignSelf: 'center',
-    flex: 1,
-    justifyContent: 'flex-end',
-    padding: 16
-  },
-  redirectText: {
-    color: '#5C5C5C'
   }
 });

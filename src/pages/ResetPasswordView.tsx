@@ -1,30 +1,25 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFormik } from 'formik';
 import { NavigationProp, RouteProp } from '@react-navigation/core';
 import { CustomButton } from '../components/CustomButton';
-import { codeValidationRequest } from '../services/user.services';
+import { resetCodePasswordRequest } from '../services/user.services';
 import { useToastAlert } from '../hooks/useToastAlert';
 
-interface EmailValidationViewProps {
+interface ResetPasswordViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   navigation?: NavigationProp<any, any>;
-  route?: RouteProp<{ params: { email: string } }, 'params'>;
+  route?: RouteProp<{ params: { email?: string } }, 'params'>;
 }
 
-export const EmailValidationView = ({
+export const ResetPasswordView = ({
   navigation,
   route
-}: EmailValidationViewProps) => {
+}: ResetPasswordViewProps) => {
   const { showSuccessToast, showErrorToast } = useToastAlert();
 
-  const redirectToLogin = () => {
-    navigation?.navigate('Login');
-  };
-
-  const redirectToNewCode = () => {
-    // Redirect to the validation screen and pass the email as a param
-    navigation?.navigate('NewCode', { email: formik.values.email });
+  const redirectToChangePassword = () => {
+    navigation?.navigate('ChangePassword', { email: formik.values.email });
   };
 
   // Try to get the email from the params
@@ -32,26 +27,22 @@ export const EmailValidationView = ({
 
   const formik = useFormik({
     initialValues: {
-      email: email || '',
-      code: ''
+      email: email || ''
     },
     onSubmit: async (values) => {
-      const [response, error] = await codeValidationRequest(
-        values.email,
-        values.code
-      );
+      const [response, error] = await resetCodePasswordRequest(values.email);
       if (error && response?.message) {
         showErrorToast(response?.message);
       } else {
         showSuccessToast(response?.message);
-        redirectToLogin();
+        redirectToChangePassword();
       }
     }
   });
   return (
     <View style={Styles.container}>
       <View style={Styles.header}>
-        <Text style={Styles.headerTitle}>Validate account</Text>
+        <Text style={Styles.headerTitle}>Reset Your Password</Text>
       </View>
       <View style={Styles.footer}>
         <View style={Styles.form}>
@@ -63,26 +54,11 @@ export const EmailValidationView = ({
             value={formik.values.email}
             onChangeText={formik.handleChange('email')}
           />
-          <TextInput
-            style={{ ...Styles.formField, marginTop: 8 }}
-            placeholderTextColor={'#9C9C9C'}
-            placeholder='Your Code'
-            autoCapitalize='none'
-            value={formik.values.code}
-            onChangeText={formik.handleChange('code')}
-          />
           <CustomButton
-            title='Validate'
+            title='Send me a code!'
             type='primary'
             callback={formik.handleSubmit}
           />
-        </View>
-        <View style={Styles.redirect}>
-          <Pressable onPress={redirectToNewCode}>
-            <Text style={Styles.redirectText}>
-              Lost your code? Click here and get another one!
-            </Text>
-          </Pressable>
         </View>
       </View>
     </View>
@@ -122,14 +98,5 @@ const Styles = StyleSheet.create({
     backgroundColor: '#ECECEC',
     color: '#6C6C6C',
     paddingHorizontal: 16
-  },
-  redirect: {
-    alignSelf: 'center',
-    flex: 1,
-    justifyContent: 'flex-end',
-    padding: 16
-  },
-  redirectText: {
-    color: '#5C5C5C'
   }
 });

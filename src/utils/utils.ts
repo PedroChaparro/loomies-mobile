@@ -18,6 +18,7 @@ export const colors: {
 export const images: {
   [key: string]: ImageSourcePropType;
 } = {
+  // Loomies
   '001': require('@assets/images/loomies/001.png'),
   '002': require('@assets/images/loomies/002.png'),
   '003': require('@assets/images/loomies/003.png'),
@@ -36,5 +37,16 @@ export const images: {
   '016': require('@assets/images/loomies/016.png'),
   '017': require('@assets/images/loomies/017.png'),
   '018': require('@assets/images/loomies/018.png'),
-  '019': require('@assets/images/loomies/019.png')
+  '019': require('@assets/images/loomies/019.png'),
+  // Objects
+  'O-001': require('@assets/images/items/001.png'),
+  'O-002': require('@assets/images/items/002.png'),
+  'O-003': require('@assets/images/items/003.png'),
+  'O-004': require('@assets/images/items/004.png'),
+  'O-005': require('@assets/images/items/005.png'),
+  'O-006': require('@assets/images/items/006.png'),
+  'O-007': require('@assets/images/items/007.png'),
+  'O-008': require('@assets/images/items/008.png'),
+  'O-009': require('@assets/images/items/009.png'),
+  'O-010': require('@assets/images/items/010.png')
 };
