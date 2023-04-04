@@ -30,6 +30,9 @@ export const Login = ({ navigation }: LoginProps) => {
   const redirectToEmailVal = () => {
     navigation.navigate('EmailValidation', { email: formik.values.email });
   };
+  const redirectToResetPassword = () => {
+    navigation.navigate('ResetPassword', { email: formik.values.email });
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -97,6 +100,11 @@ export const Login = ({ navigation }: LoginProps) => {
               Does not have an account? Sign-up
             </Text>
           </Pressable>
+          <Pressable onPress={redirectToResetPassword}>
+            <Text style={Styles.redirectText}>
+              Forgot your Password? Reset Your Password
+            </Text>
+          </Pressable>
         </View>
       </View>
     </View>
@@ -150,6 +158,8 @@ const Styles = StyleSheet.create({
     padding: 16
   },
   redirectText: {
-    color: '#5C5C5C'
+    color: '#5C5C5C',
+    textAlign: 'center',
+    padding: 4
   }
 });
