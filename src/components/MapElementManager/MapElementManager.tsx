@@ -136,7 +136,11 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       // create hitbox
       const hitbox = Babylon.MeshBuilder.CreateCylinder(
         'hitbox_gym',
-        { tessellation: 5, height: HITBOX_HEIGHT_GYM, diameter: HITBOX_DIAMETER },
+        {
+          tessellation: 5,
+          height: HITBOX_HEIGHT_GYM,
+          diameter: HITBOX_DIAMETER
+        },
         scene
       );
 
@@ -207,7 +211,11 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       // create hitbox
       const hitbox = Babylon.MeshBuilder.CreateCylinder(
         'hitbox_loomie',
-        { tessellation: 5, height: HITBOX_HEIGHT_LOOMIE, diameter: HITBOX_DIAMETER },
+        {
+          tessellation: 5,
+          height: HITBOX_HEIGHT_LOOMIE,
+          diameter: HITBOX_DIAMETER
+        },
         scene
       );
 
