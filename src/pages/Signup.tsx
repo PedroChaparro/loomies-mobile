@@ -26,19 +26,23 @@ export const Signup = ({ navigation }: SignupProps) => {
 
   const formik = useFormik({
     initialValues: {
-      email: '',
-      username: '',
-      password: ''
+      'email': '',
+      'username': '',
+      'password': '',
+      'password confirmation': ''
     },
     validationSchema: Yup.object({
-      email: Yup.string().email().required(),
-      username: Yup.string().required(),
-      password: Yup.string()
+      'email': Yup.string().email().required(),
+      'username': Yup.string().required(),
+      'password': Yup.string()
         .matches(
           /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[)(;.,\][}{_=@$!¡#%*?¿&^+-/<>|~'"])[A-Za-z\d)(;.,\][}{_=@$!¡#%*?¿&^+-/<>|~'"]{8,}$/,
           'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character'
         )
+        .required(),
+      'password confirmation': Yup.string()
         .required()
+        .oneOf([Yup.ref('password')], 'Passwords must match')
     }),
 
     onSubmit: async (values) => {
@@ -65,7 +69,7 @@ export const Signup = ({ navigation }: SignupProps) => {
           <TextInput
             style={Styles.formField}
             placeholderTextColor={'#9C9C9C'}
-            placeholder='Email'
+            placeholder='Your email here'
             autoCapitalize='none'
             value={formik.values.email}
             onChangeText={formik.handleChange('email')}
@@ -77,7 +81,7 @@ export const Signup = ({ navigation }: SignupProps) => {
           <TextInput
             style={{ ...Styles.formField, marginTop: 8 }}
             placeholderTextColor={'#9C9C9C'}
-            placeholder='Username'
+            placeholder='Your username here'
             autoCapitalize='none'
             value={formik.values.username}
             onChangeText={formik.handleChange('username')}
@@ -89,7 +93,7 @@ export const Signup = ({ navigation }: SignupProps) => {
           <TextInput
             style={{ ...Styles.formField, marginTop: 8 }}
             placeholderTextColor={'#9C9C9C'}
-            placeholder='********'
+            placeholder='Your password here'
             secureTextEntry={true}
             value={formik.values.password}
             onChangeText={formik.handleChange('password')}
@@ -97,6 +101,20 @@ export const Signup = ({ navigation }: SignupProps) => {
           {/* Shows the password validation error if exists */}
           {formik.errors.password && (
             <Text style={Styles.formError}>*{formik.errors.password}</Text>
+          )}
+          <TextInput
+            style={{ ...Styles.formField, marginTop: 8 }}
+            placeholderTextColor={'#9C9C9C'}
+            placeholder='Confirm your password here'
+            secureTextEntry={true}
+            value={formik.values['password confirmation']}
+            onChangeText={formik.handleChange('password confirmation')}
+          />
+          {/* Shows the password confirmation validation error if exists */}
+          {formik.errors['password confirmation'] && (
+            <Text style={Styles.formError}>
+              *{formik.errors['password confirmation']}
+            </Text>
           )}
           <CustomButton
             title='Create account'
@@ -130,7 +148,7 @@ const Styles = StyleSheet.create({
     color: '#fff',
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 96,
+    marginBottom: 145,
     textAlign: 'center',
     textTransform: 'uppercase'
   },
@@ -141,7 +159,7 @@ const Styles = StyleSheet.create({
   form: {
     alignSelf: 'center',
     backgroundColor: '#fff',
-    marginTop: -64,
+    marginTop: -125,
     padding: 12,
     width: '80%'
   },
