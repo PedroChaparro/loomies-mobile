@@ -40,6 +40,11 @@ export const ModelProvider = (props: { children: ReactNode }) => {
         const container = await LoadModel(MODEL_RESOURCE[name]);
         if (!container) throw "ERROR: Couldn't load model";
 
+        // make it non pickable by default
+        container.meshes.forEach((mesh) => {
+          mesh.isPickable = false;
+        });
+
         models.current[name] = container;
         return container;
       }

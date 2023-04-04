@@ -19,9 +19,19 @@ import { useInterval } from '@src/hooks/useInterval';
 import {
   instantiatedEntriesRotate,
   instantiatedEntriesTranslate
-} from './utilsVertex';
+} from '@src/components/Map3D/utilsVertex';
+import { useScenePointerObservable } from '@src/hooks/useScenePointerObservable';
+import { LoomieEnterCaptureView } from './utilsElementInteraction';
 
-const DELAY_FETCH_WILD_LOOMIES = 4000; // 4 seconds
+// debug
+import { CONFIG } from '@src/services/config.services';
+const { MAP_DEBUG } = CONFIG;
+
+const DELAY_FETCH_WILD_LOOMIES = 10000; // 4 seconds
+
+const HITBOX_HEIGHT_GYM = 4.2;
+const HITBOX_HEIGHT_LOOMIE = 2.3;
+const HITBOX_DIAMETER = 1.8;
 
 export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
   props
@@ -96,6 +106,8 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
         }).length
       ) {
         obj.mesh.dispose();
+        obj.meshHitbox.dispose();
+
         return false;
       }
 
@@ -121,12 +133,28 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       const mesh = await instantiateModel('MAP_GYM', scene);
       if (!mesh) return;
 
+      // create hitbox
+      const hitbox = Babylon.MeshBuilder.CreateCylinder(
+        'hitbox_gym',
+        {
+          tessellation: 5,
+          height: HITBOX_HEIGHT_GYM,
+          diameter: HITBOX_DIAMETER
+        },
+        scene
+      );
+
+      if (!MAP_DEBUG) hitbox.visibility = 0;
+
       // position and rotation
       instantiatedEntriesTranslate(mesh, coordsGlobalToMap(gym.origin));
       instantiatedEntriesRotate(mesh, Math.random() * 2 * Math.PI);
+      hitbox.position = coordsGlobalToMap(gym.origin);
+      hitbox.position.y = HITBOX_HEIGHT_GYM / 2;
 
       mapGyms.current.push({
         mesh: mesh,
+        meshHitbox: hitbox,
         origin: gym.origin,
         id: gym.id
       });
@@ -153,6 +181,8 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
         }).length
       ) {
         obj.mesh.dispose();
+        obj.meshHitbox.dispose();
+
         return false;
       }
 
@@ -178,15 +208,34 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       const mesh = await instantiateModel(loomie.serial.toString(), scene);
       if (!mesh) return;
 
+      // create hitbox
+      const hitbox = Babylon.MeshBuilder.CreateCylinder(
+        'hitbox_loomie',
+        {
+          tessellation: 5,
+          height: HITBOX_HEIGHT_LOOMIE,
+          diameter: HITBOX_DIAMETER
+        },
+        scene
+      );
+
+      if (!MAP_DEBUG) hitbox.visibility = 0;
+
       // position and rotation
       instantiatedEntriesTranslate(
         mesh,
         coordsGlobalToMap({ lat: loomie.latitude, lon: loomie.longitude })
       );
       instantiatedEntriesRotate(mesh, Math.random() * 2 * Math.PI);
+      hitbox.position = coordsGlobalToMap({
+        lat: loomie.latitude,
+        lon: loomie.longitude
+      });
+      hitbox.position.y = HITBOX_HEIGHT_LOOMIE / 2;
 
       mapWildLoomies.current.push({
         mesh: mesh,
+        meshHitbox: hitbox,
         origin: {
           lat: loomie.latitude,
           lon: loomie.longitude
@@ -201,10 +250,14 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
 
     mapGyms.current.forEach((obj) => {
       instantiatedEntriesTranslate(obj.mesh, coordsGlobalToMap(obj.origin));
+      obj.meshHitbox.position = coordsGlobalToMap(obj.origin);
+      obj.meshHitbox.position.y = HITBOX_HEIGHT_GYM / 2;
     });
 
     mapWildLoomies.current.forEach((obj) => {
       instantiatedEntriesTranslate(obj.mesh, coordsGlobalToMap(obj.origin));
+      obj.meshHitbox.position = coordsGlobalToMap(obj.origin);
+      obj.meshHitbox.position.y = HITBOX_HEIGHT_LOOMIE / 2;
     });
 
     // update gyms when tiles change
@@ -212,10 +265,47 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
     fetchGyms();
   }, [updateCountTiles]);
 
-  // update at start
+  // interval fetch wild Loomies
+
   useInterval(() => {
     if (readyToDrawElements.current) fetchWildLoomies();
   }, DELAY_FETCH_WILD_LOOMIES);
+
+  // add event on 3D model click
+
+  useScenePointerObservable(props.scene, (pointerInfo: Babylon.PointerInfo) => {
+    if (pointerInfo.type == Babylon.PointerEventTypes.POINTERTAP) {
+      if (!userPosition) return;
+      if (!pointerInfo.pickInfo) return;
+      if (!pointerInfo.pickInfo.hit) return;
+      if (!pointerInfo.pickInfo.pickedMesh) return;
+
+      const meshName = pointerInfo.pickInfo.pickedMesh.name;
+      console.log('Info: Touched', meshName);
+
+      // it's a Loomie
+
+      if (meshName == 'hitbox_loomie') {
+        const loomie = mapWildLoomies.current.find((obj) => {
+          return obj.meshHitbox == pointerInfo.pickInfo?.pickedMesh;
+        });
+
+        if (!loomie) return;
+
+        LoomieEnterCaptureView(userPosition, loomie.origin, loomie.id);
+      }
+
+      // it's a gym
+      else if (meshName == 'hitbox_gym') {
+        const gym = mapGyms.current.find((obj) => {
+          return obj.meshHitbox == pointerInfo.pickInfo?.pickedMesh;
+        });
+
+        if (!gym) return;
+        console.log('Gym touched!', gym.id);
+      }
+    }
+  });
 
   return <></>;
 };
