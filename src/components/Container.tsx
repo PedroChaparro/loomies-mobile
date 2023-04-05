@@ -12,6 +12,6 @@ export const Container = ({ children }: IProps) => {
 
 const Styles = StyleSheet.create({
   container: {
-    padding: 8
+    paddingHorizontal: 8
   }
 });

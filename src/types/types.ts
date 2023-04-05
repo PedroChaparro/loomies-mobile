@@ -46,3 +46,29 @@ export type TWildLoomies = {
   longitude: number;
   generated_at: number; // timestamp
 };
+
+// Shared interface between the items and the loomballs
+export type TInventoryItem = {
+  _id: string;
+  serial: number;
+  type: string;
+  name: string;
+  quantity: number;
+};
+
+export type TItem = {
+  _id: string;
+  serial: number;
+  name: string;
+  description: string;
+  target: string;
+  is_combat_item: boolean;
+  quantity: number;
+};
+
+export type TLoombal = {
+  _id: string;
+  serial: number;
+  name: string;
+  quantity: number;
+};
