@@ -17,32 +17,34 @@ interface iModelProvider {
     _name: string,
     _scene: Babylon.Scene
   ) => Promise<Babylon.Mesh | null>;
+  getModelHeight: (_name: string, _scene: Babylon.Scene) => Promise<number>;
 }
 
 export const ModelContext = createContext<iModelProvider>({
   instantiateModel: async (_name: string, _scene: Babylon.Scene) => null,
-  cloneModel: async (_name: string, _scene: Babylon.Scene) => null
+  cloneModel: async (_name: string, _scene: Babylon.Scene) => null,
+  getModelHeight: async (_name: string, _scene: Babylon.Scene) => 0
 });
 
 export const ModelProvider = (props: { children: ReactNode }) => {
-  const models = useRef<{ [key: string]: { [key: string]: Babylon.AssetContainer }}>({});
+  const models = useRef<{
+    [key: string]: { [key: string]: Babylon.AssetContainer };
+  }>({});
 
   // return model as Babylon.AssetContainer. If not loaded before then load
   const getModelAsset = async (
     name: string,
     scene: Babylon.Scene
   ): Promise<Babylon.AssetContainer | null> => {
-
-    const sceneName: string = scene.metadata.name ;
+    const sceneName: string = scene.metadata.name;
 
     if (!sceneName) return null;
-    if (!models.current[sceneName])
-      models.current[sceneName] = {};
+    if (!models.current[sceneName]) models.current[sceneName] = {};
 
     try {
-
       // model is already loaded
-      const model: Babylon.AssetContainer | undefined = models.current[sceneName][name];
+      const model: Babylon.AssetContainer | undefined =
+        models.current[sceneName][name];
 
       if (!model) {
         // if not, load it
@@ -109,8 +111,29 @@ export const ModelProvider = (props: { children: ReactNode }) => {
     return null;
   };
 
+  const getModelHeight = async (
+    name: string,
+    scene: Babylon.Scene
+  ): Promise<number> => {
+    try {
+      const container = await getModelAsset(name, scene);
+
+      if (container) {
+        // get bounding box from entire hierarchy
+        const boundingBox = container.meshes[0].getHierarchyBoundingVectors();
+        return boundingBox.max.y;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    return 10;
+  };
+
   return (
-    <ModelContext.Provider value={{ instantiateModel, cloneModel }}>
+    <ModelContext.Provider
+      value={{ instantiateModel, cloneModel, getModelHeight }}
+    >
       {props.children}
     </ModelContext.Provider>
   );
