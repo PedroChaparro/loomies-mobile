@@ -33,9 +33,10 @@ const HITBOX_HEIGHT_GYM = 4.2;
 const HITBOX_HEIGHT_LOOMIE = 2.3;
 const HITBOX_DIAMETER = 1.8;
 
-export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
-  props
-) => {
+export const MapElementManager: React.FC<{
+  scene: Babylon.Scene | null;
+  gymsCallback(): void;
+}> = (props) => {
   const { instantiateModel } = useContext(ModelContext);
   const {
     setGyms,

@@ -4,11 +4,15 @@ import { Map3DEngine } from './Map3DEngine';
 import { UserPositionProvider } from '@src/context/UserPositionProvider';
 import { SensorProvider } from '@src/context/SensorProvider';
 
-export const Map3D = () => {
+interface IProps {
+  gymCallback(): void;
+}
+
+export const Map3D = ({ gymCallback }: IProps) => {
   return (
     <UserPositionProvider>
       <SensorProvider>
-        <Map3DEngine />
+        <Map3DEngine gymCallback={gymCallback} />
         <TileManager />
       </SensorProvider>
     </UserPositionProvider>

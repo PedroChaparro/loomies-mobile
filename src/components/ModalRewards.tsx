@@ -1,7 +1,7 @@
 import { images } from '@src/utils/utils';
+import React from 'react';
 import Modal from 'react-native-modal';
-import React, { useState } from 'react';
-import { View, Button, Text, FlatList, StyleSheet, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
 import { CustomButton } from './CustomButton';
 
 interface Item {
@@ -37,14 +37,14 @@ const data: Item[] = [
     quantity: 2
   }
 ];
+
+interface IProps {
+  isVisible: boolean;
+  callBack(): void;
+}
+
 // todo cambiar nombres
-export const ModalRewards = () => {
-  const [isModalVisible, setModalVisible] = useState(false);
-
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
-
+export const ModalRewards = ({ isVisible, callBack }: IProps) => {
   /* const [modalData, setModalData] = useState<Item[]>([]);
 
   const showModal = (location: { id: string }) => {
@@ -78,29 +78,21 @@ export const ModalRewards = () => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <Button title='Show modal' onPress={toggleModal} />
-
-      <Modal isVisible={isModalVisible}>
-        <View style={Styles.container}>
-          <View style={Styles.modal}>
-            <Text style={Styles.modalTitle}>Rewards Claimed 🏆</Text>
-            <FlatList
-              data={data}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id}
-            />
-            <View style={Styles.containerButton}>
-              <CustomButton
-                title='Aceptar'
-                type='primary'
-                callback={toggleModal}
-              />
-            </View>
+    <Modal isVisible={isVisible}>
+      <View style={Styles.container}>
+        <View style={Styles.modal}>
+          <Text style={Styles.modalTitle}>Rewards Claimed 🏆</Text>
+          <FlatList
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+          />
+          <View style={Styles.containerButton}>
+            <CustomButton title='Aceptar' type='primary' callback={callBack} />
           </View>
         </View>
-      </Modal>
-    </View>
+      </View>
+    </Modal>
   );
 };
 

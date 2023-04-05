@@ -4,14 +4,8 @@
  * Manages the Babylon 3D engine
  */
 
-import React, {
-  FunctionComponent,
-  useEffect,
-  useState,
-  useRef,
-  useContext
-} from 'react';
-import { SafeAreaView, View, Button, ViewProps } from 'react-native';
+import React, { useEffect, useState, useRef, useContext } from 'react';
+import { SafeAreaView, View, Button } from 'react-native';
 import { EngineView, useEngine } from '@babylonjs/react-native';
 
 import * as Babylon from '@babylonjs/core';
@@ -59,7 +53,11 @@ const ANI_LERP_SPEED = 0.2;
 const ANI_LERP_MERGE_DISTANCE_POSITION = 0.1;
 const ANI_LERP_MERGE_DISTANCE_ROTATION = Tools.ToRadians(1);
 
-export const Map3DEngine: FunctionComponent<ViewProps> = () => {
+interface IProps {
+  gymCallback(): void;
+}
+
+export const Map3DEngine = ({ gymCallback }: IProps) => {
   // user position debug method
   const { userPosition, debugMovePosition } = useContext(UserPositionContext);
   const { deviceYaw } = useContext(SensorContext);
@@ -488,7 +486,9 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
           </View>
         </View>
       </SafeAreaView>
-      {!!scene && <MapElementManager scene={scene} />}
+      {!!scene && (
+        <MapElementManager gymsCallback={gymCallback} scene={scene} />
+      )}
     </>
   );
 };
