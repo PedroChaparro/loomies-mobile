@@ -171,3 +171,43 @@ export const resetPasswordRequest = async (
     return [null, true];
   }
 };
+
+export const putLoomieTeam = async (
+  loomies: string[],
+  callNumber = 1
+): Promise<[any, boolean]> => {
+  try {
+    const [accessToken, error] = await getStorageData('accessToken');
+    if (error || !accessToken) return [null, true];
+
+    // Axios request with json body and headers
+    const response = await Axios.put(
+      `${API_URL}/user/loomie-team`,
+      {
+        loomie_team: loomies
+      },
+      {
+        headers: {
+          'Access-Token': accessToken
+        }
+      }
+    );
+
+    return [response.data, false];
+  } catch (err) {
+    if (
+      Axios.isAxiosError(err) &&
+      err.response?.status === 401 &&
+      callNumber === 1
+    ) {
+      await refreshRequest();
+      return await putLoomieTeam(loomies, 2);
+    }
+
+    if (Axios.isAxiosError(err)) {
+      return [err.response?.data, true];
+    }
+
+    return [null, true];
+  }
+};

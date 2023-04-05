@@ -71,6 +71,7 @@ export const UserLoomies = ({ navigation }: IProps) => {
     return (
       <LoomiesGrid
         loomies={loomies}
+        markBusyLoomies={false}
         elementsCallback={goToDetails}
         listHeaderComponent={redirectionHeader}
       />
