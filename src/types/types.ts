@@ -52,7 +52,7 @@ export type TItem = {
   quantity: number;
 };
 
-export type TLoombal = {
+export type TLoomball = {
   _id: string;
   serial: number;
   name: string;
