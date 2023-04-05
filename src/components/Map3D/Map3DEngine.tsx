@@ -7,17 +7,14 @@
 import React, {
   FunctionComponent,
   useEffect,
-  useState,
   useRef,
   useContext
 } from 'react';
 import { SafeAreaView, View, Button, ViewProps } from 'react-native';
-import { EngineView, useEngine } from '@babylonjs/react-native';
+import { EngineView } from '@babylonjs/react-native';
 
 import * as Babylon from '@babylonjs/core';
 import { Tools } from '@babylonjs/core/Misc';
-import { Scene } from '@babylonjs/core/scene';
-import { Camera } from '@babylonjs/core/Cameras/camera';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
 import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
@@ -82,8 +79,6 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
   const {
     engine,
     sceneMap,
-    showSceneMap,
-    showSceneDetails,
 
     cameraMap,
     getCurrentScene
@@ -116,8 +111,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     const light = new HemisphericLight('light', new Vector3(5, 10, 0), sceneMap);
     light.intensity = 0.9;
 
-    // create camera
-    // scene.createDefaultCamera(true, true, true);
+    // config camera
 
     if (sceneMap.activeCamera) {
       const camera = sceneMap.activeCamera as ArcRotateCamera;
@@ -454,73 +448,6 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     UpdateTileMesh();
   }, []);
 
-  const dudueffect = (async () => {
-      if (!sceneMap) return;
-      try {
-        console.log('A1');
-        const playerModel = await cloneModel('MAP_PLAYER', sceneMap);
-        const circleIndicatorModel = await cloneModel(
-          'MAP_CIRCLE_INDICATOR',
-          sceneMap
-        );
-
-        console.log('A2');
-        if (playerModel && playerNode.current) {
-          playerModel.setParent(playerNode.current);
-        }
-        console.log('A3');
-
-        if (circleIndicatorModel && playerNode.current) {
-          circleIndicatorModel.position.y = CIRCLE_INDICATOR_HEIGHT;
-          circleIndicatorModel.setParent(playerNode.current);
-        }
-        console.log('A4');
-      } catch (error) {
-        console.log("ERROR: Couldn't load model.");
-      }
-
-      Babylon.MeshBuilder.CreateBox(
-        'playerRootMesh2',
-        { size: 1 },
-        sceneMap
-      );
-
-      showSceneMap();
-
-
-
-    if (sceneMap.activeCamera) {
-      console.log("sceneMap.activeCamera exists");
-      const camera = sceneMap.activeCamera as ArcRotateCamera;
-      camera.checkCollisions = false;
-      camera.panningSensibility = 0;
-
-      // limit camera zoom
-      if (!MAP_DEBUG) {
-        camera.lowerRadiusLimit = 20;
-        camera.upperRadiusLimit = 30;
-      } else camera.lowerRadiusLimit = 10;
-
-      // limit camera angle
-      camera.lowerBetaLimit = (Math.PI * 1) / 16;
-      camera.upperBetaLimit = Math.PI / 4;
-
-      camera.setTarget(Babylon.Vector3.Zero());
-      camera.alpha = Math.PI / 8;
-      camera.beta = Math.PI / 8;
-      camera.radius = 10;
-
-      //setCamera(scene.activeCamera);
-
-      // lock to player
-      camera.lockedTarget = playerNode.current;
-    }
-
-    // create light
-    const light = new HemisphericLight('light', new Vector3(5, 10, 0), sceneMap);
-    light.intensity = 0.9;
-    });
-
   return (
     <>
       <SafeAreaView style={{ flex: 1, backgroundColor: 'red' }}>
@@ -549,12 +476,6 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
                 title={'Move y-'}
                 onPress={() => {
                   debugMovePosition({ lon: 0, lat: -DEBUG_MOVE_DISTANCE });
-                }}
-              />
-              <Button
-                title={'Dudu effect'}
-                onPress={() => {
-                  dudueffect();
                 }}
               />
             </>

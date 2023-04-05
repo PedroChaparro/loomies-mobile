@@ -2,9 +2,8 @@ import * as Babylon from '@babylonjs/core';
 import { EngineView } from '@babylonjs/react-native';
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 import { ModelContext } from '@src/context/ModelProvider';
-import { getRequiredExperienceFromLevel } from '@src/utils/utils';
 import React, { useContext, useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, View } from 'react-native';
 import { instantiatedEntriesTranslate } from '../Map3D/utilsVertex';
 
 interface iLoomie3DModelPreview {
@@ -22,6 +21,27 @@ export const Loomie3DModelPreview = ({ serial, color }: iLoomie3DModelPreview) =
 
   useEffect(() => {
     if (!sceneDetails) return;
+
+    // config camera
+
+    if (cameraDetails){
+      const camera = cameraDetails as Babylon.ArcRotateCamera;
+
+      // not panning
+      camera.panningSensibility = 0;
+
+      // limit camera zoom
+      camera.lowerRadiusLimit = 4.5;
+      camera.upperRadiusLimit = 4.5;
+
+      // limit camera angle
+      camera.lowerBetaLimit = Math.PI * (0.5 - 0.1);
+      camera.upperBetaLimit = Math.PI * (0.5 + 0.1);
+    }
+
+    // transparent background
+
+    sceneDetails.clearColor = new Babylon.Color4(0, 0, 0, 0);
 
     // instantiate model
 
@@ -50,9 +70,9 @@ export const Loomie3DModelPreview = ({ serial, color }: iLoomie3DModelPreview) =
 
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'red' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: color }}>
       <View style={{ flex: 1 }}>
-        {getCurrentScene() == APP_SCENE.DETAILS && <EngineView camera={cameraDetails} displayFrameRate={true} />}
+        {getCurrentScene() == APP_SCENE.DETAILS && <EngineView isTransparent={true} camera={cameraDetails} displayFrameRate={true} />}
       </View>
     </SafeAreaView>
   );
