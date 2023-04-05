@@ -17,7 +17,7 @@ export const LoomieCard = ({ loomie, markIfBusy, cardCallback }: IProps) => {
   // Get the color from the first type
   const mainColor = loomie.types[0].toUpperCase();
   const typeColor =
-    markIfBusy && loomie.is_busy ? '#e1e1e1' : colors[mainColor];
+    markIfBusy && loomie.is_busy ? '#c8c8c8' : colors[mainColor];
   const loomieSerial = `${loomie.serial.toString().padStart(3, '0')}`;
 
   // Function to render a border if the loomie is part of the user's team
@@ -66,8 +66,13 @@ export const LoomieCard = ({ loomie, markIfBusy, cardCallback }: IProps) => {
             )}
 
             {/* Mark the busy loomies if the option is true */}
-            {markIfBusy && loomie.is_busy && (
-              <View style={Styles.floatingIconContainer}>
+            {loomie.is_busy && (
+              <View
+                style={{
+                  ...Styles.floatingIconContainer,
+                  backgroundColor: '#aa4aed'
+                }}
+              >
                 <MaterialCommunityIcon
                   name='shield-home'
                   color={'white'}
