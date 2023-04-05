@@ -99,7 +99,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       { size: 1 },
       sceneMap
     );
-    playerRootMesh.visibility = 1;
+    playerRootMesh.visibility = 0;
     playerNode.current = playerRootMesh;
 
     // create lights

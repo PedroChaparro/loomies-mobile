@@ -6,6 +6,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView, View } from 'react-native';
 import { instantiatedEntriesTranslate } from '../Map3D/utilsVertex';
 
+import { CONFIG } from '@src/services/config.services';
+const { MAP_DEBUG } = CONFIG;
+
 interface iLoomie3DModelPreview {
   serial: number;
   color: string;
@@ -78,7 +81,7 @@ export const Loomie3DModelPreview = ({
           <EngineView
             isTransparent={true}
             camera={cameraDetails}
-            displayFrameRate={true}
+            displayFrameRate={MAP_DEBUG}
           />
         )}
       </View>
