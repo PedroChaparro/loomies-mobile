@@ -25,22 +25,36 @@ export const ModelContext = createContext<iModelProvider>({
 });
 
 export const ModelProvider = (props: { children: ReactNode }) => {
-  const models = useRef<{ [key: string]: Babylon.AssetContainer }>({});
+  const models = useRef<{ [key: string]: { [key: string]: Babylon.AssetContainer }}>({});
 
   // return model as Babylon.AssetContainer. If not loaded before then load
   const getModelAsset = async (
-    name: string
+    name: string,
+    scene: Babylon.Scene
   ): Promise<Babylon.AssetContainer | null> => {
+
+    const sceneName: string = scene.metadata.name ;
+
+    if (!sceneName) return null;
+    if (!models.current[sceneName])
+      models.current[sceneName] = {};
+
     try {
+
       // model is already loaded
-      const model: Babylon.AssetContainer | undefined = models.current[name];
+      const model: Babylon.AssetContainer | undefined = models.current[sceneName][name];
 
       if (!model) {
         // if not, load it
-        const container = await LoadModel(MODEL_RESOURCE[name]);
+        const container = await LoadModel(MODEL_RESOURCE[name], scene);
         if (!container) throw "ERROR: Couldn't load model";
 
-        models.current[name] = container;
+        // make it non pickable by default
+        container.meshes.forEach((mesh) => {
+          mesh.isPickable = false;
+        });
+
+        models.current[sceneName][name] = container;
         return container;
       }
 
@@ -55,10 +69,10 @@ export const ModelProvider = (props: { children: ReactNode }) => {
   // Instantiates model to specified scene
   const instantiateModel = async (
     name: string,
-    _scene: Babylon.Scene
+    scene: Babylon.Scene
   ): Promise<Babylon.InstantiatedEntries | null> => {
     try {
-      const container = await getModelAsset(name);
+      const container = await getModelAsset(name, scene);
 
       if (container) {
         const instance = container.instantiateModelsToScene();
@@ -75,16 +89,16 @@ export const ModelProvider = (props: { children: ReactNode }) => {
   // Clones model to specified scene
   const cloneModel = async (
     name: string,
-    _scene: Babylon.Scene
+    scene: Babylon.Scene
   ): Promise<Babylon.Mesh | null> => {
     try {
-      const container = await getModelAsset(name);
+      const container = await getModelAsset(name, scene);
 
       if (container) {
         // clone from container
         let model = container.createRootMesh();
         model = model.clone(name);
-        model.visibility = 0;
+        model.visibility = 1;
 
         return model;
       }
