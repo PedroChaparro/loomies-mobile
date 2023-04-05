@@ -5,6 +5,7 @@ import { LoomieCard } from './CaughtLoomieCard';
 
 interface IProps {
   loomies: Array<TCaughtLoomies>;
+  markBusyLoomies: boolean;
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
   elementsCallback: (a?: any) => void;
   listHeaderComponent?: React.ReactElement;
@@ -12,9 +13,13 @@ interface IProps {
 
 export const LoomiesGrid = ({
   loomies,
+  markBusyLoomies,
   elementsCallback,
   listHeaderComponent
 }: IProps) => {
+  // Sort the busy loomies to the end
+  loomies.sort((a, b) => Number(a.is_busy) - Number(b.is_busy));
+
   return (
     <FlatList
       ListHeaderComponent={listHeaderComponent || <View />}
@@ -24,7 +29,13 @@ export const LoomiesGrid = ({
       renderItem={({ item }) => {
         // Sort the types lexicographically to avoid the bg suddenly changing
         item.types = item.types.sort();
-        return <LoomieCard loomie={item} cardCallback={elementsCallback} />;
+        return (
+          <LoomieCard
+            loomie={item}
+            markIfBusy={markBusyLoomies}
+            cardCallback={elementsCallback}
+          />
+        );
       }}
     />
   );

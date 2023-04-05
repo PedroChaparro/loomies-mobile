@@ -2,19 +2,22 @@ import { TCaughtLoomiesWithTeam } from '@src/types/types';
 import { colors, images } from '@src/utils/utils';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
+import { Grayscale } from 'react-native-color-matrix-image-filters';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface IProps {
   loomie: TCaughtLoomiesWithTeam;
+  markIfBusy: boolean;
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
   cardCallback: (a?: any) => void;
 }
 
-export const LoomieCard = ({ loomie, cardCallback }: IProps) => {
+export const LoomieCard = ({ loomie, markIfBusy, cardCallback }: IProps) => {
   // Get the color from the first type
   const mainColor = loomie.types[0].toUpperCase();
-  const typeColor = colors[mainColor];
+  const typeColor =
+    markIfBusy && loomie.is_busy ? '#e1e1e1' : colors[mainColor];
   const loomieSerial = `${loomie.serial.toString().padStart(3, '0')}`;
 
   // Function to render a border if the loomie is part of the user's team
@@ -27,6 +30,18 @@ export const LoomieCard = ({ loomie, cardCallback }: IProps) => {
       return {
         borderColor: 'transparent'
       };
+    }
+  };
+
+  const renderLoomieImage = () => {
+    if (markIfBusy && loomie.is_busy) {
+      return (
+        <Grayscale>
+          <Image source={images[loomieSerial]} style={Styles.cardImage} />
+        </Grayscale>
+      );
+    } else {
+      return <Image source={images[loomieSerial]} style={Styles.cardImage} />;
     }
   };
 
@@ -43,16 +58,29 @@ export const LoomieCard = ({ loomie, cardCallback }: IProps) => {
               elevation: loomie.is_in_team ? 6 : 2
             }}
           >
+            {/* Show an sword if the loomie is in the loomie team of the user */}
             {loomie.is_in_team && (
               <View style={Styles.floatingIconContainer}>
                 <MaterialCommunityIcon name='sword' color={'white'} size={24} />
               </View>
             )}
+
+            {/* Mark the busy loomies if the option is true */}
+            {markIfBusy && loomie.is_busy && (
+              <View style={Styles.floatingIconContainer}>
+                <MaterialCommunityIcon
+                  name='shield-home'
+                  color={'white'}
+                  size={24}
+                />
+              </View>
+            )}
+
             <Text style={{ ...Styles.loomieSerial, ...Styles.cardText }}>
               #{loomieSerial}
             </Text>
             <View style={Styles.cardImageBg} />
-            <Image source={images[loomieSerial]} style={Styles.cardImage} />
+            {renderLoomieImage()}
             <View style={Styles.cardInfoContainer}>
               <Text style={{ ...Styles.cardInfoText, ...Styles.cardText }}>
                 Lvl {loomie.level}
