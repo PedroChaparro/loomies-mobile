@@ -13,6 +13,7 @@ import { NewCodeView } from '../pages/NewCodeView';
 import { LoomieDetails } from '@src/pages/LoomieDetails';
 import { ResetPasswordView } from '../pages/ResetPasswordView';
 import { ChangePasswordView } from '../pages/ChangePasswordView';
+import { BabylonProvider } from '@src/context/BabylonProvider';
 
 const Stack = createStackNavigator();
 export const StackNavigation = () => {
@@ -21,31 +22,33 @@ export const StackNavigation = () => {
    * Model provider at the top so model data is kept between screens
    */
   return (
-    <MapProvider>
-      <ModelProvider>
-        <Stack.Navigator
-          initialRouteName='Map'
-          screenOptions={{ headerShown: false }}
-        >
-          {/* Views that are not included in the bottom tabs navigation but are reachable using the navigator hook */}
-          <Stack.Screen name='Map' component={MapView} />
-          <Stack.Screen name='Capture' component={CaptureView} />
-          <Stack.Screen name='Combat' component={CombatView} />
-          <Stack.Screen name='Login' component={Login} />
-          <Stack.Screen name='Signup' component={Signup} />
-          <Stack.Screen
-            name='EmailValidation'
-            component={EmailValidationView}
-          />
-          <Stack.Screen name='NewCode' component={NewCodeView} />
-          <Stack.Screen name='ResetPassword' component={ResetPasswordView} />
-          <Stack.Screen name='ChangePassword' component={ChangePasswordView} />
-          {/* Views that includes the bottom tabs navigation */}
-          <Stack.Screen name='Application' component={BottomNavigation} />
+    <BabylonProvider>
+      <MapProvider>
+        <ModelProvider>
+          <Stack.Navigator
+            initialRouteName='Map'
+            screenOptions={{ headerShown: false }}
+          >
+            {/* Views that are not included in the bottom tabs navigation but are reachable using the navigator hook */}
+            <Stack.Screen name='Map' component={MapView} />
+            <Stack.Screen name='Capture' component={CaptureView} />
+            <Stack.Screen name='Combat' component={CombatView} />
+            <Stack.Screen name='Login' component={Login} />
+            <Stack.Screen name='Signup' component={Signup} />
+            <Stack.Screen
+              name='EmailValidation'
+              component={EmailValidationView}
+            />
+            <Stack.Screen name='NewCode' component={NewCodeView} />
+            <Stack.Screen name='ResetPassword' component={ResetPasswordView} />
+            <Stack.Screen name='ChangePassword' component={ChangePasswordView} />
+            {/* Views that includes the bottom tabs navigation */}
+            <Stack.Screen name='Application' component={BottomNavigation} />
 
-          <Stack.Screen name='LoomieDetails' component={LoomieDetails} />
-        </Stack.Navigator>
-      </ModelProvider>
-    </MapProvider>
+            <Stack.Screen name='LoomieDetails' component={LoomieDetails} />
+          </Stack.Navigator>
+        </ModelProvider>
+      </MapProvider>
+    </BabylonProvider>
   );
 };

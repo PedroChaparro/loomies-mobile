@@ -1,23 +1,30 @@
 import { RouteProp } from '@react-navigation/core';
 import { TCaughtLoomies } from '@src/types/types';
-import { StyleSheet, Text, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
 import { colors } from '@src/utils/utils';
 import { LoomieLevelBar } from '@src/components/LoomieDetails/LoomieLevelBar';
 import { LoomieStatsTable } from '@src/components/LoomieDetails/LoomieStatsTable';
 import { LoomieTypes } from '@src/components/LoomieDetails/LoomieTypes';
+import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
+import { EngineView } from '@babylonjs/react-native';
 
 interface IProps {
   route?: RouteProp<{ params: { loomie: TCaughtLoomies } }, 'params'>;
 }
 
 export const LoomieDetails = ({ route }: IProps) => {
+
   const [loomie, setLoomie] = useState<TCaughtLoomies | null>(null);
+  const { cameraDetails, cameraMap, showSceneDetails, getCurrentScene } = useContext(BabylonContext);
 
   useEffect(() => {
     // Try to get the loomie from the route params
     const loomieFromRoute = route?.params?.loomie;
     if (loomieFromRoute) setLoomie(loomieFromRoute);
+
+    // Toggle rendered scene in engine
+    showSceneDetails();
   }, []);
 
   if (!loomie) return null;
@@ -26,7 +33,13 @@ export const LoomieDetails = ({ route }: IProps) => {
 
   return (
     <View style={{ ...Styles.background, backgroundColor: typeColor }}>
-      <View style={Styles.scenario}></View>
+      <View style={Styles.scenario}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'red' }}>
+          <View style={{ flex: 1 }}>
+            {getCurrentScene() == APP_SCENE.DETAILS && <EngineView camera={cameraDetails} displayFrameRate={true} />}
+          </View>
+        </SafeAreaView>
+      </View>
       <View style={Styles.information}>
         <View style={Styles.row}>
           <Text style={Styles.loomieName}>{loomie.name}</Text>
