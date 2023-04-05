@@ -11,20 +11,22 @@ interface iLoomie3DModelPreview {
   color: string;
 }
 
-export const Loomie3DModelPreview = ({ serial, color }: iLoomie3DModelPreview) => {
-
-  const { sceneDetails, cameraDetails, getCurrentScene } = useContext(BabylonContext);
+export const Loomie3DModelPreview = ({
+  serial,
+  color
+}: iLoomie3DModelPreview) => {
+  const { sceneDetails, cameraDetails, getCurrentScene } =
+    useContext(BabylonContext);
   const { instantiateModel, getModelHeight } = useContext(ModelContext);
 
-  const [ model, setModel ] = useState<Babylon.InstantiatedEntries | null>(null);
-
+  const [model, setModel] = useState<Babylon.InstantiatedEntries | null>(null);
 
   useEffect(() => {
     if (!sceneDetails) return;
 
     // config camera
 
-    if (cameraDetails){
+    if (cameraDetails) {
       const camera = cameraDetails as Babylon.ArcRotateCamera;
 
       // not panning
@@ -47,15 +49,16 @@ export const Loomie3DModelPreview = ({ serial, color }: iLoomie3DModelPreview) =
 
     (async () => {
       try {
-
         const model = await instantiateModel(serial.toString(), sceneDetails);
         if (!model) throw "Error: Couldn't instantiate model";
         setModel(model);
 
         // position model
         const height = await getModelHeight(serial.toString(), sceneDetails);
-        instantiatedEntriesTranslate(model, new Babylon.Vector3(0, -height / 2, 0));
-
+        instantiatedEntriesTranslate(
+          model,
+          new Babylon.Vector3(0, -height / 2, 0)
+        );
       } catch (error) {
         console.error(error);
       }
@@ -65,16 +68,20 @@ export const Loomie3DModelPreview = ({ serial, color }: iLoomie3DModelPreview) =
     return () => {
       if (!model) return;
       model.dispose();
-    }
-  }, [sceneDetails])
-
+    };
+  }, [sceneDetails]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: color }}>
       <View style={{ flex: 1 }}>
-        {getCurrentScene() == APP_SCENE.DETAILS && <EngineView isTransparent={true} camera={cameraDetails} displayFrameRate={true} />}
+        {getCurrentScene() == APP_SCENE.DETAILS && (
+          <EngineView
+            isTransparent={true}
+            camera={cameraDetails}
+            displayFrameRate={true}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
 };
-

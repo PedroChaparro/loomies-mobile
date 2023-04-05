@@ -41,7 +41,10 @@ export const StackNavigation = () => {
             />
             <Stack.Screen name='NewCode' component={NewCodeView} />
             <Stack.Screen name='ResetPassword' component={ResetPasswordView} />
-            <Stack.Screen name='ChangePassword' component={ChangePasswordView} />
+            <Stack.Screen
+              name='ChangePassword'
+              component={ChangePasswordView}
+            />
             {/* Views that includes the bottom tabs navigation */}
             <Stack.Screen name='Application' component={BottomNavigation} />
 

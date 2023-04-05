@@ -4,12 +4,7 @@
  * Manages the Babylon 3D engine
  */
 
-import React, {
-  FunctionComponent,
-  useEffect,
-  useRef,
-  useContext
-} from 'react';
+import React, { FunctionComponent, useEffect, useRef, useContext } from 'react';
 import { SafeAreaView, View, Button, ViewProps } from 'react-native';
 import { EngineView } from '@babylonjs/react-native';
 
@@ -108,7 +103,11 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     playerNode.current = playerRootMesh;
 
     // create lights
-    const light = new HemisphericLight('light', new Vector3(5, 10, 0), sceneMap);
+    const light = new HemisphericLight(
+      'light',
+      new Vector3(5, 10, 0),
+      sceneMap
+    );
     light.intensity = 0.9;
 
     // config camera
@@ -444,7 +443,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
   // check tiles at creation
   useEffect(() => {
-    console.log("Initial useEeffect");
+    console.log('Initial useEeffect');
     UpdateTileMesh();
   }, []);
 
@@ -481,7 +480,9 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
             </>
           )}
           <View style={{ flex: 1 }}>
-            {getCurrentScene() == APP_SCENE.MAP && <EngineView camera={cameraMap} displayFrameRate={MAP_DEBUG} />}
+            {getCurrentScene() == APP_SCENE.MAP && (
+              <EngineView camera={cameraMap} displayFrameRate={MAP_DEBUG} />
+            )}
           </View>
         </View>
       </SafeAreaView>

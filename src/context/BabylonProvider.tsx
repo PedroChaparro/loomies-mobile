@@ -3,19 +3,17 @@
  * Distributes the babylonjs engine, Map scene, and Loomies View scene.
  */
 
-import React, {
-  createContext,
-  useEffect,
-  useState,
-  ReactNode
-} from 'react';
+import React, { createContext, useEffect, useState, ReactNode } from 'react';
 import * as Babylon from '@babylonjs/core';
 import { useEngineRenderLoop } from '@src/hooks/useEngineRenderLoop';
 import { useEngine } from '@babylonjs/react-native';
 
 export const enum APP_SCENE {
+  // eslint-disable-next-line no-unused-vars
   NONE,
+  // eslint-disable-next-line no-unused-vars
   MAP,
+  // eslint-disable-next-line no-unused-vars
   DETAILS
 }
 
@@ -50,11 +48,11 @@ export const BabylonContext = createContext<iBabylonProvider>({
   showSceneDetails: () => {
     return;
   },
-  getCurrentScene: () => APP_SCENE.NONE,
+  getCurrentScene: () => APP_SCENE.NONE
 });
 
 // useful when debugging the engine
-const DEBUG_RENDER_LOOP = true;
+const DEBUG_RENDER_LOOP = false;
 
 export const BabylonProvider = (props: { children: ReactNode }) => {
   const engine = useEngine();
@@ -80,24 +78,22 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
   };
 
   const clearSceneDetails = () => {
-
     if (!sceneDetails) return;
 
     // dispose resources
     sceneDetails.meshes.forEach((mesh) => {
       mesh.dispose();
     });
-
   };
 
   const getCurrentScene = () => {
     return currentScene;
-  }
+  };
 
   useEffect(() => {
     if (!engine) return;
 
-    console.log("INFO: Creating scenes");
+    console.log('INFO: Creating scenes');
 
     // create scenes
 
@@ -106,22 +102,24 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
 
     // metadata
 
-    sceneMap.metadata = {name: "SceneMap"};
-    sceneDetails.metadata = {name: "SceneDetails"};
+    sceneMap.metadata = { name: 'SceneMap' };
+    sceneDetails.metadata = { name: 'SceneDetails' };
 
     // cameras
 
     sceneMap.createDefaultCamera(true, true, true);
-    if (sceneMap.activeCamera)
-      setCameraMap(sceneMap.activeCamera);
+    if (sceneMap.activeCamera) setCameraMap(sceneMap.activeCamera);
 
     sceneDetails.createDefaultCamera(true, true, true);
-    if (sceneDetails.activeCamera)
-      setCameraDetails(sceneDetails.activeCamera);
+    if (sceneDetails.activeCamera) setCameraDetails(sceneDetails.activeCamera);
 
     // scene loomie details light
 
-    new Babylon.HemisphericLight("light", new Babylon.Vector3(0, 1, 0), sceneDetails);
+    new Babylon.HemisphericLight(
+      'light',
+      new Babylon.Vector3(0, 1, 0),
+      sceneDetails
+    );
 
     // set
 
@@ -137,7 +135,7 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
   // hook for updating the engine render loop
 
   useEngineRenderLoop(engine, () => {
-    DEBUG_RENDER_LOOP && console.log("DEB: currentScene", currentScene);
+    DEBUG_RENDER_LOOP && console.log('DEB: currentScene', currentScene);
 
     switch (currentScene) {
       case APP_SCENE.MAP:

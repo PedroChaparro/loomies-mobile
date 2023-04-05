@@ -15,7 +15,6 @@ export const useEngineRenderLoop = (
   });
 
   useEffect(() => {
-    console.log("useEngineRenderLoop useEffect");
     savedCallback.current = callback;
 
     if (engine) {

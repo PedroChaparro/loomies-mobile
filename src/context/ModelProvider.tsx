@@ -111,6 +111,7 @@ export const ModelProvider = (props: { children: ReactNode }) => {
     return null;
   };
 
+  // returns height of model including it's children
   const getModelHeight = async (
     name: string,
     scene: Babylon.Scene

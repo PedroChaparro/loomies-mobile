@@ -25,10 +25,7 @@ export const MapView = ({ navigation }: MapViewProps) => {
     }
   }, [isLoading]);
 
-  useEffect(() => {
-    console.log("useefefecet 2");
-  }, []);
-
+  // toggle render loop on focus events
   useFocusEffect(
     React.useCallback(() => {
       showSceneMap();

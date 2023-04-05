@@ -14,7 +14,6 @@ interface IProps {
 }
 
 export const LoomieDetails = ({ route }: IProps) => {
-
   const [loomie, setLoomie] = useState<TCaughtLoomies | null>(null);
   const { showSceneDetails, showSceneNone } = useContext(BabylonContext);
 
