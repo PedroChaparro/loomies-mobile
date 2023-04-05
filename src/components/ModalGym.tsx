@@ -1,5 +1,5 @@
 import { images } from '@src/utils/utils';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
 import { CustomButton } from './CustomButton';
@@ -45,7 +45,14 @@ export const ModalGym = () => {
   const { isGymModalOpen, currentGymId, toggleGymModalVisibility } =
     useContext(GymsModalContext);
 
-  console.log({ currentGymId });
+  useEffect(() => {
+    // Here, if the current gym id changes, and is not empty, you can
+    // fetch the gym data
+    if (currentGymId) {
+      console.log({ currentGymId });
+    }
+  }, [currentGymId]);
+
   /* const [modalData, setModalData] = useState<Item[]>([]);
 
   const showModal = (location: { id: string }) => {

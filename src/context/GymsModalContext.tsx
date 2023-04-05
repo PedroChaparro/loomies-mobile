@@ -28,8 +28,16 @@ export const GymsModalProvider = ({ children }: IProps) => {
     setIsGymModalOpen(!isGymModalOpen);
   };
 
+  // If the modal is closed, we reset the current gym id to
+  // allow the user to open the same modal again
   useEffect(() => {
-    // If a non-empty gym id is set, we open the modal
+    if (!isGymModalOpen) {
+      setCurrentGymId('');
+    }
+  }, [isGymModalOpen]);
+
+  // If the current id changes and it's not empty, we open the modal
+  useEffect(() => {
     if (currentGymId) {
       setIsGymModalOpen(true);
     }
