@@ -8,6 +8,7 @@ import { LoomieStatsTable } from '@src/components/LoomieDetails/LoomieStatsTable
 import { LoomieTypes } from '@src/components/LoomieDetails/LoomieTypes';
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 import { EngineView } from '@babylonjs/react-native';
+import { Loomie3DModelPreview } from '@src/components/LoomieDetails/Loomie3DModelPreview';
 
 interface IProps {
   route?: RouteProp<{ params: { loomie: TCaughtLoomies } }, 'params'>;
@@ -16,7 +17,7 @@ interface IProps {
 export const LoomieDetails = ({ route }: IProps) => {
 
   const [loomie, setLoomie] = useState<TCaughtLoomies | null>(null);
-  const { cameraDetails, cameraMap, showSceneDetails, getCurrentScene } = useContext(BabylonContext);
+  const { showSceneDetails } = useContext(BabylonContext);
 
   useEffect(() => {
     // Try to get the loomie from the route params
@@ -34,11 +35,7 @@ export const LoomieDetails = ({ route }: IProps) => {
   return (
     <View style={{ ...Styles.background, backgroundColor: typeColor }}>
       <View style={Styles.scenario}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: 'red' }}>
-          <View style={{ flex: 1 }}>
-            {getCurrentScene() == APP_SCENE.DETAILS && <EngineView camera={cameraDetails} displayFrameRate={true} />}
-          </View>
-        </SafeAreaView>
+        <Loomie3DModelPreview serial={loomie.serial} color={typeColor} />
       </View>
       <View style={Styles.information}>
         <View style={Styles.row}>
