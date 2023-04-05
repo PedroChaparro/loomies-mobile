@@ -112,6 +112,7 @@ export const UpdateLoomieTeamView = () => {
         <LoomiesGrid
           loomies={loomies}
           markBusyLoomies={true}
+          markTeamLoomies={true}
           elementsCallback={handleLoomiePress}
           listHeaderComponent={redirectionHeader}
         />

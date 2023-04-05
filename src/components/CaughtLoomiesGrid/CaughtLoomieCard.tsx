@@ -9,20 +9,28 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 interface IProps {
   loomie: TCaughtLoomiesWithTeam;
   markIfBusy: boolean;
+  markIfInTeam: boolean;
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
   cardCallback: (a?: any) => void;
 }
 
-export const LoomieCard = ({ loomie, markIfBusy, cardCallback }: IProps) => {
+export const LoomieCard = ({
+  loomie,
+  markIfBusy,
+  markIfInTeam,
+  cardCallback
+}: IProps) => {
   // Get the color from the first type
   const mainColor = loomie.types[0].toUpperCase();
+
   const typeColor =
     markIfBusy && loomie.is_busy ? '#c8c8c8' : colors[mainColor];
+
   const loomieSerial = `${loomie.serial.toString().padStart(3, '0')}`;
 
   // Function to render a border if the loomie is part of the user's team
   const renderBorder = () => {
-    if (loomie.is_in_team) {
+    if (markIfInTeam && loomie.is_in_team) {
       return {
         borderColor: '#ED4A5F'
       };

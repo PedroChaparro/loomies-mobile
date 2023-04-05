@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { getLoomiesRequest } from '@src/services/user.services';
-import { TCaughtLoomies } from '@src/types/types';
+import {
+  getLoomieTeamService,
+  getLoomiesRequest
+} from '@src/services/user.services';
+import { TCaughtLoomies, TCaughtLoomiesWithTeam } from '@src/types/types';
 import { LoomiesGrid } from '@src/components/CaughtLoomiesGrid/LoomiesGrid';
 import { Container } from '@src/components/Container';
 import { LoomiesGridSkeleton } from '@src/skeletons/CaughtLoomiesGrid/LoomiesGridSkeleton';
@@ -15,7 +18,8 @@ interface IProps {
 }
 
 export const UserLoomies = ({ navigation }: IProps) => {
-  const [loomies, setLoomies] = useState(Array<TCaughtLoomies>);
+  const [loomies, setLoomies] = useState(Array<TCaughtLoomiesWithTeam>);
+  const [team, setTeam] = useState(Array<string>);
   const [loading, setLoading] = useState(true);
 
   // Request to obtain the loomies
@@ -23,15 +27,34 @@ export const UserLoomies = ({ navigation }: IProps) => {
     const [response, err] = await getLoomiesRequest();
 
     if (!err) {
-      const { loomies } = response;
-      setLoomies(loomies || []);
+      const loomies: TCaughtLoomies[] = response.loomies;
+
+      const loomiesWithTeamProperty = loomies.map((loomie) => ({
+        ...loomie,
+        is_in_team: team.includes(loomie._id)
+      }));
+
+      setLoomies(loomiesWithTeamProperty || []);
       setLoading(false);
     }
   };
 
+  const fetchLoomieTeam = async () => {
+    const [response, err] = await getLoomieTeamService();
+    if (err) return;
+    const team: Array<TCaughtLoomiesWithTeam> = response.team;
+    setTeam(team.map((loomie) => loomie._id));
+  };
+
+  // First we get the loomie team
+  useEffect(() => {
+    fetchLoomieTeam();
+  }, []);
+
+  // When the team is obtained, we get the loomies
   useEffect(() => {
     fetchLoomies();
-  }, []);
+  }, [team]);
 
   // Function to redirect to the map view in case the user doesn't have any loomies
   const goToMap = () => {
@@ -72,6 +95,7 @@ export const UserLoomies = ({ navigation }: IProps) => {
       <LoomiesGrid
         loomies={loomies}
         markBusyLoomies={false}
+        markTeamLoomies={false}
         elementsCallback={goToDetails}
         listHeaderComponent={redirectionHeader}
       />
