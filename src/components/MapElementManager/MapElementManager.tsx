@@ -38,7 +38,7 @@ export const MapElementManager: React.FC<{
   scene: Babylon.Scene | null;
 }> = (props) => {
   const { instantiateModel } = useContext(ModelContext);
-  const { setCurrentGymId } = useContext(GymsModalContext);
+  const { setCurrentModalGymId } = useContext(GymsModalContext);
 
   const {
     setGyms,
@@ -307,7 +307,7 @@ export const MapElementManager: React.FC<{
         if (!gym) return;
 
         // Set the information for the gym modal
-        setCurrentGymId(gym.id);
+        setCurrentModalGymId(gym.id);
       }
     }
   });

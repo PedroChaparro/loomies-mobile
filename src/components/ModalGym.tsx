@@ -42,16 +42,16 @@ const data: Item[] = [
 
 // todo cambiar nombres
 export const ModalGym = () => {
-  const { isGymModalOpen, currentGymId, toggleGymModalVisibility } =
+  const { isGymModalOpen, currentModalGymId, toggleGymModalVisibility } =
     useContext(GymsModalContext);
 
   useEffect(() => {
     // Here, if the current gym id changes, and is not empty, you can
     // fetch the gym data
-    if (currentGymId) {
-      console.log({ currentGymId });
+    if (currentModalGymId) {
+      console.log({ currentModalGymId });
     }
-  }, [currentGymId]);
+  }, [currentModalGymId]);
 
   /* const [modalData, setModalData] = useState<Item[]>([]);
 

@@ -8,12 +8,12 @@ import React, { createContext, useEffect, useState } from 'react';
 // passing them as props.
 // --------------------------------------------
 export const GymsModalContext = createContext({
-  currentGymId: '',
+  currentModalGymId: '',
   isGymModalOpen: false,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   toggleGymModalVisibility: () => {},
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setCurrentGymId: (_id: string) => {}
+  setCurrentModalGymId: (_id: string) => {}
 });
 
 interface IProps {
@@ -21,7 +21,7 @@ interface IProps {
 }
 
 export const GymsModalProvider = ({ children }: IProps) => {
-  const [currentGymId, setCurrentGymId] = useState('');
+  const [currentModalGymId, setCurrentModalGymId] = useState('');
   const [isGymModalOpen, setIsGymModalOpen] = useState(false);
 
   const toggleGymModalVisibility = () => {
@@ -32,24 +32,24 @@ export const GymsModalProvider = ({ children }: IProps) => {
   // allow the user to open the same modal again
   useEffect(() => {
     if (!isGymModalOpen) {
-      setCurrentGymId('');
+      setCurrentModalGymId('');
     }
   }, [isGymModalOpen]);
 
   // If the current id changes and it's not empty, we open the modal
   useEffect(() => {
-    if (currentGymId) {
+    if (currentModalGymId) {
       setIsGymModalOpen(true);
     }
-  }, [currentGymId]);
+  }, [currentModalGymId]);
 
   return (
     <GymsModalContext.Provider
       value={{
-        currentGymId,
+        currentModalGymId,
         isGymModalOpen,
         toggleGymModalVisibility,
-        setCurrentGymId
+        setCurrentModalGymId
       }}
     >
       {children}
