@@ -5,7 +5,8 @@ import { useAuth } from '../hooks/useAuth';
 import { useToastAlert } from '../hooks/useToastAlert';
 import { Map3D } from '@src/components/Map3D/Map3D';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import { ModalRewards } from '@src/components/ModalRewards';
+//import { ModalRewards } from '@src/components/ModalRewards';
+import { ModalGym } from '@src/components/ModalGym';
 
 interface MapViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,7 +34,7 @@ export const MapView = ({ navigation }: MapViewProps) => {
   return (
     <View style={Styles.container}>
       <Map3D gymCallback={toggleModal} />
-      <ModalRewards isVisible={showGymModal} callBack={toggleModal} />
+      <ModalGym isVisible={showGymModal} callBack={toggleModal} />
       <Pressable
         style={{
           borderWidth: 1,

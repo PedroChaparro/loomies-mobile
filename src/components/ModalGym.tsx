@@ -1,8 +1,9 @@
 import { images } from '@src/utils/utils';
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-native-modal';
 import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
 import { CustomButton } from './CustomButton';
+import { ModalRewards } from './ModalRewards';
 
 interface Item {
   id: string;
@@ -44,7 +45,7 @@ interface IProps {
 }
 
 // todo cambiar nombres
-export const ModalRewards = ({ isVisible, callBack }: IProps) => {
+export const ModalGym = ({ isVisible, callBack }: IProps) => {
   /* const [modalData, setModalData] = useState<Item[]>([]);
 
   const showModal = (location: { id: string }) => {
@@ -53,15 +54,23 @@ export const ModalRewards = ({ isVisible, callBack }: IProps) => {
   // todo
   //const itemSerial = item.serial.toString().padStart(3, '0');
 
+  const [secondModalVisible, setSecondModalVisible] = useState(false);
+
+  const handleOpenSecondModal = () => {
+    setSecondModalVisible(true);
+  };
+
+  const handleCloseSecondModal = () => {
+    setSecondModalVisible(false);
+  };
+
   if (data.length === 0) return <Text>Nothing to show</Text>;
 
   const renderItem = ({ item }: { item: Item }) => (
     <View style={Styles.containerItem}>
+      <Image source={images[`O-00${item.id}`]} style={Styles.cardImage} />
       <Text style={Styles.nameText}>{item.name}</Text>
-      <View style={Styles.groupImageText}>
-        <Image source={images[`O-00${item.id}`]} style={Styles.cardImage} />
-        <Text>x{item.quantity}</Text>
-      </View>
+      <Text style={Styles.level}>Lvl {item.quantity}</Text>
     </View>
   );
 
@@ -69,17 +78,36 @@ export const ModalRewards = ({ isVisible, callBack }: IProps) => {
     <Modal isVisible={isVisible} onBackdropPress={callBack}>
       <View style={Styles.container}>
         <View style={Styles.modal}>
-          <Text style={Styles.modalTitle}>Rewards Claimed 🏆</Text>
+          <Text style={Styles.modalTitle}>Osinski Estate</Text>
+          <Text style={Styles.modalSubtitle}>Owner: Unclaimed</Text>
+          <View style={Styles.containerButton}>
+            <Text /* style={Styles.modalTitle} */>Protectors:</Text>
+          </View>
           <FlatList
             data={data}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
           />
           <View style={Styles.containerButton}>
-            <CustomButton title='Aceptar' type='primary' callback={callBack} />
+            <CustomButton
+              title='Claim Rewards'
+              type='primary'
+              callback={handleOpenSecondModal}
+            />
+            <CustomButton
+              title='Challenge'
+              type='primary'
+              callback={() => {
+                console.log('Challenge');
+              }}
+            />
           </View>
         </View>
       </View>
+      <ModalRewards
+        isVisible={secondModalVisible}
+        callBack={handleCloseSecondModal}
+      />
     </Modal>
   );
 };
@@ -102,16 +130,33 @@ const Styles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase'
   },
+  modalSubtitle: {
+    color: '#5c5c5c',
+    fontSize: 22,
+    textAlign: 'center'
+  },
+  containerItem: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'black',
+    marginTop: 7,
+    marginBottom: 7,
+    padding: 4,
+    width: '92%',
+    justifyContent: 'space-between',
+    height: 44,
+    borderRadius: 4
+  },
   cardImage: {
     height: 40,
     resizeMode: 'center',
     width: 50
   },
-  groupImageText: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingRight: 14,
-    color: '#5C5C5C'
+  level: {
+    color: '#5c5c5c',
+    paddingRight: 12
   },
   containerButton: {
     alignSelf: 'center',
@@ -119,20 +164,6 @@ const Styles = StyleSheet.create({
   },
   nameText: {
     color: '#5c5c5c',
-    marginLeft: 12,
     fontWeight: 'bold'
-  },
-  containerItem: {
-    alignSelf: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 7,
-    marginBottom: 7,
-    padding: 4,
-    width: '92%',
-    backgroundColor: '#f2f1ed',
-    justifyContent: 'space-between',
-    height: 44,
-    borderRadius: 4
   }
 });
