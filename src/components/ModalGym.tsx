@@ -1,9 +1,10 @@
 import { images } from '@src/utils/utils';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Modal from 'react-native-modal';
 import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
 import { CustomButton } from './CustomButton';
 import { ModalRewards } from './ModalRewards';
+import { GymsModalContext } from '@src/context/GymsModalContext';
 
 interface Item {
   id: string;
@@ -39,13 +40,12 @@ const data: Item[] = [
   }
 ];
 
-interface IProps {
-  isVisible: boolean;
-  callBack(): void;
-}
-
 // todo cambiar nombres
-export const ModalGym = ({ isVisible, callBack }: IProps) => {
+export const ModalGym = () => {
+  const { isGymModalOpen, currentGymId, toggleGymModalVisibility } =
+    useContext(GymsModalContext);
+
+  console.log({ currentGymId });
   /* const [modalData, setModalData] = useState<Item[]>([]);
 
   const showModal = (location: { id: string }) => {
@@ -75,7 +75,10 @@ export const ModalGym = ({ isVisible, callBack }: IProps) => {
   );
 
   return (
-    <Modal isVisible={isVisible} onBackdropPress={callBack}>
+    <Modal
+      isVisible={isGymModalOpen}
+      onBackdropPress={toggleGymModalVisibility}
+    >
       <View style={Styles.container}>
         <View style={Styles.modal}>
           <Text style={Styles.modalTitle}>Osinski Estate</Text>

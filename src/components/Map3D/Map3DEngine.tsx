@@ -53,11 +53,7 @@ const ANI_LERP_SPEED = 0.2;
 const ANI_LERP_MERGE_DISTANCE_POSITION = 0.1;
 const ANI_LERP_MERGE_DISTANCE_ROTATION = Tools.ToRadians(1);
 
-interface IProps {
-  gymCallback(): void;
-}
-
-export const Map3DEngine = ({ gymCallback }: IProps) => {
+export const Map3DEngine = () => {
   // user position debug method
   const { userPosition, debugMovePosition } = useContext(UserPositionContext);
   const { deviceYaw } = useContext(SensorContext);
@@ -486,9 +482,7 @@ export const Map3DEngine = ({ gymCallback }: IProps) => {
           </View>
         </View>
       </SafeAreaView>
-      {!!scene && (
-        <MapElementManager gymsCallback={gymCallback} scene={scene} />
-      )}
+      {!!scene && <MapElementManager scene={scene} />}
     </>
   );
 };

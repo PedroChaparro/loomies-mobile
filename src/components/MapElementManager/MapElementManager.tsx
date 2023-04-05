@@ -8,6 +8,7 @@ import React, { useEffect, useContext, useRef } from 'react';
 import { iGym, iMapObject } from '@src/types/mapInterfaces';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { MapContext } from '@src/context/MapProvider';
+import { GymsModalContext } from '@src/context/GymsModalContext';
 import {
   requestNearGyms,
   requestWildLoomies
@@ -35,9 +36,10 @@ const HITBOX_DIAMETER = 1.8;
 
 export const MapElementManager: React.FC<{
   scene: Babylon.Scene | null;
-  gymsCallback(): void;
 }> = (props) => {
   const { instantiateModel } = useContext(ModelContext);
+  const { setCurrentGymId } = useContext(GymsModalContext);
+
   const {
     setGyms,
     getGyms,
@@ -303,7 +305,9 @@ export const MapElementManager: React.FC<{
         });
 
         if (!gym) return;
-        console.log('Gym touched!', gym.id);
+
+        // Set the information for the gym modal
+        setCurrentGymId(gym.id);
       }
     }
   });
