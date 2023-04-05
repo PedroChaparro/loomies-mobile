@@ -33,7 +33,7 @@ import { createGradientPlane } from './utilsVertex';
 import { iMapBundleVertexData, generateRoad } from './utilsMapBuilder';
 
 // modules
-import { MapElementManager } from './MapElementManager';
+import { MapElementManager } from '@src/components/MapElementManager/MapElementManager';
 
 // debug
 import { CONFIG } from '@src/services/config.services';
@@ -152,6 +152,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     );
     planeGround.position.y = 0;
     planeGround.rotation.x = Math.PI / 2;
+    planeGround.isPickable = false;
 
     // initialize gridmap
     const gridOffset = (GRIDMAP_SIZE - 1) / 2 + 0.5;
@@ -340,6 +341,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
           0,
           (tilePos.y - gridOffset) * PLANE_SIZE
         );
+        finalMergedMesh.isPickable = false;
       }
 
       // store
