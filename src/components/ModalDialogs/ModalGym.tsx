@@ -108,15 +108,17 @@ export const ModalGym = () => {
             <Text style={Styles.modalSubtitle}>
               Owner: {gymInfo.owner == null ? 'Unclaimed' : gymInfo.owner}
             </Text>
-            <View style={Styles.containerButton}>
-              <Text style={Styles.level}>Protectors:</Text>
+            <View style={Styles.protectorsContainer}>
+              <View style={Styles.containerButton}>
+                <Text style={Styles.flastListTitle}>Protectors:</Text>
+              </View>
+              <FlatList
+                style={Styles.flatList}
+                data={gymInfo.protectors}
+                renderItem={renderLoomieCard}
+                keyExtractor={(loomie) => loomie._id.toString()}
+              />
             </View>
-            <FlatList
-              style={Styles.flatList}
-              data={gymInfo.protectors}
-              renderItem={renderLoomieCard}
-              keyExtractor={(loomie) => loomie._id.toString()}
-            />
             <View style={Styles.containerButton}>
               {!gymInfo.was_reward_claimed && (
                 <CustomButton
@@ -154,7 +156,7 @@ const Styles = StyleSheet.create({
   },
   modal: {
     backgroundColor: '#fff',
-    maxHeight: 375,
+    maxHeight: 400,
     width: '96%',
     padding: 12
   },
@@ -182,8 +184,16 @@ const Styles = StyleSheet.create({
     height: 54,
     borderRadius: 4
   },
+  protectorsContainer: {
+    marginVertical: 12,
+    maxHeight: 230
+  },
+  flastListTitle: {
+    fontSize: 16,
+    marginBottom: 4
+  },
   flatList: {
-    margin: 6
+    marginVertical: 6
   },
   cardImage: {
     height: 48,
