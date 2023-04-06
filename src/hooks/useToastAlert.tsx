@@ -7,7 +7,7 @@ export const useToastAlert = () => {
       text1: 'Success:',
       text2: message,
       topOffset: 30,
-      visibilityTime: 2000
+      visibilityTime: 2500
     });
   };
 
@@ -17,7 +17,7 @@ export const useToastAlert = () => {
       text1: 'Error:',
       text2: message,
       topOffset: 30,
-      visibilityTime: 2000
+      visibilityTime: 2500
     });
   };
 
@@ -27,7 +27,7 @@ export const useToastAlert = () => {
       text1: 'Info:',
       text2: message,
       topOffset: 30,
-      visibilityTime: 2000
+      visibilityTime: 2500
     });
   };
 

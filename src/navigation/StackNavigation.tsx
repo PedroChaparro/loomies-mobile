@@ -10,6 +10,7 @@ import { MapProvider } from '@src/context/MapProvider';
 import { ModelProvider } from '@src/context/ModelProvider';
 import { EmailValidationView } from '../pages/EmailValidationView';
 import { NewCodeView } from '../pages/NewCodeView';
+import { UpdateLoomieTeamView } from '../pages/UpdateLoomieTeamView';
 import { LoomieDetails } from '@src/pages/LoomieDetails';
 import { ResetPasswordView } from '../pages/ResetPasswordView';
 import { ChangePasswordView } from '../pages/ChangePasswordView';
@@ -47,8 +48,11 @@ export const StackNavigation = () => {
             />
             {/* Views that includes the bottom tabs navigation */}
             <Stack.Screen name='Application' component={BottomNavigation} />
-
             <Stack.Screen name='LoomieDetails' component={LoomieDetails} />
+            <Stack.Screen
+              name='UpdateLoomieTeam'
+              component={UpdateLoomieTeamView}
+            />
           </Stack.Navigator>
         </ModelProvider>
       </MapProvider>
