@@ -3,13 +3,12 @@ import React from 'react';
 import Modal from 'react-native-modal';
 import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
 import { CustomButton } from '../CustomButton';
-//import { GymsModalContext } from '@src/context/GymsModalContext';
 import { TReward } from '@src/types/types';
 
 interface IProps {
   isVisible: boolean;
-  reward: TReward[];
   callBack(): void;
+  reward: TReward[];
 }
 
 export const ModalRewards = ({ isVisible, reward, callBack }: IProps) => {
@@ -39,7 +38,7 @@ export const ModalRewards = ({ isVisible, reward, callBack }: IProps) => {
             keyExtractor={(item) => item.id}
           />
           <View style={Styles.containerButton}>
-            <CustomButton title='Aceptar' type='primary' callback={callBack} />
+            <CustomButton title='Accept' type='primary' callback={callBack} />
           </View>
         </View>
       </View>
