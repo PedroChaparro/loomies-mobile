@@ -4,9 +4,9 @@
  * Manages the Babylon 3D engine
  */
 
-import React, { useEffect, useState, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import { SafeAreaView, View, Button } from 'react-native';
-import { EngineView, useEngine } from '@babylonjs/react-native';
+import { EngineView } from '@babylonjs/react-native';
 
 import * as Babylon from '@babylonjs/core';
 import { Tools } from '@babylonjs/core/Misc';
