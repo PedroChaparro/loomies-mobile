@@ -33,6 +33,7 @@ export const ModalRewards = ({ isVisible, reward, callBack }: IProps) => {
         <View style={Styles.modal}>
           <Text style={Styles.modalTitle}>Rewards Claimed 🏆</Text>
           <FlatList
+            contentContainerStyle={{ marginVertical: 8 }}
             data={reward}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
