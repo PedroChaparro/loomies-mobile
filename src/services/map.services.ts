@@ -4,12 +4,13 @@ import {
   iRequestGym,
   iRequestWildLoomieExists,
   iRequestNearGyms,
-  iRequestNearLoomies
+  iRequestNearLoomies,
+  iRequestInfoGym
 } from '@src/types/requestInterfaces';
 import { iGym, iPosition } from '@src/types/mapInterfaces';
 import { getStorageData } from './storage.services';
 import { CONFIG } from './config.services';
-import { TWildLoomies } from '@src/types/types';
+import { TGymInfo, TWildLoomies } from '@src/types/types';
 import { refreshRequest } from './session.services';
 const { API_URL } = CONFIG;
 
@@ -76,7 +77,84 @@ export const requestNearGyms = async (
   }
 };
 
+// Return info some info (name, protectors, owner) of a Gym by Id
+export const requestGymInfoById = async (
+  gymId: string,
+  failed = false
+): Promise<[TGymInfo | null, boolean]> => {
+  try {
+    // get access token from the storage
+    const [accessToken, error] = await getStorageData('accessToken');
+    if (error || !accessToken) return [null, true];
+
+    const response = await Axios.get(`${API_URL}/gyms/${gymId}`, {
+      headers: {
+        'Access-Token': accessToken
+      }
+    });
+
+    const rawData: object = response.data;
+
+    const data: iRequestInfoGym = rawData as iRequestInfoGym;
+
+    return [data.gym, false];
+  } catch (error) {
+    // If 401, try to refresh the access token and retry the request
+    if (
+      Axios.isAxiosError(error) &&
+      error.response?.status === 401 &&
+      !failed
+    ) {
+      await refreshRequest();
+      return await requestGymInfoById(gymId, true);
+    }
+
+    return [null, false];
+  }
+};
+
 // Returns an array of iGyms
+export const requestRewards = async (
+  gymId: string,
+  userLat: number,
+  userLon: number,
+  failed = false
+): Promise<[any, boolean]> => {
+  try {
+    // get access token from the storage
+    const [accessToken, error] = await getStorageData('accessToken');
+    if (error || !accessToken) return [null, true];
+
+    const response = await Axios.post(
+      `${API_URL}/gyms/claim-reward`,
+      {
+        gym_id: gymId,
+        latitude: userLat,
+        longitude: userLon
+      },
+      {
+        headers: {
+          'Access-Token': accessToken
+        }
+      }
+    );
+    console.log(response.data);
+
+    return [response.data, false];
+  } catch (error) {
+    // If 401, try to refresh the access token and retry the request
+    if (
+      Axios.isAxiosError(error) &&
+      error.response?.status === 401 &&
+      !failed
+    ) {
+      await refreshRequest();
+      return await requestRewards(gymId, userLat, userLon, true);
+    }
+
+    return [null, false];
+  }
+};
 
 export const requestWildLoomies = async (
   userPos: iPosition,
