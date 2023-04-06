@@ -1,4 +1,4 @@
-import { TWildLoomies } from '@src/types/types';
+import { TWildLoomies, TGymInfo, TReward } from '@src/types/types';
 
 export interface iRequestGym {
   _id: string;
@@ -11,6 +11,18 @@ export interface iRequestNearGyms {
   error: boolean;
   message: string;
   nearGyms: iRequestGym[];
+}
+
+export interface iRequestInfoGym {
+  error: boolean;
+  message: string;
+  gym: TGymInfo;
+}
+
+export interface iRequestRewards {
+  error: boolean;
+  message: string;
+  reward: TReward;
 }
 
 export interface iRequestNearLoomies {

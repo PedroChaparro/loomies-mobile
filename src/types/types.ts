@@ -32,6 +32,21 @@ export type TWildLoomies = {
   generated_at: number; // timestamp
 };
 
+export type TGymLoomieProtector = {
+  _id: string;
+  serial: number;
+  name: string;
+  level: number;
+};
+
+export interface TGymInfo {
+  _id: string;
+  name: string;
+  owner: string;
+  protectors: TGymLoomieProtector[];
+  was_reward_claimed: boolean;
+}
+
 // Shared interface between the items and the loomballs
 export type TInventoryItem = {
   _id: string;
@@ -53,6 +68,13 @@ export type TItem = {
 
 export type TLoombal = {
   _id: string;
+  serial: number;
+  name: string;
+  quantity: number;
+};
+
+export type TReward = {
+  id: string;
   serial: number;
   name: string;
   quantity: number;
