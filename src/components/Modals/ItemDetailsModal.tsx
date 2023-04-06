@@ -42,11 +42,13 @@ export const ItemDetailsModal = ({
             type='bordered'
             callback={toggleVisibility}
           />
-          <CustomButton
-            title='Use now'
-            type='primary'
-            callback={handleUseNow}
-          />
+          {!item.is_combat_item && (
+            <CustomButton
+              title='Use now'
+              type='primary'
+              callback={handleUseNow}
+            />
+          )}
         </View>
       </View>
     </Modal>
