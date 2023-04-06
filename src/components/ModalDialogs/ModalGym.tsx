@@ -93,7 +93,7 @@ export const ModalGym = () => {
   );
 
   // If the gym information is not available, don't render the modal
-  if (!gymInfo) return;
+  if (!gymInfo) return <></>;
 
   return (
     <>

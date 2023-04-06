@@ -9,7 +9,6 @@ import { ModalGym } from '@src/components/ModalDialogs/ModalGym';
 import { GymsModalProvider } from '@src/context/GymsModalContext';
 import { BabylonContext } from '@src/context/BabylonProvider';
 
-
 interface MapViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   navigation: NavigationProp<any, any>;
