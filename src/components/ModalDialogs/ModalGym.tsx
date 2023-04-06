@@ -156,20 +156,19 @@ const Styles = StyleSheet.create({
   },
   modal: {
     backgroundColor: '#fff',
-    maxHeight: 400,
     width: '96%',
     padding: 12
   },
   modalTitle: {
     color: '#ED4A5F',
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
     textAlign: 'center',
     textTransform: 'uppercase'
   },
   modalSubtitle: {
     color: '#5c5c5c',
-    fontSize: 22,
+    fontSize: 20,
     textAlign: 'center'
   },
   containerItem: {
