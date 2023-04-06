@@ -29,6 +29,7 @@ import {
 
 // debug
 import { CONFIG } from '@src/services/config.services';
+import { useToastAlert } from '@src/hooks/useToastAlert';
 const { MAP_DEBUG } = CONFIG;
 
 const DELAY_FETCH_WILD_LOOMIES = 10000; // 4 seconds
@@ -40,6 +41,7 @@ const HITBOX_DIAMETER = 1.8;
 export const MapElementManager: React.FC<{
   scene: Babylon.Scene | null;
 }> = (props) => {
+  const { showErrorToast } = useToastAlert();
   const { instantiateModel } = useContext(ModelContext);
   const { setCurrentModalGymId } = useContext(GymsModalContext);
 
@@ -312,6 +314,8 @@ export const MapElementManager: React.FC<{
         if (GymIsCloseFromUser(userPosition, gym.origin)) {
           // Set the information for the gym modal
           setCurrentModalGymId(gym.id);
+        } else {
+          showErrorToast('You are too far from the gym');
         }
       }
     }
