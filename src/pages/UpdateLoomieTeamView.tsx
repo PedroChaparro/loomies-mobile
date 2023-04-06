@@ -7,13 +7,18 @@ import { TCaughtLoomies, TCaughtLoomiesWithTeam } from '@src/types/types';
 import React, { useEffect, useState } from 'react';
 import { LoomiesGrid } from '@src/components/CaughtLoomiesGrid/LoomiesGrid';
 import { Container } from '@src/components/Container';
-import { useIsFocused } from '@react-navigation/native';
+import { NavigationProp, useIsFocused } from '@react-navigation/native';
 import { LoomiesGridSkeleton } from '@src/skeletons/CaughtLoomiesGrid/LoomiesGridSkeleton';
 import { CustomButton } from '@src/components/CustomButton';
 import { View } from 'react-native';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 
-export const UpdateLoomieTeamView = () => {
+interface IProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  navigation: NavigationProp<any>;
+}
+
+export const UpdateLoomieTeamView = ({ navigation }: IProps) => {
   const { showErrorToast, showSuccessToast } = useToastAlert();
   const [loomies, setLoomies] = useState(Array<TCaughtLoomiesWithTeam>);
   const [team, setTeam] = useState(Array<string>);
@@ -95,6 +100,8 @@ export const UpdateLoomieTeamView = () => {
       showSuccessToast(
         response['message'] || 'Your team was saved successfully'
       );
+
+      navigation.navigate('Application', { screen: 'LoomieTeamView' });
     }
   };
 

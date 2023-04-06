@@ -7,7 +7,7 @@ import { TCaughtLoomies, TCaughtLoomiesWithTeam } from '@src/types/types';
 import { LoomiesGrid } from '@src/components/CaughtLoomiesGrid/LoomiesGrid';
 import { Container } from '@src/components/Container';
 import { LoomiesGridSkeleton } from '@src/skeletons/CaughtLoomiesGrid/LoomiesGridSkeleton';
-import { NavigationProp } from '@react-navigation/native';
+import { NavigationProp, useIsFocused } from '@react-navigation/native';
 import { EmptyMessage } from '@src/components/EmptyMessage';
 import { CustomButton } from '@src/components/CustomButton';
 import { View } from 'react-native';
@@ -18,6 +18,7 @@ interface IProps {
 }
 
 export const UserLoomies = ({ navigation }: IProps) => {
+  const isFocused = useIsFocused();
   const [loomies, setLoomies] = useState(Array<TCaughtLoomiesWithTeam>);
   const [team, setTeam] = useState(Array<string>);
   const [loading, setLoading] = useState(true);
@@ -48,8 +49,9 @@ export const UserLoomies = ({ navigation }: IProps) => {
 
   // First we get the loomie team
   useEffect(() => {
+    if (!isFocused) return;
     fetchLoomieTeam();
-  }, []);
+  }, [isFocused]);
 
   // When the team is obtained, we get the loomies
   useEffect(() => {
