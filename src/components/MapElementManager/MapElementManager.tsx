@@ -22,7 +22,10 @@ import {
   instantiatedEntriesTranslate
 } from '@src/components/Map3D/utilsVertex';
 import { useScenePointerObservable } from '@src/hooks/useScenePointerObservable';
-import { LoomieEnterCaptureView } from './utilsElementInteraction';
+import {
+  GymIsCloseFromUser,
+  LoomieEnterCaptureView
+} from './utilsElementInteraction';
 
 // debug
 import { CONFIG } from '@src/services/config.services';
@@ -306,8 +309,10 @@ export const MapElementManager: React.FC<{
 
         if (!gym) return;
 
-        // Set the information for the gym modal
-        setCurrentModalGymId(gym.id);
+        if (GymIsCloseFromUser(userPosition, gym.origin)) {
+          // Set the information for the gym modal
+          setCurrentModalGymId(gym.id);
+        }
       }
     }
   });
