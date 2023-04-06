@@ -1,5 +1,4 @@
 import { TCaughtLoomiesWithTeam } from '@src/types/types';
-import { NavigationProp } from '@react-navigation/native';
 import React from 'react';
 import { FlatList, View } from 'react-native';
 import { LoomieCard } from './CaughtLoomieCard';
@@ -22,7 +21,7 @@ export const LoomiesGrid = ({
 }: IProps) => {
   // Sort the busy loomies to the end
   loomies.sort((a, b) => Number(a.is_busy) - Number(b.is_busy));
-  
+
   return (
     <FlatList
       ListHeaderComponent={listHeaderComponent || <View />}
