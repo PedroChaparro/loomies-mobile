@@ -28,14 +28,16 @@ export const MODEL_RESOURCE: { [key: string]: NodeRequire } = {
 };
 
 export const LoadModel = async (
-  model: NodeRequire
+  model: NodeRequire,
+  scene: Babylon.Scene
 ): Promise<Babylon.AssetContainer | null> => {
   try {
     const sceneGLBUri = resolveAssetSource(model).uri;
 
     const container = await Babylon.SceneLoader.LoadAssetContainerAsync(
       '',
-      sceneGLBUri
+      sceneGLBUri,
+      scene
     );
 
     return container;

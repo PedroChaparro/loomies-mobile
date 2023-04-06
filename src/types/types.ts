@@ -15,6 +15,7 @@ export type TCaughtLoomies = {
   is_busy: boolean;
   owner: string;
   level: number;
+  experience: number;
 };
 
 export type TWildLoomies = {

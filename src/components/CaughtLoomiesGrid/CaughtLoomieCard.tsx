@@ -1,3 +1,4 @@
+import { NavigationProp } from '@react-navigation/native';
 import { TCaughtLoomies } from '@src/types/types';
 import { colors, images } from '@src/utils/utils';
 import React from 'react';
@@ -5,11 +6,16 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 interface IProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  navigation: NavigationProp<any, any>;
   loomie: TCaughtLoomies;
 }
 
-export const LoomieCard = ({ loomie }: IProps) => {
-  const handleCardClick = () => console.log('Card clicked!');
+export const LoomieCard = ({ navigation, loomie }: IProps) => {
+  const handleCardClick = () => {
+    // Navigate to the details page
+    navigation.navigate('LoomieDetails', { loomie });
+  };
 
   // Get the color from the first type
   const mainColor = loomie.types[0].toUpperCase();
