@@ -81,7 +81,7 @@ export const ModalGym = () => {
     gymInfo.was_reward_claimed = true;
   };
 
-  const renderItem = ({ item }: { item: TGymLoomieProtector }) => (
+  const renderLoomieCard = ({ item }: { item: TGymLoomieProtector }) => (
     <View style={Styles.containerItem}>
       <Image
         source={images[`${item.serial}`.toString().padStart(3, '0')]}
@@ -114,7 +114,7 @@ export const ModalGym = () => {
             <FlatList
               style={Styles.flatList}
               data={gymInfo.protectors}
-              renderItem={renderItem}
+              renderItem={renderLoomieCard}
               keyExtractor={(loomie) => loomie._id.toString()}
             />
             <View style={Styles.containerButton}>
