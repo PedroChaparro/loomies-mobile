@@ -1,7 +1,8 @@
 import { TInventoryItem, TItem } from '@src/types/types';
-import React from 'react';
+import React, { useState } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
 import { ItemCard } from './ItemCard';
+import { ItemDetailsModal } from '../Modals/ItemDetailsModal';
 
 interface IProps {
   items: Array<TItem>;
@@ -9,27 +10,46 @@ interface IProps {
 }
 
 export const ItemGrid = ({ inventory, items }: IProps) => {
+  const [itemModalVisible, setItemModalVisible] = useState(true);
+  const [selectedItem, setSelectedItem] = useState<TItem | null>(null);
+
+  const toggleItemModalVisibility = () => {
+    setItemModalVisible(!itemModalVisible);
+  };
+
   const handleItemPress = (item: TInventoryItem) => {
     // Find the item by the id and show the information
     const clickedItem = items.find((i) => i._id === item._id);
-    // The information contains all the required fields to show the modal
-    console.log(clickedItem);
+
+    if (clickedItem) {
+      setSelectedItem(clickedItem);
+      toggleItemModalVisibility();
+    }
   };
 
   return (
-    <FlatList
-      data={inventory}
-      keyExtractor={(item) => item._id}
-      renderItem={({ item }) => (
-        <ItemCard
-          item={item}
-          // If the item is not a loomball, pass the callback to open the item modal
-          handleClickCallback={
-            item.type === 'item' ? handleItemPress : undefined
-          }
+    <>
+      {selectedItem && (
+        <ItemDetailsModal
+          isVisible={itemModalVisible}
+          toggleVisibility={toggleItemModalVisibility}
+          item={selectedItem}
         />
       )}
-      numColumns={2}
-    />
+      <FlatList
+        data={inventory}
+        keyExtractor={(item) => item._id}
+        renderItem={({ item }) => (
+          <ItemCard
+            item={item}
+            // If the item is not a loomball, pass the callback to open the item modal
+            handleClickCallback={
+              item.type === 'item' ? handleItemPress : undefined
+            }
+          />
+        )}
+        numColumns={2}
+      />
+    </>
   );
 };
