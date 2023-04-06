@@ -9,21 +9,30 @@ import { requestGymInfoById } from '@src/services/map.services';
 import { TGymInfo, TGymLoomieProtector, TReward } from '../../types/types';
 import { getPosition } from '@src/services/geolocation.services';
 import { requestRewards } from '@src/services/map.services';
+import { useToastAlert } from '@src/hooks/useToastAlert';
 
 export const ModalGym = () => {
   const { isGymModalOpen, currentModalGymId, toggleGymModalVisibility } =
     useContext(GymsModalContext);
 
-  const [gymInfo, setGymInfo] = useState<TGymInfo | null>();
-  const [reward, setReward] = useState(Array<TReward>);
+  const { showErrorToast } = useToastAlert();
+  const [rewardsModalVisible, setRewardsModalVisible] = useState(false);
+  const [gymInfo, setGymInfo] = useState<TGymInfo>();
+  const [reward, setReward] = useState<TReward[]>([]);
 
-  // Request the gym infromation to show the first modal
+  // Request the gym information to show the first modal
   const fetchGymInfo = async () => {
     const [response, err] = await requestGymInfoById(currentModalGymId);
-    if (!err) {
-      const gymInfo = response;
-      setGymInfo(gymInfo || null);
-      if (!gymInfo) return;
+    const gymInfo = response;
+
+    if (!err && gymInfo) {
+      setGymInfo(gymInfo);
+    } else {
+      showErrorToast(
+        'There was an error trying to get the gym information. Please try again later.'
+      );
+
+      toggleGymModalVisibility();
     }
   };
 
@@ -40,32 +49,35 @@ export const ModalGym = () => {
 
       if (!err && response != null) {
         const { reward } = response;
-        setReward(reward || null);
+        setReward(reward || []);
       }
     }
   };
 
+  // Open the second modal if the user has claimed the rewards successfully
   useEffect(() => {
-    handleOpenRewardsModal();
+    if (reward && reward.length != 0) {
+      handleOpenRewardsModal();
+    }
   }, [reward]);
 
+  // Request the gym information when the modal is opened
   useEffect(() => {
     if (currentModalGymId) {
       fetchGymInfo();
     }
   }, [currentModalGymId]);
 
-  const [rewardsModalVisible, setRewardsModalVisible] = useState(false);
-
   const handleOpenRewardsModal = () => {
     setRewardsModalVisible(true);
   };
 
-  // This function is only called from the second modal to avoid changing
-  // the value of the was_reward_claimed variable.
   const handleCloseSecondModal = () => {
     setRewardsModalVisible(false);
     if (!gymInfo) return;
+    // Set the gym as claimed to avoid showing the modal again.
+    // When the user clicks on the gym again, this information
+    // will be obtained from the backend
     gymInfo.was_reward_claimed = true;
   };
 
@@ -80,50 +92,57 @@ export const ModalGym = () => {
     </View>
   );
 
+  // If the gym information is not available, don't render the modal
+  if (!gymInfo) return;
+
   return (
-    <Modal
-      isVisible={isGymModalOpen}
-      onBackdropPress={toggleGymModalVisibility}
-    >
-      <View style={Styles.container}>
-        <View style={Styles.modal}>
-          <Text style={Styles.modalTitle}>{gymInfo?.name}</Text>
-          <Text style={Styles.modalSubtitle}>
-            Owner: {gymInfo?.owner == null ? 'Unclaimed' : gymInfo?.owner}
-          </Text>
-          <View style={Styles.containerButton}>
-            <Text style={Styles.level}>Protectors:</Text>
-          </View>
-          <FlatList
-            style={Styles.flatList}
-            data={gymInfo?.protectors}
-            renderItem={renderItem}
-            keyExtractor={(loomie) => loomie._id.toString()}
-          />
-          <View style={Styles.containerButton}>
-            {!gymInfo?.was_reward_claimed && (
-              <CustomButton
-                title='Claim Rewards'
-                type='primary'
-                callback={fetchClaimRewards}
-              />
-            )}
-            <CustomButton
-              title='Challenge'
-              type='primary'
-              callback={() => {
-                console.log('Challenge');
-              }}
+    <>
+      {/* First modal (Gym information) */}
+      <Modal
+        isVisible={isGymModalOpen}
+        onBackdropPress={toggleGymModalVisibility}
+      >
+        <View style={Styles.container}>
+          <View style={Styles.modal}>
+            <Text style={Styles.modalTitle}>{gymInfo.name}</Text>
+            <Text style={Styles.modalSubtitle}>
+              Owner: {gymInfo.owner == null ? 'Unclaimed' : gymInfo.owner}
+            </Text>
+            <View style={Styles.containerButton}>
+              <Text style={Styles.level}>Protectors:</Text>
+            </View>
+            <FlatList
+              style={Styles.flatList}
+              data={gymInfo.protectors}
+              renderItem={renderItem}
+              keyExtractor={(loomie) => loomie._id.toString()}
             />
+            <View style={Styles.containerButton}>
+              {!gymInfo.was_reward_claimed && (
+                <CustomButton
+                  title='Claim Rewards'
+                  type='primary'
+                  callback={fetchClaimRewards}
+                />
+              )}
+              <CustomButton
+                title='Challenge'
+                type='primary'
+                callback={() => {
+                  console.log('Challenge');
+                }}
+              />
+            </View>
           </View>
         </View>
-      </View>
+      </Modal>
+      {/* Second modal (Rewards) */}
       <ModalRewards
-        isVisible={rewardsModalVisible}
         reward={reward}
+        isVisible={rewardsModalVisible}
         callBack={handleCloseSecondModal}
       />
-    </Modal>
+    </>
   );
 };
 
