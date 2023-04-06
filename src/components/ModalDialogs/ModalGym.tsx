@@ -2,64 +2,32 @@ import { images } from '@src/utils/utils';
 import React, { useContext, useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
-import { CustomButton } from './CustomButton';
+import { CustomButton } from '../CustomButton';
 import { ModalRewards } from './ModalRewards';
 import { GymsModalContext } from '@src/context/GymsModalContext';
-
-interface Item {
-  id: string;
-  name: string;
-  quantity: number;
-}
-
-const data: Item[] = [
-  {
-    id: '1',
-    name: 'Defibrillator',
-    quantity: 1
-  },
-  {
-    id: '2',
-    name: 'Steroids Injection',
-    quantity: 2
-  },
-  {
-    id: '3',
-    name: 'Steroids Injection',
-    quantity: 2
-  },
-  {
-    id: '4',
-    name: 'Steroids Injection',
-    quantity: 2
-  },
-  {
-    id: '5',
-    name: 'Steroids Injection',
-    quantity: 2
-  }
-];
+import { requestGymInfoById } from '@src/services/map.services';
+import { TGymInfo, TGymLoomieProtector } from '../../types/types';
 
 // todo cambiar nombres
 export const ModalGym = () => {
   const { isGymModalOpen, currentModalGymId, toggleGymModalVisibility } =
     useContext(GymsModalContext);
 
+  const [gymInfo, setGymInfo] = useState<TGymInfo | null>();
+  const fetchGymInfo = async () => {
+    const [response, err] = await requestGymInfoById(currentModalGymId);
+    if (!err) {
+      const gymInfo = response;
+      setGymInfo(gymInfo || null);
+    }
+  };
+
   useEffect(() => {
-    // Here, if the current gym id changes, and is not empty, you can
-    // fetch the gym data
     if (currentModalGymId) {
-      console.log({ currentModalGymId });
+      //console.log({ currentModalGymId });
+      fetchGymInfo();
     }
   }, [currentModalGymId]);
-
-  /* const [modalData, setModalData] = useState<Item[]>([]);
-
-  const showModal = (location: { id: string }) => {
-    setModalData(data.filter((item) => item.id === location.id));
-  }; */
-  // todo
-  //const itemSerial = item.serial.toString().padStart(3, '0');
 
   const [secondModalVisible, setSecondModalVisible] = useState(false);
 
@@ -71,13 +39,14 @@ export const ModalGym = () => {
     setSecondModalVisible(false);
   };
 
-  if (data.length === 0) return <Text>Nothing to show</Text>;
-
-  const renderItem = ({ item }: { item: Item }) => (
+  const renderItem = ({ item }: { item: TGymLoomieProtector }) => (
     <View style={Styles.containerItem}>
-      <Image source={images[`O-00${item.id}`]} style={Styles.cardImage} />
+      <Image
+        source={images[`${item.serial}`.toString().padStart(3, '0')]}
+        style={Styles.cardImage}
+      />
       <Text style={Styles.nameText}>{item.name}</Text>
-      <Text style={Styles.level}>Lvl {item.quantity}</Text>
+      <Text style={Styles.level}>Lvl {item.level}</Text>
     </View>
   );
 
@@ -88,15 +57,18 @@ export const ModalGym = () => {
     >
       <View style={Styles.container}>
         <View style={Styles.modal}>
-          <Text style={Styles.modalTitle}>Osinski Estate</Text>
-          <Text style={Styles.modalSubtitle}>Owner: Unclaimed</Text>
+          <Text style={Styles.modalTitle}>{gymInfo?.name}</Text>
+          <Text style={Styles.modalSubtitle}>
+            Owner: {gymInfo?.owner == null ? 'Unclaimed' : gymInfo?.owner}
+          </Text>
           <View style={Styles.containerButton}>
-            <Text /* style={Styles.modalTitle} */>Protectors:</Text>
+            <Text style={Styles.level}>Protectors:</Text>
           </View>
           <FlatList
-            data={data}
+            style={Styles.flatList}
+            data={gymInfo?.protectors}
             renderItem={renderItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(loomie) => loomie._id.toString()}
           />
           <View style={Styles.containerButton}>
             <CustomButton
@@ -116,6 +88,7 @@ export const ModalGym = () => {
       </View>
       <ModalRewards
         isVisible={secondModalVisible}
+        isClaimed={gymInfo?.was_reward_claimed || false}
         callBack={handleCloseSecondModal}
       />
     </Modal>
@@ -130,8 +103,9 @@ const Styles = StyleSheet.create({
   },
   modal: {
     backgroundColor: '#fff',
+    maxHeight: '52%',
     width: '96%',
-    padding: 16
+    padding: 12
   },
   modalTitle: {
     color: '#ED4A5F',
@@ -151,16 +125,17 @@ const Styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 0.5,
     borderBottomColor: 'black',
-    marginTop: 7,
-    marginBottom: 7,
     padding: 4,
     width: '92%',
     justifyContent: 'space-between',
-    height: 44,
+    height: 54,
     borderRadius: 4
   },
+  flatList: {
+    margin: 6
+  },
   cardImage: {
-    height: 40,
+    height: 48,
     resizeMode: 'center',
     width: 50
   },

@@ -1,69 +1,78 @@
 import { images } from '@src/utils/utils';
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
-import { CustomButton } from './CustomButton';
-
-interface Item {
-  id: string;
-  name: string;
-  quantity: number;
-}
-
-const data: Item[] = [
-  {
-    id: '1',
-    name: 'Defibrillator',
-    quantity: 1
-  },
-  {
-    id: '2',
-    name: 'Steroids Injection',
-    quantity: 2
-  },
-  {
-    id: '3',
-    name: 'Steroids Injection',
-    quantity: 2
-  },
-  {
-    id: '4',
-    name: 'Steroids Injection',
-    quantity: 2
-  },
-  {
-    id: '5',
-    name: 'Steroids Injection',
-    quantity: 2
-  }
-];
+import { CustomButton } from '../CustomButton';
+import { GymsModalContext } from '@src/context/GymsModalContext';
+import { getPosition } from '@src/services/geolocation.services';
+import { TReward } from '@src/types/types';
+import { requestRewards } from '@src/services/map.services';
 
 interface IProps {
   isVisible: boolean;
+  isClaimed: boolean;
   callBack(): void;
 }
 
 // todo cambiar nombres
-export const ModalRewards = ({ isVisible, callBack }: IProps) => {
-  /* const [modalData, setModalData] = useState<Item[]>([]);
+export const ModalRewards = ({ isVisible, isClaimed, callBack }: IProps) => {
+  const { currentModalGymId } = useContext(GymsModalContext);
 
-  const showModal = (location: { id: string }) => {
-    setModalData(data.filter((item) => item.id === location.id));
-  }; */
-  // todo
-  //const itemSerial = item.serial.toString().padStart(3, '0');
+  const [reward, setReward] = useState(Array<TReward>);
 
-  if (data.length === 0) return <Text>Nothing to show</Text>;
+  const fetchClaimRewards = async () => {
+    const position = await getPosition();
 
-  const renderItem = ({ item }: { item: Item }) => (
+    if (position) {
+      const [response, err] = await requestRewards(
+        currentModalGymId,
+        position.lat,
+        position.lon
+      );
+      if (!err && response != null) {
+        const { reward } = response;
+        setReward(reward || null);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (isVisible && !isClaimed && currentModalGymId) {
+      fetchClaimRewards();
+    }
+  }, [isVisible, isClaimed, currentModalGymId]);
+
+  const renderItem = ({ item }: { item: TReward }) => (
     <View style={Styles.containerItem}>
       <Text style={Styles.nameText}>{item.name}</Text>
       <View style={Styles.groupImageText}>
-        <Image source={images[`O-00${item.id}`]} style={Styles.cardImage} />
+        <Image
+          source={
+            images[`${'O-'}` + `${item.serial}`.toString().padStart(3, '0')]
+          }
+          style={Styles.cardImage}
+        />
         <Text>x{item.quantity}</Text>
       </View>
     </View>
   );
+  if (isClaimed)
+    return (
+      <Modal isVisible={isVisible} onBackdropPress={callBack}>
+        <View style={Styles.container}>
+          <View style={Styles.modal}>
+            <Text style={Styles.modalTitle}>Rewards Already Claimed!</Text>
+            <View style={Styles.containerButton}>
+              <CustomButton
+                title='Aceptar'
+                type='primary'
+                callback={callBack}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
 
   return (
     <Modal isVisible={isVisible} onBackdropPress={callBack}>
@@ -71,7 +80,7 @@ export const ModalRewards = ({ isVisible, callBack }: IProps) => {
         <View style={Styles.modal}>
           <Text style={Styles.modalTitle}>Rewards Claimed 🏆</Text>
           <FlatList
-            data={data}
+            data={reward}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
           />

@@ -5,8 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useToastAlert } from '../hooks/useToastAlert';
 import { Map3D } from '@src/components/Map3D/Map3D';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-//import { ModalRewards } from '@src/components/ModalRewards';
-import { ModalGym } from '@src/components/ModalGym';
+import { ModalGym } from '@src/components/ModalDialogs/ModalGym';
 import { GymsModalProvider } from '@src/context/GymsModalContext';
 
 interface MapViewProps {
