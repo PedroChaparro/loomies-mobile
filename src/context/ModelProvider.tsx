@@ -17,27 +17,38 @@ interface iModelProvider {
     _name: string,
     _scene: Babylon.Scene
   ) => Promise<Babylon.Mesh | null>;
+  getModelHeight: (_name: string, _scene: Babylon.Scene) => Promise<number>;
 }
 
 export const ModelContext = createContext<iModelProvider>({
   instantiateModel: async (_name: string, _scene: Babylon.Scene) => null,
-  cloneModel: async (_name: string, _scene: Babylon.Scene) => null
+  cloneModel: async (_name: string, _scene: Babylon.Scene) => null,
+  getModelHeight: async (_name: string, _scene: Babylon.Scene) => 0
 });
 
 export const ModelProvider = (props: { children: ReactNode }) => {
-  const models = useRef<{ [key: string]: Babylon.AssetContainer }>({});
+  const models = useRef<{
+    [key: string]: { [key: string]: Babylon.AssetContainer };
+  }>({});
 
   // return model as Babylon.AssetContainer. If not loaded before then load
   const getModelAsset = async (
-    name: string
+    name: string,
+    scene: Babylon.Scene
   ): Promise<Babylon.AssetContainer | null> => {
+    const sceneName: string = scene.metadata.name;
+
+    if (!sceneName) return null;
+    if (!models.current[sceneName]) models.current[sceneName] = {};
+
     try {
       // model is already loaded
-      const model: Babylon.AssetContainer | undefined = models.current[name];
+      const model: Babylon.AssetContainer | undefined =
+        models.current[sceneName][name];
 
       if (!model) {
         // if not, load it
-        const container = await LoadModel(MODEL_RESOURCE[name]);
+        const container = await LoadModel(MODEL_RESOURCE[name], scene);
         if (!container) throw "ERROR: Couldn't load model";
 
         // make it non pickable by default
@@ -45,7 +56,7 @@ export const ModelProvider = (props: { children: ReactNode }) => {
           mesh.isPickable = false;
         });
 
-        models.current[name] = container;
+        models.current[sceneName][name] = container;
         return container;
       }
 
@@ -60,10 +71,10 @@ export const ModelProvider = (props: { children: ReactNode }) => {
   // Instantiates model to specified scene
   const instantiateModel = async (
     name: string,
-    _scene: Babylon.Scene
+    scene: Babylon.Scene
   ): Promise<Babylon.InstantiatedEntries | null> => {
     try {
-      const container = await getModelAsset(name);
+      const container = await getModelAsset(name, scene);
 
       if (container) {
         const instance = container.instantiateModelsToScene();
@@ -80,16 +91,16 @@ export const ModelProvider = (props: { children: ReactNode }) => {
   // Clones model to specified scene
   const cloneModel = async (
     name: string,
-    _scene: Babylon.Scene
+    scene: Babylon.Scene
   ): Promise<Babylon.Mesh | null> => {
     try {
-      const container = await getModelAsset(name);
+      const container = await getModelAsset(name, scene);
 
       if (container) {
         // clone from container
         let model = container.createRootMesh();
         model = model.clone(name);
-        model.visibility = 0;
+        model.visibility = 1;
 
         return model;
       }
@@ -100,8 +111,30 @@ export const ModelProvider = (props: { children: ReactNode }) => {
     return null;
   };
 
+  // returns height of model including it's children
+  const getModelHeight = async (
+    name: string,
+    scene: Babylon.Scene
+  ): Promise<number> => {
+    try {
+      const container = await getModelAsset(name, scene);
+
+      if (container) {
+        // get bounding box from entire hierarchy
+        const boundingBox = container.meshes[0].getHierarchyBoundingVectors();
+        return boundingBox.max.y;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    return 10;
+  };
+
   return (
-    <ModelContext.Provider value={{ instantiateModel, cloneModel }}>
+    <ModelContext.Provider
+      value={{ instantiateModel, cloneModel, getModelHeight }}
+    >
       {props.children}
     </ModelContext.Provider>
   );

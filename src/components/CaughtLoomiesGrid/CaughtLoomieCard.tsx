@@ -1,4 +1,5 @@
 import { TCaughtLoomiesWithTeam } from '@src/types/types';
+import { NavigationProp } from '@react-navigation/native';
 import { colors, images } from '@src/utils/utils';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';

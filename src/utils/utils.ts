@@ -1,3 +1,4 @@
+import { GAME_MIN_REQUIRED_EXPERIENCE, GAME_EXPERIENCE_FACTOR } from '@env';
 import { ImageSourcePropType } from 'react-native';
 
 export const colors: {
@@ -50,3 +51,14 @@ export const images: {
   'O-009': require('@assets/images/items/009.png'),
   'O-010': require('@assets/images/items/010.png')
 };
+
+export function getRequiredExperienceFromLevel(level: number): number {
+  return (
+    Math.log10(level) * GAME_EXPERIENCE_FACTOR + GAME_MIN_REQUIRED_EXPERIENCE
+  );
+}
+
+export function incrementStatFromLevel(stat: number, level: number): number {
+  const largeDecimal = stat * (1 + (1 / 8) * (level - 1));
+  return Math.floor(largeDecimal);
+}
