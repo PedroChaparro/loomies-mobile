@@ -60,7 +60,5 @@ export function getRequiredExperienceFromLevel(level: number): number {
 
 export function incrementStatFromLevel(stat: number, level: number): number {
   const largeDecimal = stat * (1 + (1 / 8) * (level - 1));
-
-  // Fix to 2 decimals
-  return Number(largeDecimal.toFixed(2));
+  return Math.floor(largeDecimal);
 }
