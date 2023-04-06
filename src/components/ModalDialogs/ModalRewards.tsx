@@ -1,47 +1,18 @@
 import { images } from '@src/utils/utils';
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import Modal from 'react-native-modal';
 import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
 import { CustomButton } from '../CustomButton';
-import { GymsModalContext } from '@src/context/GymsModalContext';
-import { getPosition } from '@src/services/geolocation.services';
+//import { GymsModalContext } from '@src/context/GymsModalContext';
 import { TReward } from '@src/types/types';
-import { requestRewards } from '@src/services/map.services';
 
 interface IProps {
   isVisible: boolean;
-  isClaimed: boolean;
+  reward: TReward[];
   callBack(): void;
 }
 
-// todo cambiar nombres
-export const ModalRewards = ({ isVisible, isClaimed, callBack }: IProps) => {
-  const { currentModalGymId } = useContext(GymsModalContext);
-
-  const [reward, setReward] = useState(Array<TReward>);
-
-  const fetchClaimRewards = async () => {
-    const position = await getPosition();
-
-    if (position) {
-      const [response, err] = await requestRewards(
-        currentModalGymId,
-        position.lat,
-        position.lon
-      );
-      if (!err && response != null) {
-        const { reward } = response;
-        setReward(reward || null);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (isVisible && !isClaimed && currentModalGymId) {
-      fetchClaimRewards();
-    }
-  }, [isVisible, isClaimed, currentModalGymId]);
-
+export const ModalRewards = ({ isVisible, reward, callBack }: IProps) => {
   const renderItem = ({ item }: { item: TReward }) => (
     <View style={Styles.containerItem}>
       <Text style={Styles.nameText}>{item.name}</Text>
@@ -56,23 +27,6 @@ export const ModalRewards = ({ isVisible, isClaimed, callBack }: IProps) => {
       </View>
     </View>
   );
-  if (isClaimed)
-    return (
-      <Modal isVisible={isVisible} onBackdropPress={callBack}>
-        <View style={Styles.container}>
-          <View style={Styles.modal}>
-            <Text style={Styles.modalTitle}>Rewards Already Claimed!</Text>
-            <View style={Styles.containerButton}>
-              <CustomButton
-                title='Aceptar'
-                type='primary'
-                callback={callBack}
-              />
-            </View>
-          </View>
-        </View>
-      </Modal>
-    );
 
   return (
     <Modal isVisible={isVisible} onBackdropPress={callBack}>
