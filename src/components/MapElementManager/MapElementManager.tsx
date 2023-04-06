@@ -8,6 +8,7 @@ import React, { useEffect, useContext, useRef } from 'react';
 import { iGym, iMapObject } from '@src/types/mapInterfaces';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { MapContext } from '@src/context/MapProvider';
+import { GymsModalContext } from '@src/context/GymsModalContext';
 import {
   requestNearGyms,
   requestWildLoomies
@@ -21,10 +22,14 @@ import {
   instantiatedEntriesTranslate
 } from '@src/components/Map3D/utilsVertex';
 import { useScenePointerObservable } from '@src/hooks/useScenePointerObservable';
-import { LoomieEnterCaptureView } from './utilsElementInteraction';
+import {
+  GymIsCloseFromUser,
+  LoomieEnterCaptureView
+} from './utilsElementInteraction';
 
 // debug
 import { CONFIG } from '@src/services/config.services';
+import { useToastAlert } from '@src/hooks/useToastAlert';
 const { MAP_DEBUG } = CONFIG;
 
 const DELAY_FETCH_WILD_LOOMIES = 10000; // 4 seconds
@@ -33,10 +38,13 @@ const HITBOX_HEIGHT_GYM = 4.2;
 const HITBOX_HEIGHT_LOOMIE = 2.3;
 const HITBOX_DIAMETER = 1.8;
 
-export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
-  props
-) => {
+export const MapElementManager: React.FC<{
+  scene: Babylon.Scene | null;
+}> = (props) => {
+  const { showErrorToast } = useToastAlert();
   const { instantiateModel } = useContext(ModelContext);
+  const { setCurrentModalGymId } = useContext(GymsModalContext);
+
   const {
     setGyms,
     getGyms,
@@ -302,7 +310,13 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
         });
 
         if (!gym) return;
-        console.log('Gym touched!', gym.id);
+
+        if (GymIsCloseFromUser(userPosition, gym.origin)) {
+          // Set the information for the gym modal
+          setCurrentModalGymId(gym.id);
+        } else {
+          showErrorToast('You are too far from the gym');
+        }
       }
     }
   });
