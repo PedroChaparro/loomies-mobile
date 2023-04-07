@@ -3,7 +3,7 @@ import {
   getLoomieTeamService,
   getLoomiesRequest
 } from '@src/services/user.services';
-import { TCaughtLoomies, TCaughtLoomiesWithTeam } from '@src/types/types';
+import { TCaughtLoomies, TCaughtLoomieToRender } from '@src/types/types';
 import { LoomiesGrid } from '@src/components/CaughtLoomiesGrid/LoomiesGrid';
 import { Container } from '@src/components/Container';
 import { LoomiesGridSkeleton } from '@src/skeletons/CaughtLoomiesGrid/LoomiesGridSkeleton';
@@ -19,7 +19,7 @@ interface IProps {
 
 export const UserLoomies = ({ navigation }: IProps) => {
   const isFocused = useIsFocused();
-  const [loomies, setLoomies] = useState(Array<TCaughtLoomiesWithTeam>);
+  const [loomies, setLoomies] = useState(Array<TCaughtLoomieToRender>);
   const [team, setTeam] = useState(Array<string>);
   const [loading, setLoading] = useState(true);
 
@@ -43,7 +43,7 @@ export const UserLoomies = ({ navigation }: IProps) => {
   const fetchLoomieTeam = async () => {
     const [response, err] = await getLoomieTeamService();
     if (err) return;
-    const team: Array<TCaughtLoomiesWithTeam> = response.team;
+    const team: Array<TCaughtLoomieToRender> = response.team;
     setTeam(team.map((loomie) => loomie._id));
   };
 

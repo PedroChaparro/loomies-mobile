@@ -1,12 +1,12 @@
-import { TCaughtLoomiesWithTeam } from '@src/types/types';
+import { TCaughtLoomieToRender } from '@src/types/types';
 import React from 'react';
 import { FlatList, View } from 'react-native';
 import { LoomieCard } from './CaughtLoomieCard';
 
 interface IProps {
-  loomies: Array<TCaughtLoomiesWithTeam>;
+  loomies: Array<TCaughtLoomieToRender>;
   markBusyLoomies: boolean;
-  markTeamLoomies: boolean;
+  markSelectedLoomies: boolean;
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
   elementsCallback: (a?: any) => void;
   listHeaderComponent?: React.ReactElement;
@@ -15,7 +15,7 @@ interface IProps {
 export const LoomiesGrid = ({
   loomies,
   markBusyLoomies,
-  markTeamLoomies,
+  markSelectedLoomies,
   elementsCallback,
   listHeaderComponent
 }: IProps) => {
@@ -35,7 +35,7 @@ export const LoomiesGrid = ({
           <LoomieCard
             loomie={item}
             markIfBusy={markBusyLoomies}
-            markIfInTeam={markTeamLoomies}
+            markIfSelected={markSelectedLoomies}
             cardCallback={elementsCallback}
           />
         );

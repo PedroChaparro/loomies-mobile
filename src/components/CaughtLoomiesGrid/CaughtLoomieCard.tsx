@@ -1,4 +1,4 @@
-import { TCaughtLoomiesWithTeam } from '@src/types/types';
+import { TCaughtLoomieToRender } from '@src/types/types';
 import { colors, images } from '@src/utils/utils';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
@@ -7,9 +7,9 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface IProps {
-  loomie: TCaughtLoomiesWithTeam;
+  loomie: TCaughtLoomieToRender;
   markIfBusy: boolean;
-  markIfInTeam: boolean;
+  markIfSelected: boolean;
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
   cardCallback: (a?: any) => void;
 }
@@ -17,7 +17,7 @@ interface IProps {
 export const LoomieCard = ({
   loomie,
   markIfBusy,
-  markIfInTeam,
+  markIfSelected,
   cardCallback
 }: IProps) => {
   // Get the color from the first type
@@ -30,7 +30,7 @@ export const LoomieCard = ({
 
   // Function to render a border if the loomie is part of the user's team
   const renderBorder = () => {
-    if (markIfInTeam && loomie.is_in_team) {
+    if (markIfSelected && loomie.is_selected) {
       return {
         borderColor: '#ED4A5F'
       };

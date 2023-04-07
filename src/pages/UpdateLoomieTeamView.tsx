@@ -3,7 +3,7 @@ import {
   getLoomiesRequest,
   putLoomieTeam
 } from '@src/services/user.services';
-import { TCaughtLoomies, TCaughtLoomiesWithTeam } from '@src/types/types';
+import { TCaughtLoomies, TCaughtLoomieToRender } from '@src/types/types';
 import React, { useEffect, useState } from 'react';
 import { LoomiesGrid } from '@src/components/CaughtLoomiesGrid/LoomiesGrid';
 import { Container } from '@src/components/Container';
@@ -20,7 +20,7 @@ interface IProps {
 
 export const UpdateLoomieTeamView = ({ navigation }: IProps) => {
   const { showErrorToast, showSuccessToast } = useToastAlert();
-  const [loomies, setLoomies] = useState(Array<TCaughtLoomiesWithTeam>);
+  const [loomies, setLoomies] = useState(Array<TCaughtLoomieToRender>);
   const [team, setTeam] = useState(Array<string>);
   const [loading, setLoading] = useState(true);
   const focused = useIsFocused();
@@ -39,10 +39,11 @@ export const UpdateLoomieTeamView = ({ navigation }: IProps) => {
     if (error) return;
 
     const loomies: TCaughtLoomies[] = response.loomies;
-    const loomiesWithTeamProperty = loomies.map((loomie) => ({
-      ...loomie,
-      is_in_team: team.includes(loomie._id)
-    }));
+
+    const loomiesWithTeamProperty = loomies.map((loomie) => {
+      const isTeamLoomie = team.includes(loomie._id);
+      return { ...loomie, is_in_team: isTeamLoomie, is_selected: isTeamLoomie };
+    });
 
     setLoomies(loomiesWithTeamProperty);
     setLoading(false);
@@ -119,7 +120,7 @@ export const UpdateLoomieTeamView = ({ navigation }: IProps) => {
         <LoomiesGrid
           loomies={loomies}
           markBusyLoomies={true}
-          markTeamLoomies={true}
+          markSelectedLoomies={true}
           elementsCallback={handleLoomiePress}
           listHeaderComponent={redirectionHeader}
         />

@@ -1,5 +1,5 @@
 import { RouteProp, useFocusEffect } from '@react-navigation/core';
-import { TCaughtLoomiesWithTeam } from '@src/types/types';
+import { TCaughtLoomieToRender } from '@src/types/types';
 import { StyleSheet, Text, View } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import { colors } from '@src/utils/utils';
@@ -10,11 +10,11 @@ import { BabylonContext } from '@src/context/BabylonProvider';
 import { Loomie3DModelPreview } from '@src/components/LoomieDetails/Loomie3DModelPreview';
 
 interface IProps {
-  route?: RouteProp<{ params: { loomie: TCaughtLoomiesWithTeam } }, 'params'>;
+  route?: RouteProp<{ params: { loomie: TCaughtLoomieToRender } }, 'params'>;
 }
 
 export const LoomieDetails = ({ route }: IProps) => {
-  const [loomie, setLoomie] = useState<TCaughtLoomiesWithTeam | null>(null);
+  const [loomie, setLoomie] = useState<TCaughtLoomieToRender | null>(null);
   const { showSceneDetails, showSceneNone } = useContext(BabylonContext);
 
   useEffect(() => {
