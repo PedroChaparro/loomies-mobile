@@ -87,7 +87,12 @@ export const FuseLoomiesModal = ({
     }
   };
 
-  if (!loomies) return <Text>Loading...</Text>;
+  const goToMap = () => {
+    toggleVisibilityCallback();
+    navigate('Map', null);
+  };
+
+  if (!loomies) return null;
 
   return (
     <Modal
@@ -96,11 +101,13 @@ export const FuseLoomiesModal = ({
       style={Styles.modal}
     >
       <Text style={Styles.modalTitle}>Fuse Loomies</Text>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, marginVertical: 8 }}>
         {loomies.length === 0 ? (
           <EmptyMessage
-            text="You don't have any Loomie to fuse yet..."
-            showButton={false}
+            text={`You have to catch another "${selectedLoomie.name}" to fuse it`}
+            showButton={true}
+            buttonText='Catch Loomies'
+            buttonCallback={goToMap}
           />
         ) : (
           <LoomiesGrid
@@ -114,7 +121,7 @@ export const FuseLoomiesModal = ({
       {loomies.length === 0 ? null : (
         <View style={Styles.containerButton}>
           <CustomButton
-            title='Accept'
+            title='Fuse'
             type='primary'
             callback={callfuseLoomies}
           />
