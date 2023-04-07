@@ -52,12 +52,14 @@ export const LoomieDetails = ({ route }: IProps) => {
         />
       )}
       <View style={{ ...Styles.background, backgroundColor: typeColor }}>
-        <Pressable
-          style={Styles.fuseFloatingButton}
-          onPress={toggleFuseModalVisibility}
-        >
-          <MaterialCommunityIcon name='merge' color={'white'} size={32} />
-        </Pressable>
+        {loomie.is_busy == false && (
+          <Pressable
+            style={Styles.fuseFloatingButton}
+            onPress={toggleFuseModalVisibility}
+          >
+            <MaterialCommunityIcon name='merge' color={'white'} size={32} />
+          </Pressable>
+        )}
         <View style={Styles.scenario}>
           <Loomie3DModelPreview serial={loomie.serial} color={typeColor} />
         </View>
@@ -79,6 +81,7 @@ export const LoomieDetails = ({ route }: IProps) => {
             defense={loomie.defense}
             attack={loomie.attack}
           />
+          
         </View>
       </View>
     </>
