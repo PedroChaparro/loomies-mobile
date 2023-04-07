@@ -32,6 +32,11 @@ export const MODEL_RESOURCE: { [key: string]: NodeRequire } = {
 
   // environment models
   'ENV_GRASS': require('@assets/models/environments/grass/grass.glb'),
+
+  // loomballs
+  'loomball-008': require('@assets/models/loomballs/loomball/loomball.glb'),
+  'loomball-009': require('@assets/models/loomballs/loomball/loomball.glb'),
+  'loomball-010': require('@assets/models/loomballs/loomball/loomball.glb'),
 };
 
 export const LoadModel = async (
