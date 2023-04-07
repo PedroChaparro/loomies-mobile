@@ -30,6 +30,7 @@ export type TCaughtLoomiesWithTeam = {
   is_busy: boolean;
   owner: string;
   level: number;
+  experience: number;
   is_in_team?: boolean;
 };
 

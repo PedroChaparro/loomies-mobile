@@ -67,8 +67,10 @@ export const UserLoomies = ({ navigation }: IProps) => {
     navigation.navigate('UpdateLoomieTeam');
   };
 
-  const goToDetails = () => {
-    console.log('Go to details pressed...');
+  const goToDetails = (loomieId: string) => {
+    const loomie = loomies.find((loomie) => loomie._id === loomieId);
+    if (!loomie) return;
+    navigation.navigate('LoomieDetails', { loomie });
   };
 
   // Function to render the loomies or show a message if there are no loomies
