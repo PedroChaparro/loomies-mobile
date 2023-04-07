@@ -31,6 +31,8 @@ export type TWildLoomies = {
   latitude: number;
   longitude: number;
   generated_at: number; // timestamp
+  level: number;
+  experience: number;
 };
 
 // Shared interface between the items and the loomballs
