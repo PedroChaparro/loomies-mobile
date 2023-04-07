@@ -18,7 +18,7 @@ export type TCaughtLoomies = {
   experience: number;
 };
 
-export type TCaughtLoomiesWithTeam = {
+export type TCaughtLoomieToRender = {
   _id: string;
   serial: number;
   name: string;
@@ -31,7 +31,10 @@ export type TCaughtLoomiesWithTeam = {
   owner: string;
   level: number;
   experience: number;
+  // Property to render the sword icon in the loomie card
   is_in_team?: boolean;
+  // Property to render a red border around the loomie card
+  is_selected?: boolean;
 };
 
 export type TWildLoomies = {
