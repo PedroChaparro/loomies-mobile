@@ -246,10 +246,9 @@ export const putLoomieTeam = async (
 
 export const fuseLoomies = async (
   loomie1: string,
-  loomie2: string
+  loomie2: string,
+  callNumber = 1
 ): Promise<[any, boolean]> => {
-  console.log(loomie1);
-  console.log(loomie2);
   try {
     const [accessToken, error] = await getStorageData('accessToken');
     if (error || !accessToken) return [null, true];
@@ -269,6 +268,15 @@ export const fuseLoomies = async (
     return [response.data, false];
   } catch (error) {
     // Return the custom error message if exists
+    if (
+      Axios.isAxiosError(error) &&
+      error.response?.status === 401 &&
+      callNumber === 1
+    ) {
+      await refreshRequest();
+      return await fuseLoomies(loomie1, loomie2, 2);
+    }
+
     if (Axios.isAxiosError(error)) {
       return [error.response?.data, true];
     }
