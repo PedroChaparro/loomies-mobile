@@ -3,9 +3,13 @@ import '@babylonjs/loaders/glTF';
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 
 export const MODEL_RESOURCE: { [key: string]: NodeRequire } = {
+
+  // map models
   'MAP_CIRCLE_INDICATOR': require('@assets/models/map/indicator/circleIndicator.glb'),
   'MAP_PLAYER': require('@assets/models/map/indicator/player.glb'),
   'MAP_GYM': require('@assets/models/map/gym/gym.glb'),
+
+  // loomie models
   '1': require('@assets/models/loomies/001/001.glb'),
   '2': require('@assets/models/loomies/002/002.glb'),
   '3': require('@assets/models/loomies/003/003.glb'),
@@ -24,7 +28,10 @@ export const MODEL_RESOURCE: { [key: string]: NodeRequire } = {
   '16': require('@assets/models/loomies/016/016.glb'),
   '17': require('@assets/models/loomies/017/017.glb'),
   '18': require('@assets/models/loomies/018/018.glb'),
-  '19': require('@assets/models/loomies/019/019.glb')
+  '19': require('@assets/models/loomies/019/019.glb'),
+
+  // environment models
+  'ENV_GRASS': require('@assets/models/environments/grass/grass.glb'),
 };
 
 export const LoadModel = async (
