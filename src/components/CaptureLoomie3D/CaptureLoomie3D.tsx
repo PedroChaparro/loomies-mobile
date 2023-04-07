@@ -7,19 +7,23 @@ import { SafeAreaView, View } from 'react-native';
 import { instantiatedEntriesTranslate } from '../Map3D/utilsVertex';
 
 import { CONFIG } from '@src/services/config.services';
+import { TLoomball } from '@src/types/types';
 const { MAP_DEBUG } = CONFIG;
 
 interface iCaptureLoomie3D {
-  serial: number;
+  serialLoomie: number;
+  loomball: TLoomball;
 }
 
-export const CaptureLoomie3D = ({ serial }: iCaptureLoomie3D) => {
+export const CaptureLoomie3D = ({ serialLoomie, loomball }: iCaptureLoomie3D) => {
   const { sceneCapture, cameraCapture, getCurrentScene } =
     useContext(BabylonContext);
-  const { instantiateModel, getModelHeight } = useContext(ModelContext);
+  const { cloneModel, instantiateModel, getModelHeight } = useContext(ModelContext);
   const { showScene } = useContext(BabylonContext);
 
-  const [model, setModel] = useState<Babylon.InstantiatedEntries | null>(null);
+  // models
+  const [modelLoomie, setModelLoomie] = useState<Babylon.InstantiatedEntries | null>(null);
+  const [modelBall, setModelBall] = useState<Babylon.Mesh | null>(null);
 
   useEffect(() => {
     if (!sceneCapture) return;
@@ -45,39 +49,42 @@ export const CaptureLoomie3D = ({ serial }: iCaptureLoomie3D) => {
     camera.angularSensibilityX = 20000;
     camera.angularSensibilityY = camera.angularSensibilityX;
 
-    // instantiate model
+    // instantiate modelLoomie
 
     (async () => {
       try {
         console.log("instantiate a thing or two");
-        // loomie model
-        const modelLoomie = await instantiateModel(serial.toString(), sceneCapture);
+
+        // loomie modelLoomie
+        const modelLoomie = await instantiateModel(serialLoomie.toString(), sceneCapture);
         const modelEnv = await instantiateModel("ENV_GRASS", sceneCapture);
 
-        // environment model
-        if (!modelLoomie) throw "Error: Couldn't instantiate Loomie model";
-        if (!modelEnv) throw "Error: Couldn't instantiate env model";
+        // environment modelLoomie
+        if (!modelLoomie) throw "Error: Couldn't instantiate Loomie modelLoomie";
+        if (!modelEnv) throw "Error: Couldn't instantiate env modelEnv";
 
-        setModel(modelLoomie);
+        setModelLoomie(modelLoomie);
 
-        // position model
-        const height = await getModelHeight(serial.toString(), sceneCapture);
+        // position modelLoomie
+        const height = await getModelHeight(serialLoomie.toString(), sceneCapture);
         instantiatedEntriesTranslate(
           modelLoomie,
           new Babylon.Vector3(0, 0, 0)
         );
 
+        // make camera target the Loomie at the middle
         camera.setTarget(new Babylon.Vector3(0, height/2, 0));
 
       } catch (error) {
         console.error(error);
       }
+
     })();
 
-    // dispose model
+    // dispose modelLoomie
     return () => {
-      if (!model) return;
-      model.dispose();
+      if (!modelLoomie) return;
+      modelLoomie.dispose();
     };
   }, [sceneCapture]);
 

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { RouteProp, useFocusEffect } from '@react-navigation/core';
+import { NavigationProp, RouteProp, useFocusEffect } from '@react-navigation/core';
 import { View, Text, Pressable, Image, StyleSheet } from 'react-native';
 import { TWildLoomies } from '@src/types/types';
 import { MapContext } from '@src/context/MapProvider';
@@ -8,17 +8,17 @@ import { TLoomball } from '@src/types/types';
 import { requestCaptureLoomieAttempt } from '@src/services/capture.services';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { CaptureLoomie3D } from '@src/components/CaptureLoomie3D/CaptureLoomie3D';
-//import FeatherIcon from 'react-native-vector-icons/Feather';
-//import RunIcon from '@assets/svg/directions_run.svg';
 import { images } from '@src/utils/utils';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 
 interface CaptureViewProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  navigation?: NavigationProp<any, any>;
   route: RouteProp<{ params: { loomieId: string } }, 'params'>;
 }
 
-export const CaptureView = ({ route }: CaptureViewProps) => {
+export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
 
   const [loomie, setLoomie] = useState<TWildLoomies | null>(null);
   const { getWildLoomies } = useContext(MapContext);
@@ -27,16 +27,16 @@ export const CaptureView = ({ route }: CaptureViewProps) => {
 
   // state
   const [balls, setBalls] = useState<TLoomball[]>([]);
-  const [ballSelected, setBallSelected] = useState<string | null>(null);
-  const [ballAmount, setBallAmount] = useState<number>(0);
+  const [ballSelected, setBallSelected] = useState<TLoomball | null>(null);
+  //const [ballAmount, setBallAmount] = useState<number>(0);
 
-  // fetch inventory
+  // fetch user loomballs
 
   const fetchLoomballs = () => {
 
     (async () => {
-      const [items, err] = await getItemsService();
 
+      const [items, err] = await getItemsService();
       if (err) return;
 
       // cast check
@@ -45,9 +45,24 @@ export const CaptureView = ({ route }: CaptureViewProps) => {
         return;
       }
 
+      // set loomballs available to player
       const loomballs: TLoomball[] = rawData as TLoomball[];
       setBalls(loomballs);
-      setBallAmount(loomballs.length);
+
+      // still has balls of this kind available?
+      let available = false;
+
+      if (ballSelected){
+        available = loomballs.some((ball) => {
+          return (ball._id == ballSelected._id);
+        })
+      }
+
+      // select the first one in the array
+      if (!available && loomballs.length){
+        setBallSelected(loomballs[0]);
+      }
+
       console.log(loomballs);
 
     })();
@@ -58,7 +73,11 @@ export const CaptureView = ({ route }: CaptureViewProps) => {
     if (!ballSelected) return;
     if (!loomie) return;
 
-    const success = await requestCaptureLoomieAttempt (userPosition, ballSelected, loomie._id);
+    const success = await requestCaptureLoomieAttempt (userPosition, ballSelected._id, loomie._id);
+  }
+
+  const escape = () => {
+    navigation?.navigate("Map");
   }
 
   useEffect(() => {
@@ -72,9 +91,17 @@ export const CaptureView = ({ route }: CaptureViewProps) => {
 
     // loomie not found, probably it just stopped existing
 
-    if (!foundLoomie) return;
+    if (!foundLoomie) {
+      escape();
+      return;
+    }
+
     setLoomie(foundLoomie);
-    console.log(foundLoomie);
+    console.log("INFO: Loomie exists", foundLoomie);
+
+    // get user loomballs
+
+    fetchLoomballs();
     
   }, []);
 
@@ -90,7 +117,7 @@ export const CaptureView = ({ route }: CaptureViewProps) => {
     <View style={styles.container}>
 
       <View style={styles.scene}>
-        { loomie && <CaptureLoomie3D serial={loomie.serial} /> }
+        { loomie && ballSelected && <CaptureLoomie3D serialLoomie={loomie.serial} loomball={ballSelected} /> }
       </View>
 
       { /* header */ }
@@ -123,9 +150,7 @@ export const CaptureView = ({ route }: CaptureViewProps) => {
       { /* scape bubble */ }
       <Pressable
         style={styles.bubbleEscape}
-        onPress={() => {
-          console.log("2");
-        }}
+        onPress={escape}
       >
         <MaterialCommunityIcons size={30} name={"run"} color={"white"} style={{transform: [{ scaleX: -1 }]}} />
       </Pressable>
