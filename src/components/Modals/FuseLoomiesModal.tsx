@@ -1,7 +1,4 @@
-import {
-  getLoomiesRequest,
-  fuseLoomies
-} from '@src/services/user.services';
+import { getLoomiesRequest, fuseLoomies } from '@src/services/user.services';
 import { TCaughtLoomieToRender, TCaughtLoomies } from '@src/types/types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -36,8 +33,7 @@ export const FuseLoomiesModal = ({
     const loomies: TCaughtLoomies[] = response.loomies;
 
     const loomiesWithTeamProperty = loomies.map((loomie) => {
-
-      const isSelectedLoomie = team === loomie._id? true: false 
+      const isSelectedLoomie = team === loomie._id ? true : false;
 
       return {
         ...loomie,
@@ -67,14 +63,17 @@ export const FuseLoomiesModal = ({
     if (loomie?.is_busy) return;
 
     setFuseLoomie(loomieId);
-    setTeam(loomieId)
-    
+    setTeam(loomieId);
+
     console.log('Loomie pressed: ', loomieId);
   }, []);
 
   const callfuseLoomies = async () => {
-    const [response, error] = await fuseLoomies(selectedLoomie._id,fuseLoomie as string)
-    toggleVisibilityCallback
+    const [response, error] = await fuseLoomies(
+      selectedLoomie._id,
+      fuseLoomie as string
+    );
+    toggleVisibilityCallback;
     if (error) {
       showErrorToast(
         response['message'] ||
@@ -86,7 +85,6 @@ export const FuseLoomiesModal = ({
       );
       navigate('Application', { screen: 'LoomieTeamView' });
     }
-    
   };
 
   if (!loomies) return <Text>Loading...</Text>;
@@ -99,35 +97,35 @@ export const FuseLoomiesModal = ({
     >
       <Text style={Styles.modalTitle}>Fuse Loomies</Text>
       <View style={{ flex: 1 }}>
-        {loomies.length === 0 ? 
+        {loomies.length === 0 ? (
           <EmptyMessage
             text="You don't have any Loomie to fuse yet..."
             showButton={false}
           />
-          :    
+        ) : (
           <LoomiesGrid
             loomies={loomies}
             markBusyLoomies={false}
             markSelectedLoomies={true}
             elementsCallback={handleLoomiePress}
           />
-        }
+        )}
       </View>
-      {loomies.length === 0 ? null :    
-          <View style={Styles.containerButton}>
-              <CustomButton
-                  title='Accept'
-                  type='primary'
-                  callback={callfuseLoomies}
-              />
-          </View>
-      }
-      <View style={Styles.containerButton}>
+      {loomies.length === 0 ? null : (
+        <View style={Styles.containerButton}>
           <CustomButton
-              title='Cancel'
-              type='primary'
-              callback={toggleVisibilityCallback}
+            title='Accept'
+            type='primary'
+            callback={callfuseLoomies}
           />
+        </View>
+      )}
+      <View style={Styles.containerButton}>
+        <CustomButton
+          title='Cancel'
+          type='primary'
+          callback={toggleVisibilityCallback}
+        />
       </View>
     </Modal>
   );
@@ -135,19 +133,19 @@ export const FuseLoomiesModal = ({
 
 const Styles = StyleSheet.create({
   modal: {
-      backgroundColor: '#fff',
-      width: '90%',
-      padding: 12
+    backgroundColor: '#fff',
+    width: '90%',
+    padding: 12
   },
   modalTitle: {
-      color: '#ED4A5F',
-      fontSize: 26,
-      fontWeight: 'bold',
-      textAlign: 'center',
-      textTransform: 'uppercase'
+    color: '#ED4A5F',
+    fontSize: 26,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    textTransform: 'uppercase'
   },
   containerButton: {
-      alignSelf: 'center',
-      width: '90%'
+    alignSelf: 'center',
+    width: '90%'
   }
 });

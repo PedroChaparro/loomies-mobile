@@ -248,22 +248,23 @@ export const fuseLoomies = async (
   loomie1: string,
   loomie2: string
 ): Promise<[any, boolean]> => {
-  console.log(loomie1)
-  console.log(loomie2)
+  console.log(loomie1);
+  console.log(loomie2);
   try {
     const [accessToken, error] = await getStorageData('accessToken');
     if (error || !accessToken) return [null, true];
 
-    const response = await Axios.post(`${API_URL}/loomies/fuse`, 
-    {
-      loomie_id_1 : loomie1,
-      loomie_id_2 : loomie2,
-    },
-    {
-      headers: {
-        'Access-Token': accessToken
+    const response = await Axios.post(
+      `${API_URL}/loomies/fuse`,
+      {
+        loomie_id_1: loomie1,
+        loomie_id_2: loomie2
+      },
+      {
+        headers: {
+          'Access-Token': accessToken
+        }
       }
-    }
     );
     return [response.data, false];
   } catch (error) {
@@ -275,4 +276,3 @@ export const fuseLoomies = async (
     return [null, true];
   }
 };
-

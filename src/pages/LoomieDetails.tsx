@@ -81,7 +81,6 @@ export const LoomieDetails = ({ route }: IProps) => {
             defense={loomie.defense}
             attack={loomie.attack}
           />
-          
         </View>
       </View>
     </>
