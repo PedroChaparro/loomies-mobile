@@ -98,6 +98,7 @@ export const FuseLoomiesModal = ({
     <Modal
       isVisible={isVisible}
       onBackButtonPress={toggleVisibilityCallback}
+      onBackdropPress={toggleVisibilityCallback}
       style={Styles.modal}
     >
       <Text style={Styles.modalTitle}>Fuse Loomies</Text>
