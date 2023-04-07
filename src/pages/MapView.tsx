@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useToastAlert } from '../hooks/useToastAlert';
 import { Map3D } from '@src/components/Map3D/Map3D';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import { BabylonContext } from '@src/context/BabylonProvider';
+import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 
 interface MapViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,7 +15,7 @@ interface MapViewProps {
 export const MapView = ({ navigation }: MapViewProps) => {
   const { isLoading, isAuthenticated } = useAuth();
   const { showInfoToast } = useToastAlert();
-  const { showSceneMap, showSceneNone } = useContext(BabylonContext);
+  const { showScene } = useContext(BabylonContext);
 
   // Redirects to the login view if the user is not authenticated
   useEffect(() => {
@@ -28,8 +28,8 @@ export const MapView = ({ navigation }: MapViewProps) => {
   // toggle render loop on focus events
   useFocusEffect(
     React.useCallback(() => {
-      showSceneMap();
-      return () => showSceneNone();
+      showScene( APP_SCENE.MAP );
+      return () => showScene( APP_SCENE.NONE );
     }, [])
   );
 
