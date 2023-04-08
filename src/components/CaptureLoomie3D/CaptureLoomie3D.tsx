@@ -55,17 +55,19 @@ export const CaptureLoomie3D = ({ serialLoomie, loomball }: iCaptureLoomie3D) =>
       try {
         console.log("instantiate a thing or two");
 
-        // loomie modelLoomie
+        // models
         const modelLoomie = await instantiateModel(serialLoomie.toString(), sceneCapture);
         const modelEnv = await instantiateModel("ENV_GRASS", sceneCapture);
+        const modelBall = await cloneModel(`loomball-${loomball.serial.toString().padStart(3, '0')}`, sceneCapture);
 
-        // environment modelLoomie
         if (!modelLoomie) throw "Error: Couldn't instantiate Loomie modelLoomie";
         if (!modelEnv) throw "Error: Couldn't instantiate env modelEnv";
+        if (!modelBall) throw "Error: Couldn't instantiate env modelBall";
 
         setModelLoomie(modelLoomie);
+        setModelBall(modelBall);
 
-        // position modelLoomie
+        // position model loomie
         const height = await getModelHeight(serialLoomie.toString(), sceneCapture);
         instantiatedEntriesTranslate(
           modelLoomie,
@@ -74,6 +76,12 @@ export const CaptureLoomie3D = ({ serialLoomie, loomball }: iCaptureLoomie3D) =>
 
         // make camera target the Loomie at the middle
         camera.setTarget(new Babylon.Vector3(0, height/2, 0));
+
+        // position ball relative to the camera
+
+        modelBall.position.y = -0.5;
+        modelBall.position.z = 2;
+        modelBall.parent = cameraCapture;
 
       } catch (error) {
         console.error(error);

@@ -51,16 +51,21 @@ export const ModelProvider = (props: { children: ReactNode }) => {
         const container = await LoadModel(MODEL_RESOURCE[name], scene);
         if (!container) throw "ERROR: Couldn't load model";
 
+        // create an abstract root mesh [WARNING]
+        //container.createRootMesh();
+
         // make it non pickable by default
         container.meshes.forEach((mesh) => {
           mesh.isPickable = false;
         });
 
         models.current[sceneName][name] = container;
+
         return container;
       }
 
       return model;
+      
     } catch (e) {
       console.error(e);
     }
@@ -98,11 +103,17 @@ export const ModelProvider = (props: { children: ReactNode }) => {
 
       if (container) {
         // clone from container
-        let model = container.createRootMesh();
-        model = model.clone(name);
-        model.visibility = 1;
+        if (!container.meshes.length) return null;
 
-        return model;
+        // create a root mesh
+        const rootNode = new Babylon.Mesh(`rootNode_${name}`, scene);
+
+        // clone
+        const clone = container.meshes[0].clone(name, rootNode);
+        if (clone == null) return null;
+
+        clone.visibility = 1;
+        return rootNode;
       }
     } catch (e) {
       console.error(e);

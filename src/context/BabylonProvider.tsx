@@ -50,7 +50,7 @@ export const BabylonContext = createContext<iBabylonProvider>({
 });
 
 // useful when debugging the engine
-const DEBUG_RENDER_LOOP = true;
+const DEBUG_RENDER_LOOP = false;
 
 export const BabylonProvider = (props: { children: ReactNode }) => {
   const engine = useEngine();
@@ -91,12 +91,10 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
   };
 
   const showSceneDetails = () => {
-    clearSceneDetails();
     setCurrentScene(APP_SCENE.DETAILS);
   };
 
   const showSceneCapture = () => {
-    clearSceneCapture();
     setCurrentScene(APP_SCENE.CAPTURE);
   };
 

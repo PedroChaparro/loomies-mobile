@@ -123,7 +123,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
       { /* header */ }
       <View style={styles.circle}></View>
       { loomie && <Text style={styles.title} >{loomie.name}</Text> }
-      { loomie && <Text style={styles.subtitle} >{loomie.level}</Text>}
+      { loomie && <Text style={styles.subtitle} >Level {loomie.level}</Text>}
 
       { /* loomball bubble */ }
       <Pressable
