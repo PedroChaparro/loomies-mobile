@@ -19,6 +19,7 @@ interface iCaptureLoomie3D {
 
 const LOOMBALL_CAMERA_DISTANCE = 2;
 const LOOMBALL_SCALE = 0.6;
+const LOOMBALL_INITIAL_POS = new Vector3(0, -0.5, LOOMBALL_CAMERA_DISTANCE);
 
 export const CaptureLoomie3D = ({
   serialLoomie,
@@ -37,13 +38,17 @@ export const CaptureLoomie3D = ({
     useState<Babylon.InstantiatedEntries | null>(null);
   const [modelBall, setModelBall] = useState<Babylon.Mesh | null>(null);
   const [modelHitbox, setModelHitbox] = useState<Babylon.Mesh | null>(null);
+  const [initialOriginBall, setInitialOriginBall] = useState<Babylon.Mesh | null>(null);
 
   // loomball variables
 
   const ballGrabbed = useRef<boolean>(false);
+  const ballReturning = useRef<boolean>(true);
+
   //const ballTarget = useRef<Babylon.Vector3>(Vector3.Zero());
   const ballPrevPos = useRef<Babylon.Vector3>(Vector3.Zero());
   const [ballTarget, setBallTarget] = useState<Babylon.Vector3>(Vector3.Zero());
+
 
   useEffect(() => {
     if (!sceneCapture) return;
@@ -69,7 +74,7 @@ export const CaptureLoomie3D = ({
     camera.angularSensibilityX = 20000;
     camera.angularSensibilityY = camera.angularSensibilityX;
 
-    // instantiate modelLoomie
+    // setup scene
 
     (async () => {
       try {
@@ -101,9 +106,8 @@ export const CaptureLoomie3D = ({
         if (!modelEnv) throw "Error: Couldn't instantiate env modelEnv";
         if (!modelBall) throw "Error: Couldn't instantiate env modelBall";
 
-
-
         // position model loomie
+
         const height = await getModelHeight(
           serialLoomie.toString(),
           sceneCapture
@@ -111,14 +115,21 @@ export const CaptureLoomie3D = ({
         instantiatedEntriesTranslate(modelLoomie, new Babylon.Vector3(0, 0, 0));
 
         // make camera target the Loomie at the middle
+
         camera.setTarget(new Babylon.Vector3(0, height / 2, 0));
 
         // position ball relative to the camera
 
         modelBall.scaling = Vector3.One().scale(LOOMBALL_SCALE);
-        modelBall.position.y = -0.5;
-        modelBall.position.z = LOOMBALL_CAMERA_DISTANCE;
+        modelBall.position = new Vector3().copyFrom(LOOMBALL_INITIAL_POS);
         modelBall.parent = cameraCapture;
+
+        // loomball initial position
+
+        //const initialOriginBall = new Babylon.Mesh("initialOriginBall", sceneCapture);
+        const initialOriginBall = Babylon.MeshBuilder.CreateBox("initialOriginBall", {size: 0.2}, sceneCapture);
+        initialOriginBall.position = new Vector3().copyFrom(LOOMBALL_INITIAL_POS);
+        initialOriginBall.parent = cameraCapture;
 
         // loomball hitbox
 
@@ -131,12 +142,11 @@ export const CaptureLoomie3D = ({
         hitbox.parent = modelBall;
         hitbox.isPickable = true;
 
-
         // scratch pad
 
-        const scratchPad = Babylon.MeshBuilder.CreatePlane(
-          'plane',
-          { size: 1, sideOrientation: 2 },
+        const scratchPad = Babylon.CreateDisc(
+          'scratchPad',
+          { radius: 0.5, tessellation: 12, sideOrientation: 2 },
           sceneCapture
         );
         scratchPad.position.y = -0.5;
@@ -150,7 +160,7 @@ export const CaptureLoomie3D = ({
         setModelBall(modelBall);
         setModelHitbox(hitbox);
         setScratchPad(scratchPad);
-
+        setInitialOriginBall(initialOriginBall);
       } catch (error) {
         console.error(error);
       }
@@ -158,19 +168,73 @@ export const CaptureLoomie3D = ({
 
     // hitbox
 
-    // dispose modelLoomie
-    return () => {
-      if (!modelLoomie) return;
-      modelLoomie.dispose();
-    };
+    // dispose
+    //return () => {
+    //if (!modelLoomie) return;
+    //modelLoomie.dispose();
+    //modelBall.dispose();
+    //};
   }, [sceneCapture]);
 
   // toggle scene
+
   useEffect(() => {
     showScene(APP_SCENE.CAPTURE);
   }, []);
 
   // pointer events
+
+  const onPointerDown = () => {
+    if (!modelBall) return;
+
+    console.log('grabbed on');
+    ballPrevPos.current = modelBall.getAbsolutePosition();
+    ballGrabbed.current = true;
+    setBallTarget(modelBall.getAbsolutePosition());
+
+    cameraCapture?.detachControl();
+  };
+
+  const onPointerUp = () => {
+    if (!ballGrabbed.current) return;
+    if (!initialOriginBall) return;
+
+    console.log('grabbed off');
+    ballGrabbed.current = false;
+    ballReturning.current = true;
+    setBallTarget(initialOriginBall.getAbsolutePosition());
+
+    cameraCapture?.attachControl();
+
+  };
+
+  const onPointerMove = () => {
+    if (!sceneCapture) return;
+    if (!modelBall) return;
+    if (!ballGrabbed.current) return;
+
+    // get pointer position in plane
+
+    const pickinfo = sceneCapture.pick(
+      sceneCapture.pointerX,
+      sceneCapture.pointerY,
+      (mesh) => {
+        return mesh == scratchPad;
+      }
+    );
+
+    // pointer outside plane
+
+    if (!pickinfo.hit) {
+      onPointerUp();
+      return;
+    }
+    if (!pickinfo.pickedPoint) return;
+
+    // set target
+
+    setBallTarget(pickinfo.pickedPoint);
+  };
 
   if (sceneCapture)
     useScenePointerObservable(
@@ -187,56 +251,25 @@ export const CaptureLoomie3D = ({
               pointerInfo.pickInfo.hit &&
               pointerInfo.pickInfo.pickedMesh == modelHitbox
             ) {
-
-              ballPrevPos.current = modelBall.getAbsolutePosition();
-              ballGrabbed.current = true;
-              setBallTarget(modelBall.getAbsolutePosition());
-
-              console.log(pointerInfo.pickInfo.pickedMesh?.name);
-              console.log("grabbed on");
-
-
-              cameraCapture?.detachControl();
-              //pointerDown(pointerInfo.pickInfo.pickedMesh);
+              console.log(
+                'Info: Pressed',
+                pointerInfo.pickInfo.pickedMesh?.name
+              );
+              onPointerDown();
             }
             break;
 
           // pointer up
 
           case Babylon.PointerEventTypes.POINTERUP:
-            
-            if (ballGrabbed.current){
-              ballGrabbed.current = false;
-              cameraCapture?.attachControl();
-              console.log("grabbed off");
-            }
+            onPointerUp();
             break;
 
           // pointer move
 
-          case Babylon.PointerEventTypes.POINTERMOVE:{
-            if (!ballGrabbed.current) return;
-            console.log("moved 1");
-
-            // get pick plane position
-
-            const pickinfo = sceneCapture.pick(
-              sceneCapture.pointerX,
-              sceneCapture.pointerY,
-              (mesh) => {
-                return mesh == scratchPad;
-              }
-            );
-            console.log("moved 2");
-
-            if (!pickinfo.hit) return;
-            if (!pickinfo.pickedPoint) return;
-
-            //ballTarget.current = pickinfo.pickedPoint;
-            setBallTarget(pickinfo.pickedPoint);
-            //return pickinfo.pickedPoint;
-
-            break
+          case Babylon.PointerEventTypes.POINTERMOVE: {
+            onPointerMove();
+            break;
           }
         }
       }
@@ -257,24 +290,41 @@ export const CaptureLoomie3D = ({
     };
   }, [modelBall, ballTarget, sceneCapture]);
 
-      //playerNode.current.position = Vector3.Lerp(
-        //currPos,
-        //targPos,
-        //ANI_LERP_SPEED
-      //);
+  //playerNode.current.position = Vector3.Lerp(
+  //currPos,
+  //targPos,
+  //ANI_LERP_SPEED
+  //);
 
   // frame update
 
   const frameUpdate = () => {
     //console.log(ballTarget);
     if (!modelBall) return;
-    
-    if (ballGrabbed.current){
-      modelBall.setAbsolutePosition(Vector3.Lerp(modelBall.getAbsolutePosition(), ballTarget, 0.5));
-      //hit.setAbsolutePosition(Vector3.Lerp(modelBall.getAbsolutePosition(), ballTarget, 0.5));
-      //modelBall.setAbsolutePosition(ballTarget);
-      console.log(modelBall.getAbsolutePosition());
+    if (Vector3.Distance(ballTarget, Vector3.Zero()) === 0) return;
+    if (!(ballReturning.current || ballGrabbed.current)) return;
+
+    let target = ballTarget;
+
+    // returning to default position
+
+    if ((ballReturning.current) && (initialOriginBall)){
+      target = initialOriginBall.getAbsolutePosition();
+
+      // too close 
+
+      if (Vector3.Distance(target, modelBall.getAbsolutePosition()) < 0.01){
+        ballReturning.current = false;
+        modelBall.setAbsolutePosition(target);
+      }
     }
+
+    console.log(target);
+
+    modelBall.setAbsolutePosition(
+      Vector3.Lerp(modelBall.getAbsolutePosition(), target, 0.5)
+    );
+
   };
 
   return (
