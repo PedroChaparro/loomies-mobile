@@ -14,7 +14,7 @@ interface ProfileProps {
 
 export const Profile = ({ navigation }: ProfileProps) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const { user } = useContext(AuthContext);
+  const { user, logoutService } = useContext(AuthContext);
 
   const redirectToResetPassword = () => {
     navigation.navigate('ResetPassword');
@@ -29,7 +29,7 @@ export const Profile = ({ navigation }: ProfileProps) => {
       <LogoutConfirmationModal
         isVisible={showLogoutModal}
         toggleVisibilityCallback={toggleLogoutModalVisibility}
-        acceptCallback={() => {}}
+        acceptCallback={logoutService}
       />
       <View style={Styles.container}>
         <View style={Styles.header}>
