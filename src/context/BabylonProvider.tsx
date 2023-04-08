@@ -100,6 +100,7 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
 
   const clearSceneDetails = () => {
     if (!sceneDetails) return;
+    console.log("Info: Disposing scene Details");
 
     // dispose resources
     sceneDetails.meshes.forEach((mesh) => {
@@ -109,6 +110,7 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
 
   const clearSceneCapture = () => {
     if (!sceneCapture) return;
+    console.log("Info: Disposing scene Capture");
 
     // dispose resources
     sceneCapture.meshes.forEach((mesh) => {
