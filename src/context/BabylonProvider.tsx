@@ -82,8 +82,8 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
 
   const showSceneNone = () => {
     setCurrentScene(APP_SCENE.NONE);
-    clearSceneDetails();
-    clearSceneCapture();
+    clearScene(sceneDetails);
+    clearScene(sceneCapture);
   };
 
   const showSceneMap = () => {
@@ -98,25 +98,19 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
     setCurrentScene(APP_SCENE.CAPTURE);
   };
 
-  const clearSceneDetails = () => {
-    if (!sceneDetails) return;
-    console.log("Info: Disposing scene Details");
+  const clearScene = (scene: Babylon.Scene | undefined) => {
+    if (!scene) return;
+    console.log(`Info: Disposing scene ${scene.metadata.name}`);
 
     // dispose resources
-    sceneDetails.meshes.forEach((mesh) => {
-      mesh.dispose();
-    });
-  };
-
-  const clearSceneCapture = () => {
-    if (!sceneCapture) return;
-    console.log("Info: Disposing scene Capture");
-
-    // dispose resources
-    sceneCapture.meshes.forEach((mesh) => {
-      mesh.dispose();
-    });
-  };
+    for (let i = 0; i < 10; i++){
+      scene.meshes.forEach((mesh) => {
+        console.log(`Info: Disposing (try ${i}) "${mesh.name}"`);
+        mesh.dispose();
+      });
+      if (!scene.meshes.length) break;
+    }
+  }
 
   const getCurrentScene = () => {
     return currentScene;
