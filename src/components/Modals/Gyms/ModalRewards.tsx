@@ -2,7 +2,7 @@ import { images } from '@src/utils/utils';
 import React from 'react';
 import Modal from 'react-native-modal';
 import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
-import { CustomButton } from '../CustomButton';
+import { CustomButton } from '@src/components/CustomButton';
 import { TReward } from '@src/types/types';
 
 interface IProps {
