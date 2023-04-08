@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationProp } from '@react-navigation/core';
+import { useIsFocused } from '@react-navigation/native';
 import { CustomButton } from '../components/CustomButton';
 import { LinkCard } from '../components/LinkCard';
 import { LogoutConfirmationModal } from '@src/components/Modals/LogoutConfirmationModal';
@@ -14,9 +15,16 @@ interface ProfileProps {
 }
 
 export const Profile = ({ navigation }: ProfileProps) => {
+  const isFocused = useIsFocused();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { user } = useContext(AuthContext);
-  const { logout } = useAuth();
+  const { logout, isAuthenticated, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (isFocused && !isLoading && !isAuthenticated()) {
+      navigation.navigate('Login');
+    }
+  }, [isFocused]);
 
   const redirectToResetPassword = () => {
     navigation.navigate('ResetPassword');
