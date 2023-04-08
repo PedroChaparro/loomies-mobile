@@ -1,4 +1,8 @@
-import { NavigationProp, useFocusEffect } from '@react-navigation/native';
+import {
+  NavigationProp,
+  useFocusEffect,
+  useIsFocused
+} from '@react-navigation/native';
 import React, { useContext, useEffect } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
@@ -15,17 +19,18 @@ interface MapViewProps {
 }
 
 export const MapView = ({ navigation }: MapViewProps) => {
+  const isFocused = useIsFocused();
   const { isLoading, isAuthenticated } = useAuth();
   const { showInfoToast } = useToastAlert();
   const { showSceneMap, showSceneNone } = useContext(BabylonContext);
 
   // Redirects to the login view if the user is not authenticated
   useEffect(() => {
-    if (!isLoading && !isAuthenticated()) {
+    if (isFocused && !isLoading && !isAuthenticated()) {
       showInfoToast('You are not logged in');
       navigation.navigate('Login');
     }
-  }, [isLoading]);
+  }, [isLoading, isFocused]);
 
   // toggle render loop on focus events
   useFocusEffect(
