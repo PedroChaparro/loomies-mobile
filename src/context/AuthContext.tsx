@@ -2,7 +2,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { whoamiRequest } from '../services/session.services';
 import { TUser } from '../types/types';
-import { useToastAlert } from '@src/hooks/useToastAlert';
 
 // Create the context and set the initial values
 export const AuthContext = createContext({
@@ -17,7 +16,6 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const { showSuccessToast, showErrorToast } = useToastAlert();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [user, setUser] = useState<TUser | null>(null);
 
