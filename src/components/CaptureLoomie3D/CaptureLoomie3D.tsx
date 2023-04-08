@@ -62,7 +62,6 @@ export const CaptureLoomie3D = ({
 
   // loomball variables
 
-  const ballGrabbed = useRef<boolean>(false);
   const [ballState, setBallState] = useState<LOOMBALL_STATE>(LOOMBALL_STATE.ANI_RETURNING);
 
   //const ballTarget = useRef<Babylon.Vector3>(Vector3.Zero());
@@ -210,20 +209,21 @@ export const CaptureLoomie3D = ({
   const onPointerDown = () => {
     if (!modelBall) return;
 
+    if (ballState != LOOMBALL_STATE.GRABBABLE) return;
+
     console.log('grabbed on');
     ballPosPrev.current = modelBall.getAbsolutePosition();
-    ballGrabbed.current = true;
+    setBallState(LOOMBALL_STATE.ANI_GRABBED);
     setBallTarget(modelBall.getAbsolutePosition());
 
     cameraCapture?.detachControl();
   };
 
   const onPointerUp = () => {
-    if (!ballGrabbed.current) return;
+    if (ballState != LOOMBALL_STATE.ANI_GRABBED) return;
     if (!initialOriginBall) return;
 
     console.log('grabbed off');
-    ballGrabbed.current = false;
     setBallState(LOOMBALL_STATE.ANI_RETURNING);
     setBallTarget(initialOriginBall.getAbsolutePosition());
 
@@ -234,7 +234,7 @@ export const CaptureLoomie3D = ({
   const onPointerMove = () => {
     if (!sceneCapture) return;
     if (!modelBall) return;
-    if (!ballGrabbed.current) return;
+    if (ballState != LOOMBALL_STATE.ANI_GRABBED) return;
 
     // get pointer position in plane
 
@@ -332,37 +332,51 @@ export const CaptureLoomie3D = ({
     return () => {
       sceneCapture.unregisterBeforeRender(handler);
     };
-  }, [modelBall, ballTarget, sceneCapture, ballState, setBallState, ballPosCurr.current, ballPosPrev.current]);
+  }, [modelBall, ballTarget, sceneCapture, ballState, setBallState, ballPosCurr.current, ballPosPrev.current, initialOriginBall]);
 
   // frame update
 
   const frameUpdate = () => {
+    console.log(ballState);
     if (!modelBall) return;
-    if (Vector3.Distance(ballTarget, Vector3.Zero()) === 0) return;
-    if (!((ballState == LOOMBALL_STATE.ANI_RETURNING) || ballGrabbed.current)) return;
+    if (!initialOriginBall) return;
 
-    let target = ballTarget;
     const absolutePos = modelBall.getAbsolutePosition();
+    let target = ballTarget;
 
-    // returning to default position
+    // process
 
-    if ((ballState == LOOMBALL_STATE.ANI_RETURNING) && (initialOriginBall)){
-      target = initialOriginBall.getAbsolutePosition();
+    switch (ballState) {
+      case LOOMBALL_STATE.ANI_GRABBED:
+        break;
 
-      // too close 
+      // returning to default position
 
-      if (Vector3.Distance(target, absolutePos) < 0.01){
-        setBallState(LOOMBALL_STATE.GRABBABLE);
-        modelBall.setAbsolutePosition(target);
-        console.log("Arrived");
-      }
+      case LOOMBALL_STATE.ANI_RETURNING:
+        target = initialOriginBall.getAbsolutePosition();
+
+        // merge if too close
+
+        if (Vector3.Distance(target, absolutePos) < 0.01){
+          setBallState(LOOMBALL_STATE.GRABBABLE);
+          modelBall.setAbsolutePosition(target);
+          console.log("Arrived");
+        }
+        break;
     }
 
-    ballPosPrev.current = absolutePos;
-    ballPosCurr.current = Vector3.Lerp(absolutePos, target, 0.5);
-    ballDir.current = ballPosCurr.current.subtract(ballPosPrev.current);
+    // apply
 
-    modelBall.setAbsolutePosition(ballPosCurr.current);
+    switch (ballState) {
+      case LOOMBALL_STATE.ANI_GRABBED:
+      case LOOMBALL_STATE.ANI_RETURNING:
+        ballPosPrev.current = absolutePos;
+        ballPosCurr.current = Vector3.Lerp(absolutePos, target, 0.5);
+        ballDir.current = ballPosCurr.current.subtract(ballPosPrev.current);
+
+        modelBall.setAbsolutePosition(ballPosCurr.current);
+        break;
+    }
   };
 
   return (
