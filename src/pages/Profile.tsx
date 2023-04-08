@@ -6,6 +6,7 @@ import { NavigationProp } from '@react-navigation/core';
 import { CustomButton } from '../components/CustomButton';
 import { LinkCard } from '../components/LinkCard';
 import { LogoutConfirmationModal } from '@src/components/Modals/LogoutConfirmationModal';
+import { useAuth } from '@src/hooks/useAuth';
 
 interface ProfileProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,7 +15,8 @@ interface ProfileProps {
 
 export const Profile = ({ navigation }: ProfileProps) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const { user, logoutService } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
+  const { logout } = useAuth();
 
   const redirectToResetPassword = () => {
     navigation.navigate('ResetPassword');
@@ -29,7 +31,7 @@ export const Profile = ({ navigation }: ProfileProps) => {
       <LogoutConfirmationModal
         isVisible={showLogoutModal}
         toggleVisibilityCallback={toggleLogoutModalVisibility}
-        acceptCallback={logoutService}
+        acceptCallback={logout}
       />
       <View style={Styles.container}>
         <View style={Styles.header}>

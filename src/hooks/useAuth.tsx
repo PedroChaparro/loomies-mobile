@@ -1,10 +1,16 @@
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { loginRequest } from '../services/session.services';
-import { saveStorageData } from '../services/storage.services';
+import {
+  removeStorageData,
+  saveStorageData
+} from '../services/storage.services';
+import { useToastAlert } from './useToastAlert';
+import { navigate } from '@src/navigation/RootNavigation';
 
 export const useAuth = () => {
   const { user, setUser, isLoading, setIsLoading } = useContext(AuthContext);
+  const { showErrorToast, showSuccessToast } = useToastAlert();
 
   // Check if the user is authenticated ()
   const isAuthenticated = (): boolean => {
@@ -34,5 +40,21 @@ export const useAuth = () => {
     return [response, error];
   };
 
-  return { isLoading, isAuthenticated, login };
+  const logout = async () => {
+    const wasRefreshTokenRemoved = await removeStorageData('refreshToken');
+    if (!wasRefreshTokenRemoved) {
+      showErrorToast('There was an error logging out. Please try again.');
+    }
+
+    // We don't care if the access token was removed or not because it will be
+    // expired anyway and we are nullifying the user state so the user cannot
+    // access any protected route
+    await removeStorageData('accessToken');
+    setUser(null);
+    setIsLoading(false);
+    navigate('Login', null);
+    showSuccessToast('You have been logged out successfully');
+  };
+
+  return { isLoading, isAuthenticated, login, logout };
 };

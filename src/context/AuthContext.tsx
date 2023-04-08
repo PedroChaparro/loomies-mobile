@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React, { createContext, useEffect, useState } from 'react';
 import { whoamiRequest } from '../services/session.services';
-import { removeStorageData } from '@src/services/storage.services';
 import { TUser } from '../types/types';
-import { navigate } from '@src/navigation/RootNavigation';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 
 // Create the context and set the initial values
@@ -11,8 +9,7 @@ export const AuthContext = createContext({
   user: null as TUser | null,
   isLoading: false,
   setUser: (_user: TUser | null) => {},
-  setIsLoading: (_isLoading: boolean) => {},
-  logoutService: () => {}
+  setIsLoading: (_isLoading: boolean) => {}
 });
 
 interface AuthProviderProps {
@@ -35,33 +32,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsLoading(false);
   };
 
-  // Logout the user
-  const logoutService = async () => {
-    const wasRefreshTokenRemoved = await removeStorageData('refreshToken');
-    if (!wasRefreshTokenRemoved) {
-      showErrorToast('There was an error logging out. Please try again.');
-    }
-
-    const wasAccessTokenRemoved = await removeStorageData('accessToken');
-    if (!wasAccessTokenRemoved) {
-      showErrorToast('There was an error logging out. Please try again.');
-    }
-
-    setUser(null);
-    setIsLoading(false);
-    navigate('Login', null);
-    showSuccessToast('You have been logged out successfully');
-  };
-
   useEffect(() => {
     setIsLoading(true);
     recoverUserSession();
   }, []);
 
   return (
-    <AuthContext.Provider
-      value={{ user, isLoading, setUser, setIsLoading, logoutService }}
-    >
+    <AuthContext.Provider value={{ user, isLoading, setUser, setIsLoading }}>
       {children}
     </AuthContext.Provider>
   );
