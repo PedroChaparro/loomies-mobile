@@ -3,7 +3,7 @@ import { NavigationProp, RouteProp, useFocusEffect } from '@react-navigation/cor
 import { View, Text, Pressable, Image, StyleSheet } from 'react-native';
 import { TWildLoomies } from '@src/types/types';
 import { MapContext } from '@src/context/MapProvider';
-import { getItemsService } from '@src/services/user.services';
+import { getItemsService, getLoomballsService } from '@src/services/user.services';
 import { TLoomball } from '@src/types/types';
 import { requestCaptureLoomieAttempt } from '@src/services/capture.services';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
@@ -11,6 +11,8 @@ import { CaptureLoomie3D } from '@src/components/CaptureLoomie3D/CaptureLoomie3D
 import { images } from '@src/utils/utils';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
+import { navigate } from '@src/navigation/RootNavigation';
+import { useToastAlert } from '@src/hooks/useToastAlert';
 
 interface CaptureViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,6 +21,7 @@ interface CaptureViewProps {
 }
 
 export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
+  const { showInfoToast } = useToastAlert();
 
   const [loomie, setLoomie] = useState<TWildLoomies | null>(null);
   const { getWildLoomies } = useContext(MapContext);
@@ -35,18 +38,15 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
   const fetchLoomballs = () => {
 
     (async () => {
+      const loomballs = await getLoomballsService();
 
-      const [items, err] = await getItemsService();
-      if (err) return;
-
-      // cast check
-      const rawData: object = items['loomballs'];
-      if ((rawData as TLoomball[]) === undefined) {
-        return;
+      // if no loomballs return to map
+      if (!loomballs.length){
+        navigation?.navigate("Map");
+        showInfoToast("You don't have any Loomballs to catch this Loomie");
       }
 
       // set loomballs available to player
-      const loomballs: TLoomball[] = rawData as TLoomball[];
       setBalls(loomballs);
 
       // still has balls of this kind available?

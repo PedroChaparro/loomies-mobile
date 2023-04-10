@@ -3,6 +3,7 @@ import { navigate } from '@src/navigation/RootNavigation';
 import { iPosition } from '@src/types/mapInterfaces';
 import { Vector2 } from '@babylonjs/core';
 import { requestWildLoomieExists } from '@src/services/map.services';
+import { getLoomballsService } from '@src/services/user.services';
 
 import { CONFIG } from '@src/services/config.services';
 const { PLAYER_REACH_RADIUS } = CONFIG;
@@ -10,7 +11,8 @@ const { PLAYER_REACH_RADIUS } = CONFIG;
 export const LoomieEnterCaptureView = async (
   userPosition: iPosition,
   loomiePosition: iPosition,
-  loomieId: string
+  loomieId: string,
+  showToast: (_message: string) => void
 ) => {
   // check distance
 
@@ -26,6 +28,14 @@ export const LoomieEnterCaptureView = async (
 
   if (!(await requestWildLoomieExists(loomieId))) {
     console.log("INFO: Loomie doesn't exists");
+    return;
+  }
+
+  // check user has loomballs
+
+  const loomballs = await getLoomballsService();
+  if (!loomballs.length) {
+    showToast("You don't have any Loomballs to catch this Loomie");
     return;
   }
 

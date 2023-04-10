@@ -25,6 +25,7 @@ import { LoomieEnterCaptureView } from './utilsElementInteraction';
 
 // debug
 import { CONFIG } from '@src/services/config.services';
+import { useToastAlert } from '@src/hooks/useToastAlert';
 const { MAP_DEBUG } = CONFIG;
 
 const DELAY_FETCH_WILD_LOOMIES = 10000; // 4 seconds
@@ -48,6 +49,8 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
     coordsGlobalToMap
   } = useContext(MapContext);
   const { userPosition } = useContext(UserPositionContext);
+  const { showInfoToast } = useToastAlert();
+
   const mapGyms = useRef<iMapObject[]>([]);
   const mapWildLoomies = useRef<iMapObject[]>([]);
   const readyToDrawElements = useRef<boolean>(false);
@@ -292,10 +295,16 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
 
         if (!loomie) return;
 
-        LoomieEnterCaptureView(userPosition, loomie.origin, loomie.id);
+        LoomieEnterCaptureView(
+          userPosition,
+          loomie.origin,
+          loomie.id,
+          showInfoToast
+        );
       }
 
       // it's a gym
+
       else if (meshName == 'hitbox_gym') {
         const gym = mapGyms.current.find((obj) => {
           return obj.meshHitbox == pointerInfo.pickInfo?.pickedMesh;
