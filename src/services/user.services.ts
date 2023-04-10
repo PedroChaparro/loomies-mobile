@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { TLoomball } from '@src/types/types';
 import Axios from 'axios';
 import { CONFIG } from './config.services';
 import { refreshRequest } from './session.services';
@@ -130,6 +131,31 @@ export const getItemsService = async (
 
     return [null, true];
   }
+};
+
+// returns player Loomballs
+// depends on getItemsService
+
+export const getLoomballsService = async (): Promise<TLoomball[]> => {
+  try {
+    const [items, err] = await getItemsService();
+    if (err) throw err;
+
+    // cast check
+    const rawData: object = items['loomballs'];
+    if ((rawData as TLoomball[]) === undefined) {
+      throw 'Error: getLoomballsService cast error';
+    }
+
+    // return loomballs available to player
+    const loomballs: TLoomball[] = rawData as TLoomball[];
+
+    return loomballs;
+  } catch (e) {
+    console.error(e);
+  }
+
+  return [];
 };
 
 export const resetCodePasswordRequest = async (
