@@ -26,6 +26,7 @@ import { LoomieEnterCaptureView } from './utilsElementInteraction';
 // debug
 import { CONFIG } from '@src/services/config.services';
 import { useToastAlert } from '@src/hooks/useToastAlert';
+import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 const { MAP_DEBUG } = CONFIG;
 
 const DELAY_FETCH_WILD_LOOMIES = 10000; // 4 seconds
@@ -48,6 +49,9 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
     updateCountTiles,
     coordsGlobalToMap
   } = useContext(MapContext);
+  const {
+    getCurrentScene
+  } = useContext(BabylonContext);
   const { userPosition } = useContext(UserPositionContext);
   const { showInfoToast } = useToastAlert();
 
@@ -277,6 +281,8 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
   // add event on 3D model click
 
   useScenePointerObservable(props.scene, (pointerInfo: Babylon.PointerInfo) => {
+
+    if (getCurrentScene() != APP_SCENE.MAP) return;
     if (pointerInfo.type == Babylon.PointerEventTypes.POINTERTAP) {
       if (!userPosition) return;
       if (!pointerInfo.pickInfo) return;
