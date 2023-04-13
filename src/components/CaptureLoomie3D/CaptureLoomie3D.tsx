@@ -10,6 +10,8 @@ import { CONFIG } from '@src/services/config.services';
 import { TLoomball } from '@src/types/types';
 import { Vector3 } from '@babylonjs/core';
 import { useScenePointerObservable } from '@src/hooks/useScenePointerObservable';
+import { CaptureSM } from './utilsCapture';
+import { useRegisterBeforeRender } from '@src/hooks/useRegisterBeforeRender';
 const { MAP_DEBUG } = CONFIG;
 
 interface iCaptureLoomie3D {
@@ -19,6 +21,8 @@ interface iCaptureLoomie3D {
 
 export const enum LOOMBALL_STATE {
   // eslint-disable-next-line no-unused-vars
+  NONE,
+  // eslint-disable-next-line no-unused-vars
   GRABBABLE,
   // eslint-disable-next-line no-unused-vars
   ANI_GRABBED,
@@ -26,358 +30,140 @@ export const enum LOOMBALL_STATE {
   ANI_RETURNING,
   // eslint-disable-next-line no-unused-vars
   ANI_THROW,
+  // eslint-disable-next-line no-unused-vars
+  ANI_FALL,
+  // eslint-disable-next-line no-unused-vars
+  ANI_STRUGGLE,
+  // eslint-disable-next-line no-unused-vars
+  ANI_CAPTURED,
+  // eslint-disable-next-line no-unused-vars
+  ANI_ESCAPED,
 }
-
-// control constants
-
-const LOOMBALL_CAMERA_DISTANCE = 2;
-const LOOMBALL_SCALE = 0.6;
-const LOOMBALL_INITIAL_POS = new Vector3(0, -0.5, LOOMBALL_CAMERA_DISTANCE);
-
-// animation constants
-
-const ANI_THROW_GRAVITY = -2;
-const ANI_THROW_DURATION = 10;
 
 export const CaptureLoomie3D = ({
   serialLoomie,
   loomball
 }: iCaptureLoomie3D) => {
+
   const { sceneCapture, cameraCapture, getCurrentScene } =
     useContext(BabylonContext);
   const { cloneModel, instantiateModel, getModelHeight } =
     useContext(ModelContext);
   const { showScene } = useContext(BabylonContext);
 
-  // meshes
 
-  const [scratchPad, setScratchPad] = useState<Babylon.Mesh | null>(null);
-  const [modelLoomie, setModelLoomie] =
-    useState<Babylon.InstantiatedEntries | null>(null);
-  const [modelBall, setModelBall] = useState<Babylon.Mesh | null>(null);
-  const [modelHitbox, setModelHitbox] = useState<Babylon.Mesh | null>(null);
-  const [initialOriginBall, setInitialOriginBall] = useState<Babylon.Mesh | null>(null);
-
-  const loomieHeight = useRef<number>(2);
-
-  // loomball variables
-
-  const [ballState, setBallState] = useState<LOOMBALL_STATE>(LOOMBALL_STATE.ANI_RETURNING);
-
-  //const ballTarget = useRef<Babylon.Vector3>(Vector3.Zero());
-  const ballPosCurr = useRef<Babylon.Vector3>(Vector3.Zero());
-  const ballPosPrev = useRef<Babylon.Vector3>(Vector3.Zero());
-  const ballDir = useRef<Babylon.Vector3>(Vector3.Zero());
-  const [ballTarget, setBallTarget] = useState<Babylon.Vector3>(Vector3.Zero());
+  const babylonContext = useContext(BabylonContext);
+  const modelContext = useContext(ModelContext);
 
 
-  useEffect(() => {
-    if (!sceneCapture) return;
-    if (!cameraCapture) return;
+  // stores the ballState
+  const stateMachine = useRef<CaptureSM | null>(null);
 
-    // config camera
-    const camera = cameraCapture as Babylon.ArcRotateCamera;
+  // frame
+  console.log("= == == = == = = == = Render this");
 
-    // not panning
-    camera.panningSensibility = 0;
+  // 
 
-    // limit camera zoom
-    camera.lowerRadiusLimit = 7;
-    camera.upperRadiusLimit = camera.lowerRadiusLimit;
+  useRegisterBeforeRender(
+    sceneCapture,
+    () => {
+      if (!stateMachine.current) return;
 
-    // limit camera angle
-    camera.lowerBetaLimit = Math.PI * (0.5 - 0.15);
-    camera.upperBetaLimit = Math.PI * (0.5 - 0.1);
+      const state = stateMachine.current.stt.state;
+      const controller = stateMachine.current.controllers.get(state);
+      console.log(`State State ${state}`);
 
-    camera.lowerAlphaLimit = Math.PI * (0.5 - 0.05);
-    camera.upperAlphaLimit = Math.PI * (0.5 + 0.05);
+      if (controller?.frame){
+        const callback = controller.frame;
 
-    camera.angularSensibilityX = 20000;
-    camera.angularSensibilityY = camera.angularSensibilityX;
+        callback(stateMachine.current.stt);
 
-    // setup scene
-
-    (async () => {
-      try {
-        console.log('instantiate a thing or two');
-
-        // models
-        const modelLoomie = await instantiateModel(
-          serialLoomie.toString(),
-          sceneCapture
-        );
-        const modelEnv = await instantiateModel('ENV_GRASS', sceneCapture);
-        const modelBall = await cloneModel(
-          `loomball-${loomball.serial.toString().padStart(3, '0')}`,
-          sceneCapture
-        );
-        const modelBall2 = await cloneModel(
-          `loomball-${loomball.serial.toString().padStart(3, '0')}`,
-          sceneCapture
-        );
-        if (modelBall2) {
-          modelBall2.position.y = 2.5;
-          modelBall2.scaling = Vector3.One().scale(LOOMBALL_SCALE);
-        }
-
-        // check
-
-        if (!modelLoomie)
-          throw "Error: Couldn't instantiate Loomie modelLoomie";
-        if (!modelEnv) throw "Error: Couldn't instantiate env modelEnv";
-        if (!modelBall) throw "Error: Couldn't instantiate env modelBall";
-
-        // position model loomie
-
-        const height = await getModelHeight(
-          serialLoomie.toString(),
-          sceneCapture
-        );
-        loomieHeight.current = height;
-        instantiatedEntriesTranslate(modelLoomie, new Babylon.Vector3(0, 0, 0));
-
-        // make camera target the Loomie at the middle
-
-        camera.setTarget(new Babylon.Vector3(0, height / 2, 0));
-
-        // position ball relative to the camera
-
-        modelBall.scaling = Vector3.One().scale(LOOMBALL_SCALE);
-        modelBall.position = new Vector3().copyFrom(LOOMBALL_INITIAL_POS);
-        modelBall.parent = cameraCapture;
-
-        // loomball initial position
-
-        //const initialOriginBall = new Babylon.Mesh("initialOriginBall", sceneCapture);
-        const initialOriginBall = Babylon.MeshBuilder.CreateBox("initialOriginBall", {size: 0.2}, sceneCapture);
-        initialOriginBall.position = new Vector3().copyFrom(LOOMBALL_INITIAL_POS);
-        initialOriginBall.parent = cameraCapture;
-
-        // loomball hitbox
-
-        const hitbox = Babylon.MeshBuilder.CreateSphere(
-          'loomball_hitbox',
-          { diameter: 1.1, segments: 6, sideOrientation: 2 },
-          sceneCapture
-        );
-        hitbox.scaling = Vector3.One().scale(LOOMBALL_SCALE);
-        hitbox.parent = modelBall;
-        hitbox.isPickable = true;
-
-        // scratch pad
-
-        const scratchPad = Babylon.CreateDisc(
-          'scratchPad',
-          { radius: 0.5, tessellation: 12, sideOrientation: 2 },
-          sceneCapture
-        );
-        scratchPad.position.y = -0.5;
-        scratchPad.position.z = LOOMBALL_CAMERA_DISTANCE;
-        scratchPad.parent = cameraCapture;
-        scratchPad.isPickable = true;
-
-        // set state
-
-        setModelLoomie(modelLoomie);
-        setModelBall(modelBall);
-        setModelHitbox(hitbox);
-        setScratchPad(scratchPad);
-        setInitialOriginBall(initialOriginBall);
-      } catch (error) {
-        console.error(error);
       }
-    })();
 
-    // hitbox
-
-    // dispose
-    //return () => {
-    //if (!modelLoomie) return;
-    //modelLoomie.dispose();
-    //modelBall.dispose();
-    //};
-  }, [sceneCapture]);
-
-  // toggle scene
-
-  useEffect(() => {
-    showScene(APP_SCENE.CAPTURE);
-  }, []);
+    },
+    stateMachine.current?.stt.state,
+  );
 
   // pointer events
-
-  const onPointerDown = () => {
-    if (!modelBall) return;
-
-    if (ballState != LOOMBALL_STATE.GRABBABLE) return;
-
-    console.log('grabbed on');
-    ballPosPrev.current = modelBall.getAbsolutePosition();
-    setBallState(LOOMBALL_STATE.ANI_GRABBED);
-    setBallTarget(modelBall.getAbsolutePosition());
-
-    cameraCapture?.detachControl();
-  };
-
-  const onPointerUp = () => {
-    if (ballState != LOOMBALL_STATE.ANI_GRABBED) return;
-    if (!initialOriginBall) return;
-
-    console.log('grabbed off');
-    setBallState(LOOMBALL_STATE.ANI_RETURNING);
-    setBallTarget(initialOriginBall.getAbsolutePosition());
-
-    cameraCapture?.attachControl();
-
-  };
-
-  const onPointerMove = () => {
-    if (!sceneCapture) return;
-    if (!modelBall) return;
-    if (ballState != LOOMBALL_STATE.ANI_GRABBED) return;
-
-    // get pointer position in plane
-
-    const pickinfo = sceneCapture.pick(
-      sceneCapture.pointerX,
-      sceneCapture.pointerY,
-      (mesh) => {
-        return mesh == scratchPad;
-      }
-    );
-
-    // pointer outside plane
-
-    if (!pickinfo.hit) {
-      onPointerUp();
-      return;
-    }
-    if (!pickinfo.pickedPoint) return;
-
-    // set target
-
-    console.log("direction", ballDir.current);
-
-    setBallTarget(pickinfo.pickedPoint);
-  };
 
   if (sceneCapture)
     useScenePointerObservable(
       sceneCapture,
       (pointerInfo: Babylon.PointerInfo) => {
-        if (!modelBall) return;
+        if (!stateMachine.current) return;
 
         switch (pointerInfo.type) {
           // pointer down
 
           case Babylon.PointerEventTypes.POINTERDOWN:
-            if (!pointerInfo.pickInfo) return;
-            if (
-              pointerInfo.pickInfo.hit &&
-              pointerInfo.pickInfo.pickedMesh == modelHitbox
-            ) {
-              console.log(
-                'Info: Pressed',
-                pointerInfo.pickInfo.pickedMesh?.name
-              );
-              onPointerDown();
-            }
+            console.log(stateMachine.current.stt.state);
+            console.log("Look at me");
+            stateMachine.current.onPointerDown(pointerInfo);
             break;
 
           // pointer up
 
           case Babylon.PointerEventTypes.POINTERUP:
-            onPointerUp();
+            stateMachine.current.onPointerUp(pointerInfo);
             break;
 
           // pointer move
 
           case Babylon.PointerEventTypes.POINTERMOVE: {
-            onPointerMove();
+            stateMachine.current.onPointerMove(pointerInfo);
             break;
           }
         }
       }
     );
 
-  // throw animation
-
-  const calculateSpeeds = () => {
-    if (!modelBall) return;
-    if (!modelLoomie) return;
-
-    const h1 = modelBall.getAbsolutePosition().y;
-    const h2 = loomieHeight.current;
-    const d = Math.abs(0 - modelBall.getAbsolutePosition().x);
-    const g = ANI_THROW_GRAVITY;
-    const t = ANI_THROW_DURATION;
-
-    // speeds
-
-    const vy = ((h2 - h1) - (g/2) * (t*t)) / t;
-    const vz = d / t;
-
-  };
-
-  // register frame event
+  // create / update state machine
 
   useEffect(() => {
     if (!sceneCapture) return;
+    if (!cameraCapture) return;
 
-    const handler = () => {
-      frameUpdate();
-    };
-    sceneCapture.registerBeforeRender(handler);
+    // create scene
+    if (!stateMachine.current){
+      stateMachine.current = new CaptureSM(
+        sceneCapture,
+        cameraCapture,
+        babylonContext,
+        modelContext,
+      );
+
+      stateMachine.current.setup(serialLoomie, loomball);
+    }
+
+    // update
+    else {
+      stateMachine.current.updateProps(
+        sceneCapture,
+        cameraCapture,
+        babylonContext,
+        modelContext,
+      );
+    }
 
     return () => {
-      sceneCapture.unregisterBeforeRender(handler);
-    };
-  }, [modelBall, ballTarget, sceneCapture, ballState, setBallState, ballPosCurr.current, ballPosPrev.current, initialOriginBall]);
-
-  // frame update
-
-  const frameUpdate = () => {
-    console.log(ballState);
-    if (!modelBall) return;
-    if (!initialOriginBall) return;
-
-    const absolutePos = modelBall.getAbsolutePosition();
-    let target = ballTarget;
-
-    // process
-
-    switch (ballState) {
-      case LOOMBALL_STATE.ANI_GRABBED:
-        break;
-
-      // returning to default position
-
-      case LOOMBALL_STATE.ANI_RETURNING:
-        target = initialOriginBall.getAbsolutePosition();
-
-        // merge if too close
-
-        if (Vector3.Distance(target, absolutePos) < 0.01){
-          setBallState(LOOMBALL_STATE.GRABBABLE);
-          modelBall.setAbsolutePosition(target);
-          console.log("Arrived");
-        }
-        break;
+      // destroy everything
     }
+  }, [sceneCapture, cameraCapture, babylonContext, modelContext]);
 
-    // apply
+  // none state create scene
+  useEffect(() => {
+    // create scene
 
-    switch (ballState) {
-      case LOOMBALL_STATE.ANI_GRABBED:
-      case LOOMBALL_STATE.ANI_RETURNING:
-        ballPosPrev.current = absolutePos;
-        ballPosCurr.current = Vector3.Lerp(absolutePos, target, 0.5);
-        ballDir.current = ballPosCurr.current.subtract(ballPosPrev.current);
-
-        modelBall.setAbsolutePosition(ballPosCurr.current);
-        break;
+    return () => {
+      // destroy everything
     }
-  };
+  }, []);
+
+  // toggle scene
+
+  useEffect(() => {
+    showScene(APP_SCENE.CAPTURE);
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -389,3 +175,4 @@ export const CaptureLoomie3D = ({
     </SafeAreaView>
   );
 };
+
