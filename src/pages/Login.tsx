@@ -20,7 +20,10 @@ export const Login = ({ navigation }: LoginProps) => {
   useEffect(() => {
     if (!isLoading && isAuthenticated()) {
       showInfoToast('You are already logged in');
-      navigation.navigate('Map');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Map' }]
+      });
     }
   }, [isLoading]);
 
