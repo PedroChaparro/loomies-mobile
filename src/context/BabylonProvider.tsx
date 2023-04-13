@@ -19,7 +19,7 @@ export const enum APP_SCENE {
   CAPTURE
 }
 
-interface iBabylonProvider {
+export interface iBabylonProvider {
   engine: Babylon.Engine | undefined;
   sceneMap: Babylon.Scene | undefined;
   sceneDetails: Babylon.Scene | undefined;
@@ -64,6 +64,7 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
   const [cameraCapture, setCameraCapture] = useState<Babylon.Camera>();
 
   const showScene = (scene: APP_SCENE) => {
+
     switch (scene) {
       case APP_SCENE.NONE:
         showSceneNone();
@@ -80,21 +81,24 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
     }
   };
 
-  const showSceneNone = () => {
-    setCurrentScene(APP_SCENE.NONE);
+  const showSceneNone = async () => {
     clearScene(sceneDetails);
     clearScene(sceneCapture);
+    setCurrentScene(APP_SCENE.NONE);
   };
 
-  const showSceneMap = () => {
+  const showSceneMap = async () => {
+    await delay (500);
     setCurrentScene(APP_SCENE.MAP);
   };
 
-  const showSceneDetails = () => {
+  const showSceneDetails = async () => {
+    await delay (500);
     setCurrentScene(APP_SCENE.DETAILS);
   };
 
-  const showSceneCapture = () => {
+  const showSceneCapture = async () => {
+    await delay (500);
     setCurrentScene(APP_SCENE.CAPTURE);
   };
 
@@ -103,14 +107,14 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
     console.log(`Info: Disposing scene ${scene.metadata.name}`);
 
     // dispose resources
-    for (let i = 0; i < 10; i++){
+    for (let i = 0; i < 10; i++) {
       scene.meshes.forEach((mesh) => {
         console.log(`Info: Disposing (try ${i}) "${mesh.name}"`);
         mesh.dispose();
       });
       if (!scene.meshes.length) break;
     }
-  }
+  };
 
   const getCurrentScene = () => {
     return currentScene;
@@ -208,3 +212,8 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
     </BabylonContext.Provider>
   );
 };
+
+const delay = (ms: number): Promise<void> =>
+  new Promise((resolve): void => {
+    setTimeout(resolve, ms);
+  });
