@@ -28,7 +28,10 @@ export const MapView = ({ navigation }: MapViewProps) => {
   useEffect(() => {
     if (isFocused && !isLoading && !isAuthenticated()) {
       showInfoToast('You are not logged in');
-      navigation.navigate('Login');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }]
+      });
     }
   }, [isLoading, isFocused]);
 

@@ -22,7 +22,10 @@ export const Profile = ({ navigation }: ProfileProps) => {
 
   useEffect(() => {
     if (isFocused && !isLoading && !isAuthenticated()) {
-      navigation.navigate('Login');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }]
+      });
     }
   }, [isFocused]);
 
