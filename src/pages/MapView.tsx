@@ -1,11 +1,15 @@
-import { NavigationProp, useFocusEffect } from '@react-navigation/native';
+import {
+  NavigationProp,
+  useFocusEffect,
+  useIsFocused
+} from '@react-navigation/native';
 import React, { useContext, useEffect } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
 import { useToastAlert } from '../hooks/useToastAlert';
 import { Map3D } from '@src/components/Map3D/Map3D';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import { ModalGym } from '@src/components/ModalDialogs/ModalGym';
+import { ModalGym } from '@src/components/Modals/Gyms/ModalGym';
 import { GymsModalProvider } from '@src/context/GymsModalContext';
 import { BabylonContext } from '@src/context/BabylonProvider';
 
@@ -15,17 +19,21 @@ interface MapViewProps {
 }
 
 export const MapView = ({ navigation }: MapViewProps) => {
+  const isFocused = useIsFocused();
   const { isLoading, isAuthenticated } = useAuth();
   const { showInfoToast } = useToastAlert();
   const { showSceneMap, showSceneNone } = useContext(BabylonContext);
 
   // Redirects to the login view if the user is not authenticated
   useEffect(() => {
-    if (!isLoading && !isAuthenticated()) {
+    if (isFocused && !isLoading && !isAuthenticated()) {
       showInfoToast('You are not logged in');
-      navigation.navigate('Login');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }]
+      });
     }
-  }, [isLoading]);
+  }, [isLoading, isFocused]);
 
   // toggle render loop on focus events
   useFocusEffect(
