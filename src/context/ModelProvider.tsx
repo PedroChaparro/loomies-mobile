@@ -8,7 +8,7 @@ import React, { createContext, useRef, ReactNode } from 'react';
 import { LoadModel, MODEL_RESOURCE } from '@src/services/modelLoader.services';
 
 // provider interface
-interface iModelProvider {
+export interface iModelProvider {
   instantiateModel: (
     _name: string,
     _scene: Babylon.Scene
