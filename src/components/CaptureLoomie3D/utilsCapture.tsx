@@ -6,6 +6,7 @@ import { TLoomball } from '@src/types/types';
 import { instantiatedEntriesTranslate } from '../Map3D/utilsVertex';
 
 import {
+    controllerFall,
   controllerGrabbable,
   controllerGrabbed,
   controllerNone,
@@ -123,6 +124,7 @@ export class CaptureSM {
     this.controllers.set(LOOMBALL_STATE.ANI_GRABBED, controllerGrabbed);
     this.controllers.set(LOOMBALL_STATE.ANI_RETURNING, controllerReturning);
     this.controllers.set(LOOMBALL_STATE.ANI_THROW, controllerThrow);
+    this.controllers.set(LOOMBALL_STATE.ANI_FALL, controllerFall);
   }
 
   updateProps(

@@ -1,7 +1,7 @@
 import * as Babylon from '@babylonjs/core';
 import { Vector3 } from '@babylonjs/core';
 import { LOOMBALL_STATE } from "./CaptureLoomie3D";
-import { aniThrowCalculatePosition, calculateSpeeds, collidedWithObject } from './utilsAnimation';
+import { aniThrowCalculatePosition, throwCalculateSpeeds, collidedWithObject, fallCalculateSpeeds, fallCalculatePosition } from './utilsAnimation';
 import { iAniState } from "./utilsCapture";
 
 export interface iStateController {
@@ -20,8 +20,12 @@ const LOOMBALL_INITIAL_STATE = LOOMBALL_STATE.GRABBABLE;
 
 // animation constants
 
-export const ANI_THROW_GRAVITY = -17;
 export const ANI_THROW_DURATION = 500; // milliseconds
+export const ANI_THROW_GRAVITY = -17;
+
+export const ANI_FALL_DURATION = 1000; // milliseconds
+export const ANI_FALL_GRAVITY = -17;
+
 const ANI_FPS = 30;
 const LOOMBALL_MINIMUN_THROW_FORCE = 0.04;
 
@@ -76,7 +80,7 @@ export const controllerGrabbed: iStateController = {
       console.log("THROW ===========================");
       stt.state = LOOMBALL_STATE.ANI_THROW;
 
-      // set animation
+      // config animation
 
       stt.ballPosInitialLocal = stt.ballPosCurrLocal;
       stt.ballPosInitial = stt.ballPosCurr;
@@ -86,11 +90,7 @@ export const controllerGrabbed: iStateController = {
       // normalized vector
 
       const norma = Babylon.Vector2.Normalize(new Babylon.Vector2(stt.ballDir.x, stt.ballDir.y));
-      //const norma = Babylon.Vector2.Normalize(new Babylon.Vector2(modelBall.position.x, -modelBall.position.y));
-
-      //console.log(new Babylon.Vector2(modelBall.position.y, modelBall.position.x));
-
-      calculateSpeeds(stt, Math.atan2(norma.y, norma.x));
+      throwCalculateSpeeds(stt, Math.atan2(norma.y, norma.x));
     }
   },
 
@@ -172,8 +172,21 @@ export const controllerThrow: iStateController = {
     // did it ended already?
 
     if ((new Date()).getTime() > stt.aniEndTime){
-      stt.state = LOOMBALL_STATE.ANI_RETURNING;
-      stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
+      // DEBUG: set state to returning
+      //stt.state = LOOMBALL_STATE.ANI_RETURNING;
+      //stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
+
+      // set state to fall
+      stt.state = LOOMBALL_STATE.ANI_FALL;
+
+      // config animation
+
+      //stt.ballPosInitialLocal = stt.ballPosCurrLocal;
+      stt.ballPosInitial = new Vector3(0, stt.ballPosCurr.y, 0);
+      stt.aniStartTime = new Date().getTime();
+      stt.aniEndTime = stt.aniStartTime + ANI_FALL_DURATION;
+
+      fallCalculateSpeeds(stt);
     }
 
     // local x, z position
@@ -184,6 +197,29 @@ export const controllerThrow: iStateController = {
     const posAbs = stt.ballModel.getAbsolutePosition();
     posAbs.y = posCal.y;
     stt.ballModel.setAbsolutePosition(posAbs);
+
+    stt.ballPosCurr = stt.ballModel.getAbsolutePosition();
+    stt.ballPosCurrLocal = stt.ballModel.position;
+  }
+}
+
+// state ANI_FALL | =====================================================
+
+export const controllerFall: iStateController = {
+  frame: (stt) => {
+    if (!stt.ballInitialOrigin) return;
+    if (!stt.ballModel) return;
+    
+    // did it ended already?
+
+    if ((new Date()).getTime() > stt.aniEndTime){
+      stt.state = LOOMBALL_STATE.ANI_RETURNING;
+      stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
+    }
+
+    // absolute y position
+    const posCal = fallCalculatePosition(stt);
+    stt.ballModel.setAbsolutePosition(posCal);
 
     stt.ballPosCurr = stt.ballModel.getAbsolutePosition();
     stt.ballPosCurrLocal = stt.ballModel.position;
