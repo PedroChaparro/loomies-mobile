@@ -29,18 +29,20 @@ export const calculateSpeeds = (stt: iAniState, angle: number) => {
   // parabolic movement in y
 
   const t = ANI_THROW_DURATION / 1000;
-
   const h1 = stt.ballPosInitial.y;
   const h2 = stt.loomieHeight - 0.1;
-  const d = Math.abs(0 - stt.ballPosInitial.z);
   const g = ANI_THROW_GRAVITY;
 
   const vy = (h2 - h1 - (g / 2) * (t * t)) / t;
+
+  // linear movement in z
+
+  const d = Vector3.Distance(stt.ballPosInitial, Vector3.Zero());
   const vz = d / t;
 
   // parabolic movement in x
 
-  const vx = Math.cos(angle) * -3;
+  const vx = Math.cos(angle) * 3;
   const a = (2 * (0 - stt.ballPosInitialLocal.x - vx * t)) / (t * t);
 
   // initial speeds

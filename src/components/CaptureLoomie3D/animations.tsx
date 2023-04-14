@@ -183,7 +183,7 @@ export const controllerThrow: iStateController = {
     // absolute y position
     const posAbs = stt.ballModel.getAbsolutePosition();
     posAbs.y = posCal.y;
-    //modelBall.setAbsolutePosition(posAbs);
+    stt.ballModel.setAbsolutePosition(posAbs);
 
     stt.ballPosCurr = stt.ballModel.getAbsolutePosition();
     stt.ballPosCurrLocal = stt.ballModel.position;
