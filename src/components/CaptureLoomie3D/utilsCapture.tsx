@@ -9,6 +9,7 @@ import {
   controllerGrabbable,
   controllerGrabbed,
   controllerNone,
+  controllerReturning,
   iStateController
 } from './animations';
 
@@ -120,6 +121,7 @@ export class CaptureSM {
     this.controllers.set(LOOMBALL_STATE.NONE, controllerNone);
     this.controllers.set(LOOMBALL_STATE.GRABBABLE, controllerGrabbable);
     this.controllers.set(LOOMBALL_STATE.ANI_GRABBED, controllerGrabbed);
+    this.controllers.set(LOOMBALL_STATE.ANI_RETURNING, controllerReturning);
   }
 
   updateProps(

@@ -34,6 +34,8 @@ export const controllerGrabbable: iStateController = {
     stt.ballPosPrevLocal = stt.ballModel.position;
     console.log("Flag 3");
 
+    // change state to grabbed
+
     stt.state = LOOMBALL_STATE.ANI_GRABBED;
     stt.ballTarget = stt.ballModel.getAbsolutePosition();
 
@@ -119,7 +121,7 @@ export const controllerGrabbed: iStateController = {
     stt.ballPosPrev = absolutePos;
     stt.ballPosPrevLocal = stt.ballModel.position;
 
-    stt.ballPosCurr = Vector3.Lerp(absolutePos, stt.ballTarget, 0.5);
+    stt.ballPosCurr = Vector3.Lerp(absolutePos, stt.ballTarget, 0.6);
     stt.ballModel.setAbsolutePosition(stt.ballPosCurr)
 
     stt.ballPosCurrLocal = stt.ballModel.position;
@@ -130,6 +132,25 @@ export const controllerGrabbed: iStateController = {
   }
 }
 
+export const controllerReturning: iStateController = {
+  frame: (stt) => {
+    if (!stt.ballInitialOrigin) return;
+    if (!stt.ballModel) return;
+
+    const absolutePos = stt.ballModel.getAbsolutePosition();
+    stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
+
+    // merge if too close
+
+    if (Vector3.Distance(stt.ballTarget, absolutePos) < 0.01){
+      stt.state = LOOMBALL_STATE.GRABBABLE;
+      stt.ballModel.setAbsolutePosition(stt.ballTarget);
+      console.log("Arrived");
+    }
+
+    controllerGrabbed.frame && controllerGrabbed.frame(stt);
+  }
+}
 
 export const collidedWithObject = (pointerInfo: Babylon.PointerInfo, objName: string): boolean => {
   if (
