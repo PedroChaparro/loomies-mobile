@@ -1,6 +1,6 @@
 import * as Babylon from '@babylonjs/core';
 import { Vector3 } from '@babylonjs/core';
-import { ANI_FALL_DURATION, ANI_FALL_GRAVITY, ANI_THROW_DURATION, ANI_THROW_GRAVITY } from './animations';
+import { ANI_FALL_DURATION, ANI_THROW_DURATION, ANI_THROW_GRAVITY } from './animations';
 import { iAniState } from './utilsCapture';
 
 export const collidedWithObject = (
@@ -56,13 +56,10 @@ export const aniThrowCalculatePosition = (stt: iAniState): Babylon.Vector3 => {
   const now = new Date().getTime();
   const delta = (now - stt.aniStartTime) / 1000;
 
-  //const localPosInitial = ballPosInitial.current.subtract(LOOMBALL_INITIAL_POS);
-
   const x =
     stt.ballPosInitialLocal.x +
     stt.ballSpeed.x * delta +
     (stt.ballAcc.x / 2) * Math.pow(delta, 2);
-  //const x = 0;
 
   const y =
     stt.ballPosInitial.y +
@@ -70,8 +67,6 @@ export const aniThrowCalculatePosition = (stt: iAniState): Babylon.Vector3 => {
     (stt.ballAcc.y / 2) * Math.pow(delta, 2);
 
   const z = stt.ballPosInitialLocal.z + stt.ballSpeed.z * delta;
-
-  //console.log(x);
 
   return new Babylon.Vector3(x, y, z);
 };

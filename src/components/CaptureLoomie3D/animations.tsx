@@ -1,5 +1,6 @@
 import * as Babylon from '@babylonjs/core';
 import { Vector3 } from '@babylonjs/core';
+import { instantiatedEntriesScale } from '../Map3D/utilsVertex';
 import { LOOMBALL_STATE } from "./CaptureLoomie3D";
 import { aniThrowCalculatePosition, throwCalculateSpeeds, collidedWithObject, fallCalculateSpeeds, fallCalculatePosition } from './utilsAnimation';
 import { iAniState } from "./utilsCapture";
@@ -15,6 +16,8 @@ export interface iStateController {
 
 const LOOMBALL_CAMERA_DISTANCE = 2;
 const LOOMBALL_SCALE = 0.4;
+const LOOMBALL_RADIUS = 0.2;
+
 const LOOMBALL_INITIAL_POS = new Vector3(0, -0.5, LOOMBALL_CAMERA_DISTANCE);
 const LOOMBALL_INITIAL_STATE = LOOMBALL_STATE.GRABBABLE;
 
@@ -24,6 +27,7 @@ export const ANI_THROW_DURATION = 500; // milliseconds
 export const ANI_THROW_GRAVITY = -17;
 
 export const ANI_FALL_DURATION = 1000; // milliseconds
+export const ANI_FALL_DURATION_EXTENDED = 2000; // milliseconds
 export const ANI_FALL_GRAVITY = -17;
 
 const ANI_FPS = 30;
@@ -91,6 +95,8 @@ export const controllerGrabbed: iStateController = {
 
       const norma = Babylon.Vector2.Normalize(new Babylon.Vector2(stt.ballDir.x, stt.ballDir.y));
       throwCalculateSpeeds(stt, Math.atan2(norma.y, norma.x));
+
+      return;
     }
   },
 
@@ -168,6 +174,7 @@ export const controllerThrow: iStateController = {
   frame: (stt) => {
     if (!stt.ballInitialOrigin) return;
     if (!stt.ballModel) return;
+    if (!stt.loomieModel) return;
     
     // did it ended already?
 
@@ -182,11 +189,18 @@ export const controllerThrow: iStateController = {
       // config animation
 
       //stt.ballPosInitialLocal = stt.ballPosCurrLocal;
+      stt.ballPosCurr = stt.ballModel.getAbsolutePosition();
       stt.ballPosInitial = new Vector3(0, stt.ballPosCurr.y, 0);
       stt.aniStartTime = new Date().getTime();
-      stt.aniEndTime = stt.aniStartTime + ANI_FALL_DURATION;
+      stt.aniEndTime = stt.aniStartTime + ANI_FALL_DURATION_EXTENDED;
 
       fallCalculateSpeeds(stt);
+
+      // expode Loomie
+
+      instantiatedEntriesScale(stt.loomieModel, Vector3.Zero());
+
+      return;
     }
 
     // local x, z position
@@ -217,8 +231,12 @@ export const controllerFall: iStateController = {
       stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
     }
 
-    // absolute y position
     const posCal = fallCalculatePosition(stt);
+
+    // keep it above the floor
+    posCal.y = Math.max(LOOMBALL_RADIUS, posCal.y);
+
+    // absolute y position
     stt.ballModel.setAbsolutePosition(posCal);
 
     stt.ballPosCurr = stt.ballModel.getAbsolutePosition();
