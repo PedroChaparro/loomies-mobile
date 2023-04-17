@@ -19,6 +19,7 @@ const { MAP_DEBUG } = CONFIG;
 interface iCaptureLoomie3D {
   loomie: TWildLoomies;
   loomball: TLoomball;
+  setBallState: (_state: LOOMBALL_STATE) => void;
 }
 
 export const enum LOOMBALL_STATE {
@@ -44,7 +45,8 @@ export const enum LOOMBALL_STATE {
 
 export const CaptureLoomie3D = ({
   loomie,
-  loomball
+  loomball,
+  setBallState
 }: iCaptureLoomie3D) => {
 
   const { sceneCapture, cameraCapture, getCurrentScene } =
@@ -147,6 +149,7 @@ export const CaptureLoomie3D = ({
         userPositionContext,
 
         attemptToCatch,
+        setBallState
       );
 
       stateMachine.current.setup(loomie.serial, loomball);

@@ -13,7 +13,9 @@ import {
   controllerNone,
   controllerReturning,
   controllerThrow,
-  iStateController
+  iStateController,
+  LOOMBALL_INITIAL_STATE,
+  LOOMBALL_SPAWN_POS
 } from './animations';
 
 import { LOOMBALL_STATE } from './CaptureLoomie3D';
@@ -23,7 +25,7 @@ import { LOOMBALL_STATE } from './CaptureLoomie3D';
 const LOOMBALL_CAMERA_DISTANCE = 2;
 const LOOMBALL_SCALE = 0.4;
 const LOOMBALL_INITIAL_POS = new Vector3(0, -0.5, LOOMBALL_CAMERA_DISTANCE);
-const LOOMBALL_INITIAL_STATE = LOOMBALL_STATE.GRABBABLE;
+//const LOOMBALL_INITIAL_STATE = LOOMBALL_STATE.GRABBABLE;
 
 // animation constants
 
@@ -41,6 +43,7 @@ export interface iAniState {
 
   // callbacks
   attemptToCatch: () => Promise<[boolean, TWildLoomies | null]>;
+  setBallState: (_state: LOOMBALL_STATE) => void;
 
   // loomie 
   loomieHeight: number;
@@ -95,6 +98,7 @@ export class CaptureSM {
     userPositionContext: iUserPositionContext,
 
     attemptToCatch: () => Promise<[boolean, TWildLoomies | null]>,
+    setBallState: (_state: LOOMBALL_STATE) => void
   ) {
     this.stt = {
       sceneCapture,
@@ -106,6 +110,10 @@ export class CaptureSM {
       // callbacks
 
       attemptToCatch,
+      setBallState: (state: LOOMBALL_STATE) => {
+        this.stt.state = state;
+        setBallState(state);
+      },
 
       // loomie
 
@@ -132,7 +140,7 @@ export class CaptureSM {
       aniEndTime: 0,
     };
 
-    //this.state = LOOMBALL_INITIAL_STATE;
+    this.stt.setBallState(this.stt.state)
     this.controllers = new Map<LOOMBALL_STATE, iStateController>();
 
     // setup state controllers
@@ -238,7 +246,7 @@ export class CaptureSM {
         //// position ball relative to the camera
 
         modelBall.scaling = Vector3.One().scale(LOOMBALL_SCALE);
-        modelBall.position = new Vector3().copyFrom(LOOMBALL_INITIAL_POS);
+        modelBall.position = new Vector3().copyFrom(LOOMBALL_SPAWN_POS);
         modelBall.parent = cameraCapture;
 
         //// loomball initial position

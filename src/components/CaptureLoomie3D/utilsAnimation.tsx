@@ -3,6 +3,7 @@ import { Vector3 } from '@babylonjs/core';
 import { navigate } from '@src/navigation/RootNavigation';
 import { requestCaptureLoomieAttempt } from '@src/services/capture.services';
 import { ANI_FALL_DURATION, ANI_THROW_DURATION, ANI_THROW_GRAVITY } from './animations';
+import { LOOMBALL_STATE } from './CaptureLoomie3D';
 import { iAniState } from './utilsCapture';
 
 export const collidedWithObject = (
@@ -135,5 +136,8 @@ export const attemptToCatch = async (stt: iAniState) => {
   }
   else{
     console.log('Capture failed');
+
+    // reset state
+    stt.setBallState(LOOMBALL_STATE.ANI_ESCAPED);
   }
 }

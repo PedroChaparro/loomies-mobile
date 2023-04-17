@@ -18,8 +18,9 @@ const LOOMBALL_CAMERA_DISTANCE = 2;
 const LOOMBALL_SCALE = 0.4;
 const LOOMBALL_RADIUS = 0.2;
 
+export const LOOMBALL_SPAWN_POS = new Vector3(0, -2, LOOMBALL_CAMERA_DISTANCE);
 const LOOMBALL_INITIAL_POS = new Vector3(0, -0.5, LOOMBALL_CAMERA_DISTANCE);
-const LOOMBALL_INITIAL_STATE = LOOMBALL_STATE.GRABBABLE;
+export const LOOMBALL_INITIAL_STATE = LOOMBALL_STATE.ANI_RETURNING;
 
 // animation constants
 
@@ -53,7 +54,7 @@ export const controllerGrabbable: iStateController = {
 
     // change state to grabbed
 
-    stt.state = LOOMBALL_STATE.ANI_GRABBED;
+    stt.setBallState(LOOMBALL_STATE.ANI_GRABBED);
     stt.ballTarget = stt.ballModel.getAbsolutePosition();
     stt.cameraCapture.detachControl();
     console.log('grabbed on');
@@ -73,7 +74,7 @@ export const controllerGrabbed: iStateController = {
 
     // return to state returning
 
-    stt.state = LOOMBALL_STATE.ANI_RETURNING;
+    stt.setBallState(LOOMBALL_STATE.ANI_RETURNING);
     stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
     stt.cameraCapture?.attachControl();
     console.log('grabbed off');
@@ -85,7 +86,7 @@ export const controllerGrabbed: iStateController = {
     if (stt.ballDir.y > LOOMBALL_MINIMUN_THROW_FORCE){
 
       console.log("THROW ===========================");
-      stt.state = LOOMBALL_STATE.ANI_THROW;
+      stt.setBallState(LOOMBALL_STATE.ANI_THROW);
 
       // config animation
       // use dummy camera
@@ -186,7 +187,7 @@ export const controllerReturning: iStateController = {
     // merge if too close
 
     if (Vector3.Distance(stt.ballTarget, absolutePos) < 0.01){
-      stt.state = LOOMBALL_STATE.GRABBABLE;
+      stt.setBallState(LOOMBALL_STATE.GRABBABLE);
       stt.ballModel.setAbsolutePosition(stt.ballTarget);
       console.log("Arrived");
     }
@@ -211,7 +212,7 @@ export const controllerThrow: iStateController = {
       //stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
 
       // set state to fall
-      stt.state = LOOMBALL_STATE.ANI_FALL;
+      stt.setBallState(LOOMBALL_STATE.ANI_FALL);
 
       // config animation
 
@@ -254,12 +255,12 @@ export const controllerFall: iStateController = {
     // did it ended already?
 
     if ((new Date()).getTime() > stt.aniEndTime){
-      stt.state = LOOMBALL_STATE.ANI_RETURNING;
+      stt.setBallState(LOOMBALL_STATE.ANI_RETURNING);
       stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
 
       // try to capture
 
-      stt.state = LOOMBALL_STATE.NONE;
+      stt.setBallState(LOOMBALL_STATE.NONE);
       attemptToCatch(stt);
     }
 

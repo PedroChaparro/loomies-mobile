@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { NavigationProp, RouteProp, useFocusEffect } from '@react-navigation/core';
 import { View, Text, Pressable, Image, StyleSheet } from 'react-native';
 import { TWildLoomies } from '@src/types/types';
@@ -7,12 +7,13 @@ import { getItemsService, getLoomballsService } from '@src/services/user.service
 import { TLoomball } from '@src/types/types';
 import { requestCaptureLoomieAttempt } from '@src/services/capture.services';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
-import { CaptureLoomie3D } from '@src/components/CaptureLoomie3D/CaptureLoomie3D';
+import { CaptureLoomie3D, LOOMBALL_STATE } from '@src/components/CaptureLoomie3D/CaptureLoomie3D';
 import { images } from '@src/utils/utils';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 import { navigate } from '@src/navigation/RootNavigation';
 import { useToastAlert } from '@src/hooks/useToastAlert';
+import { LOOMBALL_INITIAL_STATE } from '@src/components/CaptureLoomie3D/animations';
 
 interface CaptureViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,7 +32,44 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
   // state
   const [balls, setBalls] = useState<TLoomball[]>([]);
   const [ballSelected, setBallSelected] = useState<TLoomball | null>(null);
-  //const [ballAmount, setBallAmount] = useState<number>(0);
+  const ballState = useRef<LOOMBALL_STATE>(LOOMBALL_INITIAL_STATE);
+
+  // set state
+
+  const setBallState = (state: LOOMBALL_STATE) => {
+    ballState.current = state;
+    switch (ballState.current){
+
+      // decrease loomball quantity
+
+      case LOOMBALL_STATE.ANI_THROW:{
+
+        // update ball quantity
+
+        let currBall: TLoomball | null = null;
+
+        setBallSelected((ball) => {
+          currBall = ball;
+          return ball;
+        })
+
+        if (currBall){
+          if ((currBall as TLoomball).quantity > 0){
+            (currBall as TLoomball).quantity -= 1;
+            setBallSelected(currBall);
+          }
+        }
+
+        break;
+      }
+
+      // refresh user Loomballs on escape
+      
+      case LOOMBALL_STATE.ANI_ESCAPED:
+        fetchLoomballs();
+        break;
+    }
+  }
 
   // fetch user loomballs
 
@@ -117,7 +155,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
     <View style={styles.container}>
 
       <View style={styles.scene}>
-        { loomie && ballSelected && <CaptureLoomie3D loomie={loomie} loomball={ballSelected} /> }
+        { loomie && ballSelected && <CaptureLoomie3D loomie={loomie} loomball={ballSelected} setBallState={setBallState} /> }
       </View>
 
       { /* header */ }
@@ -129,6 +167,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
       <Pressable
         style={styles.bubbleLoomball}
         onPress={() => {
+          //setBallSelected(balls[1]);
           console.log("1");
         }}
       >
@@ -144,7 +183,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
           console.log("1");
         }}
       >
-      <Text style={{ color: "black" }} >12</Text>
+      <Text style={{ color: "black" }} >{ballSelected ? ballSelected.quantity : ''}</Text>
       </Pressable>
 
       { /* scape bubble */ }
