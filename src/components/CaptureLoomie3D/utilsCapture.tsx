@@ -2,7 +2,8 @@ import * as Babylon from '@babylonjs/core';
 import { Vector3 } from '@babylonjs/core';
 import { iBabylonProvider } from '@src/context/BabylonProvider';
 import { iModelProvider } from '@src/context/ModelProvider';
-import { TLoomball } from '@src/types/types';
+import { iUserPositionContext } from '@src/context/UserPositionProvider';
+import { TLoomball, TWildLoomies } from '@src/types/types';
 import { instantiatedEntriesTranslate } from '../Map3D/utilsVertex';
 
 import {
@@ -36,6 +37,10 @@ export interface iAniState {
   cameraCapture: Babylon.Camera;
   babylonContext: iBabylonProvider;
   modelContext: iModelProvider;
+  userPositionContext: iUserPositionContext;
+
+  // callbacks
+  attemptToCatch: () => Promise<[boolean, TWildLoomies | null]>;
 
   // loomie 
   loomieHeight: number;
@@ -84,12 +89,22 @@ export class CaptureSM {
     cameraCapture: Babylon.Camera,
     babylonContext: iBabylonProvider,
     modelContext: iModelProvider,
+    userPositionContext: iUserPositionContext,
+
+    attemptToCatch: () => Promise<[boolean, TWildLoomies | null]>,
   ) {
     this.stt = {
       sceneCapture,
       cameraCapture,
       babylonContext,
       modelContext,
+      userPositionContext,
+
+      // callbacks
+
+      attemptToCatch,
+
+      // loomie
 
       loomieHeight: 1,
 
@@ -132,11 +147,13 @@ export class CaptureSM {
     cameraCapture: Babylon.Camera,
     babylonContext: iBabylonProvider,
     modelContext: iModelProvider,
+    userPositionContext: iUserPositionContext,
   ) {
     this.stt.sceneCapture = sceneCapture;
     this.stt.cameraCapture = cameraCapture;
     this.stt.babylonContext = babylonContext;
     this.stt.modelContext = modelContext;
+    this.stt.userPositionContext = userPositionContext;
   }
 
   setup(loomieSerial: number, loomball: TLoomball) {

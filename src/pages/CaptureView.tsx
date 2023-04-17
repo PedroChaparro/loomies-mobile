@@ -117,7 +117,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
     <View style={styles.container}>
 
       <View style={styles.scene}>
-        { loomie && ballSelected && <CaptureLoomie3D serialLoomie={loomie.serial} loomball={ballSelected} /> }
+        { loomie && ballSelected && <CaptureLoomie3D loomie={loomie} loomball={ballSelected} /> }
       </View>
 
       { /* header */ }

@@ -2,7 +2,7 @@ import * as Babylon from '@babylonjs/core';
 import { Vector3 } from '@babylonjs/core';
 import { instantiatedEntriesScale } from '../Map3D/utilsVertex';
 import { LOOMBALL_STATE } from "./CaptureLoomie3D";
-import { aniThrowCalculatePosition, throwCalculateSpeeds, collidedWithObject, fallCalculateSpeeds, fallCalculatePosition } from './utilsAnimation';
+import { aniThrowCalculatePosition, throwCalculateSpeeds, collidedWithObject, fallCalculateSpeeds, fallCalculatePosition, attemptToCatch} from './utilsAnimation';
 import { iAniState } from "./utilsCapture";
 
 export interface iStateController {
@@ -229,6 +229,11 @@ export const controllerFall: iStateController = {
     if ((new Date()).getTime() > stt.aniEndTime){
       stt.state = LOOMBALL_STATE.ANI_RETURNING;
       stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
+
+      // try to capture
+
+      stt.state = LOOMBALL_STATE.NONE;
+      attemptToCatch(stt);
     }
 
     const posCal = fallCalculatePosition(stt);

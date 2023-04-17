@@ -7,15 +7,17 @@ import { SafeAreaView, View } from 'react-native';
 import { instantiatedEntriesTranslate } from '../Map3D/utilsVertex';
 
 import { CONFIG } from '@src/services/config.services';
-import { TLoomball } from '@src/types/types';
+import { TCaughtLoomies, TLoomball, TWildLoomies } from '@src/types/types';
 import { Vector3 } from '@babylonjs/core';
 import { useScenePointerObservable } from '@src/hooks/useScenePointerObservable';
 import { CaptureSM } from './utilsCapture';
 import { useRegisterBeforeRender } from '@src/hooks/useRegisterBeforeRender';
+import { UserPositionContext } from '@src/context/UserPositionProvider';
+import { requestCaptureLoomieAttempt } from '@src/services/capture.services';
 const { MAP_DEBUG } = CONFIG;
 
 interface iCaptureLoomie3D {
-  serialLoomie: number;
+  loomie: TWildLoomies;
   loomball: TLoomball;
 }
 
@@ -41,7 +43,7 @@ export const enum LOOMBALL_STATE {
 }
 
 export const CaptureLoomie3D = ({
-  serialLoomie,
+  loomie,
   loomball
 }: iCaptureLoomie3D) => {
 
@@ -50,10 +52,12 @@ export const CaptureLoomie3D = ({
   const { cloneModel, instantiateModel, getModelHeight } =
     useContext(ModelContext);
   const { showScene } = useContext(BabylonContext);
+  const { userPosition } = useContext(UserPositionContext);
 
 
   const babylonContext = useContext(BabylonContext);
   const modelContext = useContext(ModelContext);
+  const userPositionContext = useContext(UserPositionContext);
 
 
   // stores the ballState
@@ -71,7 +75,7 @@ export const CaptureLoomie3D = ({
 
       const state = stateMachine.current.stt.state;
       const controller = stateMachine.current.controllers.get(state);
-      console.log(`State State ${state}`);
+      //console.log(`State State ${state}`);
 
       if (controller?.frame){
         const callback = controller.frame;
@@ -117,11 +121,21 @@ export const CaptureLoomie3D = ({
       }
     );
 
+  const attemptToCatch = async (): Promise<[boolean, TWildLoomies | null]> => {
+    if (userPosition){
+      const captured = await requestCaptureLoomieAttempt (userPosition, loomie._id, loomball._id);
+      if (captured) return [captured, loomie];
+    }
+    return [false, null];
+  }
+
   // create / update state machine
 
   useEffect(() => {
     if (!sceneCapture) return;
     if (!cameraCapture) return;
+
+    console.log("position", userPosition);
 
     // create scene
     if (!stateMachine.current){
@@ -130,25 +144,30 @@ export const CaptureLoomie3D = ({
         cameraCapture,
         babylonContext,
         modelContext,
+        userPositionContext,
+
+        attemptToCatch,
       );
 
-      stateMachine.current.setup(serialLoomie, loomball);
+      stateMachine.current.setup(loomie.serial, loomball);
     }
 
     // update
     else {
+      console.log("UPDATING MACHINE PROPS");
       stateMachine.current.updateProps(
         sceneCapture,
         cameraCapture,
         babylonContext,
         modelContext,
+        userPositionContext,
       );
     }
 
     return () => {
       // destroy everything
     }
-  }, [sceneCapture, cameraCapture, babylonContext, modelContext]);
+  }, [sceneCapture, cameraCapture, babylonContext, modelContext, userPosition]);
 
   // none state create scene
   useEffect(() => {
