@@ -52,6 +52,9 @@ export interface iAniState {
   hitbox?: Babylon.Mesh;
   scratchPad?: Babylon.Mesh;
 
+  cameraDummy?: Babylon.Mesh;
+  ballDummy?: Babylon.Mesh;
+
   ballInitialOrigin?: Babylon.Mesh;
 
   // loomball vars
@@ -170,7 +173,7 @@ export class CaptureSM {
     const camera = cameraCapture as Babylon.ArcRotateCamera;
 
     // not panning
-    camera.panningSensibility = 0;
+    //camera.panningSensibility = 0;
 
     //// limit camera zoom
     camera.lowerRadiusLimit = 7;
@@ -285,6 +288,24 @@ export class CaptureSM {
         throwOrigin.isPickable = false;
         throwOrigin.visibility = 0;
 
+        // camera dummy
+
+        const cameraDummy = Babylon.MeshBuilder.CreateBox(
+          'cameraDummy',
+          { size: 0.2 },
+          sceneCapture
+        );
+        cameraDummy.isPickable = false;
+        //cameraDummy.visibility = 0;
+
+        const ballDummy = Babylon.MeshBuilder.CreateDisc(
+          'ballDummy',
+           { radius: 0.16, sideOrientation: 2 },
+          sceneCapture
+        );
+        ballDummy.isPickable = false;
+        ballDummy.parent = cameraDummy;
+
         // set state
 
         this.stt.loomieModel = modelLoomie;
@@ -292,6 +313,8 @@ export class CaptureSM {
         this.stt.hitbox = hitbox;
         this.stt.scratchPad = scratchPad;
         this.stt.ballInitialOrigin = initialOriginBall;
+        this.stt.cameraDummy = cameraDummy;
+        this.stt.ballDummy = ballDummy;
 
       } catch (error) {
         console.error(error);

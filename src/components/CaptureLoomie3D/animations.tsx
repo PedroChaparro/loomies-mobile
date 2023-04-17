@@ -67,6 +67,9 @@ export const controllerGrabbed: iStateController = {
     if (stt.state != LOOMBALL_STATE.ANI_GRABBED) return;
     if (!stt.ballInitialOrigin) return;
     if (!stt.ballModel) return;
+    if (!stt.ballDummy) return;
+    if (!stt.cameraDummy) return;
+    if (!stt.cameraCapture) return;
 
     // return to state returning
 
@@ -85,6 +88,21 @@ export const controllerGrabbed: iStateController = {
       stt.state = LOOMBALL_STATE.ANI_THROW;
 
       // config animation
+      // use dummy camera
+
+      const camera = stt.cameraCapture as Babylon.ArcRotateCamera;
+      stt.cameraDummy.setAbsolutePosition(camera.globalPosition);
+      stt.cameraDummy.lookAt(Vector3.Zero());
+
+      // use dummy ball position
+
+      const ballAbsPos = stt.ballDummy.getAbsolutePosition();
+      stt.ballModel.parent = stt.cameraDummy; 
+
+      stt.ballPosCurrLocal = stt.ballDummy.position;
+      stt.ballPosCurr = ballAbsPos;
+
+      // setup animation initial parameters
 
       stt.ballPosInitialLocal = stt.ballPosCurrLocal;
       stt.ballPosInitial = stt.ballPosCurr;
@@ -130,6 +148,10 @@ export const controllerGrabbed: iStateController = {
 
   frame: (stt) => {
     if (!stt.ballModel) return;
+    if (!stt.ballDummy) return;
+    if (!stt.cameraDummy) return;
+    if (!stt.cameraCapture) return;
+
     const absolutePos = stt.ballModel.getAbsolutePosition();
 
     // set global positions
@@ -143,6 +165,11 @@ export const controllerGrabbed: iStateController = {
     // calculate direction based on local positions
     stt.ballDir = stt.ballPosCurrLocal.subtract(stt.ballPosPrevLocal);
     stt.ballPosPrevLocal = stt.ballPosCurrLocal.clone();
+
+    // update dummy objects
+    stt.cameraDummy.setAbsolutePosition((stt.cameraCapture as Babylon.ArcRotateCamera).globalPosition);
+    stt.cameraDummy.lookAt(Vector3.Zero());
+    stt.ballDummy.setAbsolutePosition(stt.ballPosCurr);
   }
 }
 
