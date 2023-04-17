@@ -4,9 +4,10 @@ import { iBabylonProvider } from '@src/context/BabylonProvider';
 import { iModelProvider } from '@src/context/ModelProvider';
 import { iUserPositionContext } from '@src/context/UserPositionProvider';
 import { TLoomball, TWildLoomies } from '@src/types/types';
-import { instantiatedEntriesTranslate } from '../Map3D/utilsVertex';
+import { instantiatedEntriesScale, instantiatedEntriesTranslate, instantiatedEntriesRotate } from '../Map3D/utilsVertex';
 
 import {
+    controllerEscaped,
     controllerFall,
   controllerGrabbable,
   controllerGrabbed,
@@ -151,6 +152,7 @@ export class CaptureSM {
     this.controllers.set(LOOMBALL_STATE.ANI_RETURNING, controllerReturning);
     this.controllers.set(LOOMBALL_STATE.ANI_THROW, controllerThrow);
     this.controllers.set(LOOMBALL_STATE.ANI_FALL, controllerFall);
+    this.controllers.set(LOOMBALL_STATE.ANI_ESCAPED, controllerEscaped);
   }
 
   updateProps(
@@ -228,7 +230,10 @@ export class CaptureSM {
           sceneCapture
         );
         this.stt.loomieHeight = height;
-        instantiatedEntriesTranslate(modelLoomie, new Vector3(0, 0, 0));
+        instantiatedEntriesTranslate(modelLoomie, Vector3.Zero());
+        instantiatedEntriesScale(modelLoomie, Vector3.One());
+        instantiatedEntriesRotate(modelLoomie, Math.PI);
+
 
         const modelBall2 = await this.stt.modelContext.cloneModel(
           `loomball-${loomball.serial.toString().padStart(3, '0')}`,

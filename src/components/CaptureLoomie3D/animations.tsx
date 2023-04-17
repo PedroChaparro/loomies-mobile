@@ -70,7 +70,6 @@ export const controllerGrabbed: iStateController = {
     if (!stt.ballModel) return;
     if (!stt.ballDummy) return;
     if (!stt.cameraDummy) return;
-    if (!stt.cameraCapture) return;
 
     // return to state returning
 
@@ -151,7 +150,6 @@ export const controllerGrabbed: iStateController = {
     if (!stt.ballModel) return;
     if (!stt.ballDummy) return;
     if (!stt.cameraDummy) return;
-    if (!stt.cameraCapture) return;
 
     const absolutePos = stt.ballModel.getAbsolutePosition();
 
@@ -186,7 +184,7 @@ export const controllerReturning: iStateController = {
 
     // merge if too close
 
-    if (Vector3.Distance(stt.ballTarget, absolutePos) < 0.01){
+    if (Vector3.Distance(stt.ballTarget, absolutePos) < 0.02){
       stt.setBallState(LOOMBALL_STATE.GRABBABLE);
       stt.ballModel.setAbsolutePosition(stt.ballTarget);
       console.log("Arrived");
@@ -255,8 +253,8 @@ export const controllerFall: iStateController = {
     // did it ended already?
 
     if ((new Date()).getTime() > stt.aniEndTime){
-      stt.setBallState(LOOMBALL_STATE.ANI_RETURNING);
-      stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
+      //stt.setBallState(LOOMBALL_STATE.ANI_RETURNING);
+      //stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
 
       // try to capture
 
@@ -274,5 +272,25 @@ export const controllerFall: iStateController = {
 
     stt.ballPosCurr = stt.ballModel.getAbsolutePosition();
     stt.ballPosCurrLocal = stt.ballModel.position;
+  }
+}
+
+// state ANI_ESCAPED | =====================================================
+
+export const controllerEscaped: iStateController = {
+  frame: (stt) => {
+    if (!stt.ballModel) return;
+    if (!stt.loomieModel) return;
+
+    // reset loomball hierarchy and move to spawn point
+    // TODO: Use new Loomball model
+
+    stt.ballModel.parent = stt.cameraCapture;
+    stt.ballModel.position = new Babylon.Vector3().copyFrom(LOOMBALL_SPAWN_POS);
+    stt.setBallState(LOOMBALL_STATE.ANI_RETURNING);
+
+    // restore Loomie visibility
+
+    instantiatedEntriesScale(stt.loomieModel, Vector3.One());
   }
 }
