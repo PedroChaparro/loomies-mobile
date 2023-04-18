@@ -13,5 +13,16 @@ module.exports = {
         inlineRequires: true
       }
     })
+  },
+  resolver: {
+    assetExts: [
+      'jpg',
+      'jpeg',
+      'png',
+      'svg',
+      'wav',
+      'ttf',
+      'glb'
+    ]
   }
 };
