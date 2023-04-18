@@ -2,8 +2,8 @@ import * as Babylon from '@babylonjs/core';
 import { EngineView } from '@babylonjs/react-native';
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 import { ModelContext } from '@src/context/ModelProvider';
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { SafeAreaView, View } from 'react-native';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { Button, SafeAreaView, View } from 'react-native';
 import { instantiatedEntriesTranslate } from '../Map3D/utilsVertex';
 
 import { CONFIG } from '@src/services/config.services';
@@ -14,6 +14,7 @@ import { CaptureSM } from './utilsCapture';
 import { useRegisterBeforeRender } from '@src/hooks/useRegisterBeforeRender';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { requestCaptureLoomieAttempt } from '@src/services/capture.services';
+import {WebXRSessionManager, WebXRTrackingState} from '@babylonjs/core/XR';
 const { MAP_DEBUG } = CONFIG;
 
 interface iCaptureLoomie3D {
@@ -61,12 +62,53 @@ export const CaptureLoomie3D = ({
   const modelContext = useContext(ModelContext);
   const userPositionContext = useContext(UserPositionContext);
 
+  // XR
+  const [xrSession, setXrSession] = useState<WebXRSessionManager>();
+  const [trackingState, setTrackingState] = useState<WebXRTrackingState>();
 
   // stores the ballState
   const stateMachine = useRef<CaptureSM | null>(null);
 
   // frame
   console.log("= == == = == = = == = Render this");
+
+  const onToggleXr = useCallback(() => {
+    console.log("Debug: toggle XR");
+    (async () => {
+      try{
+        if (xrSession) {
+          await xrSession.exitXRAsync();
+        } else {
+          if (sceneCapture !== undefined) {
+            const xr = await sceneCapture.createDefaultXRExperienceAsync({
+              disableDefaultUI: true,
+              disableTeleportation: true,
+            });
+            const session = await xr.baseExperience.enterXRAsync(
+              'immersive-ar',
+              'unbounded',
+              xr.renderTarget,
+            );
+            setXrSession(session);
+            session.onXRSessionEnded.add(() => {
+              setXrSession(undefined);
+              setTrackingState(undefined);
+            });
+
+            setTrackingState(xr.baseExperience.camera.trackingState);
+            xr.baseExperience.camera.onTrackingStateChanged.add(
+              newTrackingState => {
+                setTrackingState(newTrackingState);
+              },
+            );
+          }
+        }
+      }
+      catch (e) {
+        console.error(e);
+      }
+    })();
+  }, [sceneCapture, xrSession]);
 
   // 
 
@@ -194,6 +236,10 @@ export const CaptureLoomie3D = ({
           <EngineView camera={cameraCapture} displayFrameRate={MAP_DEBUG} />
         )}
       </View>
+      <Button
+        title={xrSession ? 'Stop XR' : 'Start XR'}
+        onPress={onToggleXr}
+      />
     </SafeAreaView>
   );
 };
