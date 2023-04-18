@@ -41,7 +41,7 @@ export const FuseLoomiesModal = ({
       };
     });
 
-    // Filter loomies to show only the ones that can be fused
+    // Filter loomies to show only the ones that can be merged
     const fuseCandidates = loomiesWithTeamProperty.filter((loomie) => {
       return (
         loomie._id !== selectedLoomie._id &&
@@ -77,11 +77,11 @@ export const FuseLoomiesModal = ({
     if (error) {
       showErrorToast(
         response['message'] ||
-          'There was an error fusing your loomies, please try again later'
+          'There was an error merging your loomies, please try again later'
       );
     } else {
       showSuccessToast(
-        response['message'] || 'Your loomies was fusing successfully'
+        response['message'] || 'Your loomies was merging successfully'
       );
       navigate('Application', { screen: 'LoomieTeamView' });
     }
@@ -101,11 +101,11 @@ export const FuseLoomiesModal = ({
       onBackdropPress={toggleVisibilityCallback}
       style={Styles.modal}
     >
-      <Text style={Styles.modalTitle}>Fuse Loomies</Text>
+      <Text style={Styles.modalTitle}>Merge Loomies</Text>
       <View style={{ flex: 1, marginVertical: 8 }}>
         {loomies.length === 0 ? (
           <EmptyMessage
-            text={`You have to catch another "${selectedLoomie.name}" to fuse it`}
+            text={`You have to catch another "${selectedLoomie.name}" to merge it`}
             showButton={true}
             buttonText='Catch Loomies'
             buttonCallback={goToMap}
@@ -122,7 +122,7 @@ export const FuseLoomiesModal = ({
       {loomies.length === 0 ? null : (
         <View style={Styles.containerButton}>
           <CustomButton
-            title='Fuse'
+            title='Merge'
             type='primary'
             callback={callfuseLoomies}
           />
