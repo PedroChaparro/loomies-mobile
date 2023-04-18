@@ -15,14 +15,6 @@ jobs:
       - name: Checkout and Authenticate
         uses: actions/checkout@v3
 
-      - name: Create .env file
-        run: |
-          echo "API_URL=${{ secrets.DEPLOYMENT_API_URL }}" >> .env
-          echo "MAP_DEBUG=false" >> .env
-          echo "GAME_MIN_REQUIRED_EXPERIENCE=100" >> .env
-          echo "GAME_EXPERIENCE_FACTOR=1000" >> .env
-          echo "PLAYER_REACH_RADIUS=0.0008" >> .env
-
       - name: Setup JDK
         uses: actions/setup-java@v2
         with:
@@ -69,7 +61,14 @@ jobs:
 
       # -- Build and sign the Android app
       - name: Build Android
-        run: cd android && ./gradlew assembleRelease --no-daemon
+        run: |
+          cd android
+          API_URL=${{ secrets.DEPLOYMENT_API_URL }}
+          MAP_DEBUG=false
+          GAME_MIN_REQUIRED_EXPERIENCE=100
+          GAME_EXPERIENCE_FACTOR=1000
+          PLAYER_REACH_RADIUS=0.0008
+          ./gradlew assembleRelease --no-daemon
 
       - name: Sign Android
         id: sign_app
