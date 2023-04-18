@@ -3,7 +3,6 @@ import '@babylonjs/loaders/glTF';
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 
 export const MODEL_RESOURCE: { [key: string]: NodeRequire } = {
-
   // map models
   'MAP_CIRCLE_INDICATOR': require('@assets/models/map/indicator/circleIndicator.glb'),
   'MAP_PLAYER': require('@assets/models/map/indicator/player.glb'),
@@ -36,7 +35,7 @@ export const MODEL_RESOURCE: { [key: string]: NodeRequire } = {
   // loomballs
   'loomball-008': require('@assets/models/loomballs/loomball/loomball.glb'),
   'loomball-009': require('@assets/models/loomballs/loomball/loomball.glb'),
-  'loomball-010': require('@assets/models/loomballs/loomball/loomball.glb'),
+  'loomball-010': require('@assets/models/loomballs/loomball/loomball.glb')
 };
 
 export const LoadModel = async (

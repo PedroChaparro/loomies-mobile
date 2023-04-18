@@ -2,19 +2,23 @@ import * as Babylon from '@babylonjs/core';
 import { EngineView } from '@babylonjs/react-native';
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 import { ModelContext } from '@src/context/ModelProvider';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 import { Button, SafeAreaView, View } from 'react-native';
-import { instantiatedEntriesTranslate } from '../Map3D/utilsVertex';
 
 import { CONFIG } from '@src/services/config.services';
-import { TCaughtLoomies, TLoomball, TWildLoomies } from '@src/types/types';
-import { Vector3 } from '@babylonjs/core';
+import { TLoomball, TWildLoomies } from '@src/types/types';
 import { useScenePointerObservable } from '@src/hooks/useScenePointerObservable';
 import { CaptureSM } from './utilsCapture';
 import { useRegisterBeforeRender } from '@src/hooks/useRegisterBeforeRender';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { requestCaptureLoomieAttempt } from '@src/services/capture.services';
-import {WebXRSessionManager, WebXRTrackingState} from '@babylonjs/core/XR';
+import { WebXRSessionManager, WebXRTrackingState } from '@babylonjs/core/XR';
 const { MAP_DEBUG } = CONFIG;
 
 interface iCaptureLoomie3D {
@@ -41,7 +45,7 @@ export const enum LOOMBALL_STATE {
   // eslint-disable-next-line no-unused-vars
   ANI_CAPTURED,
   // eslint-disable-next-line no-unused-vars
-  ANI_ESCAPED,
+  ANI_ESCAPED
 }
 
 export const CaptureLoomie3D = ({
@@ -49,14 +53,10 @@ export const CaptureLoomie3D = ({
   loomball,
   setBallState
 }: iCaptureLoomie3D) => {
-
   const { sceneCapture, cameraCapture, getCurrentScene } =
     useContext(BabylonContext);
-  const { cloneModel, instantiateModel, getModelHeight } =
-    useContext(ModelContext);
   const { showScene } = useContext(BabylonContext);
   const { userPosition } = useContext(UserPositionContext);
-
 
   const babylonContext = useContext(BabylonContext);
   const modelContext = useContext(ModelContext);
@@ -70,24 +70,24 @@ export const CaptureLoomie3D = ({
   const stateMachine = useRef<CaptureSM | null>(null);
 
   // frame
-  console.log("= == == = == = = == = Render this");
+  console.log('= == == = == = = == = Render this');
 
   const onToggleXr = useCallback(() => {
-    console.log("Debug: toggle XR");
+    console.log('Debug: toggle XR');
     (async () => {
-      try{
+      try {
         if (xrSession) {
           await xrSession.exitXRAsync();
         } else {
           if (sceneCapture !== undefined) {
             const xr = await sceneCapture.createDefaultXRExperienceAsync({
               disableDefaultUI: true,
-              disableTeleportation: true,
+              disableTeleportation: true
             });
             const session = await xr.baseExperience.enterXRAsync(
               'immersive-ar',
               'unbounded',
-              xr.renderTarget,
+              xr.renderTarget
             );
             setXrSession(session);
             session.onXRSessionEnded.add(() => {
@@ -97,20 +97,19 @@ export const CaptureLoomie3D = ({
 
             setTrackingState(xr.baseExperience.camera.trackingState);
             xr.baseExperience.camera.onTrackingStateChanged.add(
-              newTrackingState => {
+              (newTrackingState) => {
                 setTrackingState(newTrackingState);
-              },
+              }
             );
           }
         }
-      }
-      catch (e) {
+      } catch (e) {
         console.error(e);
       }
     })();
   }, [sceneCapture, xrSession]);
 
-  // 
+  //
 
   useRegisterBeforeRender(
     sceneCapture,
@@ -121,15 +120,13 @@ export const CaptureLoomie3D = ({
       const controller = stateMachine.current.controllers.get(state);
       //console.log(`State State ${state}`);
 
-      if (controller?.frame){
+      if (controller?.frame) {
         const callback = controller.frame;
 
         callback(stateMachine.current.stt);
-
       }
-
     },
-    stateMachine.current?.stt.state,
+    stateMachine.current?.stt.state
   );
 
   // pointer events
@@ -145,7 +142,7 @@ export const CaptureLoomie3D = ({
 
           case Babylon.PointerEventTypes.POINTERDOWN:
             console.log(stateMachine.current.stt.state);
-            console.log("Look at me");
+            console.log('Look at me');
             stateMachine.current.onPointerDown(pointerInfo);
             break;
 
@@ -166,12 +163,16 @@ export const CaptureLoomie3D = ({
     );
 
   const attemptToCatch = async (): Promise<[boolean, TWildLoomies | null]> => {
-    if (userPosition){
-      const captured = await requestCaptureLoomieAttempt (userPosition, loomie._id, loomball._id);
+    if (userPosition) {
+      const captured = await requestCaptureLoomieAttempt(
+        userPosition,
+        loomie._id,
+        loomball._id
+      );
       if (captured) return [captured, loomie];
     }
     return [false, null];
-  }
+  };
 
   // create / update state machine
 
@@ -179,10 +180,10 @@ export const CaptureLoomie3D = ({
     if (!sceneCapture) return;
     if (!cameraCapture) return;
 
-    console.log("position", userPosition);
+    console.log('position', userPosition);
 
     // create scene
-    if (!stateMachine.current){
+    if (!stateMachine.current) {
       stateMachine.current = new CaptureSM(
         sceneCapture,
         cameraCapture,
@@ -199,19 +200,19 @@ export const CaptureLoomie3D = ({
 
     // update
     else {
-      console.log("UPDATING MACHINE PROPS");
+      console.log('UPDATING MACHINE PROPS');
       stateMachine.current.updateProps(
         sceneCapture,
         cameraCapture,
         babylonContext,
         modelContext,
-        userPositionContext,
+        userPositionContext
       );
     }
 
     return () => {
       // destroy everything
-    }
+    };
   }, [sceneCapture, cameraCapture, babylonContext, modelContext, userPosition]);
 
   // none state create scene
@@ -220,7 +221,7 @@ export const CaptureLoomie3D = ({
 
     return () => {
       // destroy everything
-    }
+    };
   }, []);
 
   // toggle scene
@@ -236,11 +237,7 @@ export const CaptureLoomie3D = ({
           <EngineView camera={cameraCapture} displayFrameRate={MAP_DEBUG} />
         )}
       </View>
-      <Button
-        title={xrSession ? 'Stop XR' : 'Start XR'}
-        onPress={onToggleXr}
-      />
+      <Button title={xrSession ? 'Stop XR' : 'Start XR'} onPress={onToggleXr} />
     </SafeAreaView>
   );
 };
-

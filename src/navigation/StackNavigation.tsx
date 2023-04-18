@@ -42,7 +42,10 @@ export const StackNavigation = () => {
                 component={EmailValidationView}
               />
               <Stack.Screen name='NewCode' component={NewCodeView} />
-              <Stack.Screen name='ResetPassword' component={ResetPasswordView} />
+              <Stack.Screen
+                name='ResetPassword'
+                component={ResetPasswordView}
+              />
               <Stack.Screen
                 name='ChangePassword'
                 component={ChangePasswordView}

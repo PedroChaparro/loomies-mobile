@@ -1,8 +1,11 @@
 import * as Babylon from '@babylonjs/core';
 import { Vector3 } from '@babylonjs/core';
 import { navigate } from '@src/navigation/RootNavigation';
-import { requestCaptureLoomieAttempt } from '@src/services/capture.services';
-import { ANI_FALL_DURATION, ANI_THROW_DURATION, ANI_THROW_GRAVITY } from './animations';
+import {
+  ANI_FALL_DURATION,
+  ANI_THROW_DURATION,
+  ANI_THROW_GRAVITY
+} from './animations';
 import { LOOMBALL_STATE } from './CaptureLoomie3D';
 import { iAniState } from './utilsCapture';
 
@@ -117,7 +120,6 @@ export const fallCalculatePosition = (stt: iAniState): Babylon.Vector3 => {
 };
 
 export const attemptToCatch = async (stt: iAniState) => {
-
   // get user position
   const userPos = stt.userPositionContext.userPosition;
   if (!userPos) return;
@@ -126,18 +128,17 @@ export const attemptToCatch = async (stt: iAniState) => {
   const [captured, loomie] = await stt.attemptToCatch();
   console.log(captured);
 
-  if (captured){
+  if (captured) {
     // print loomie info
     console.log('Congratulations! Loomie captured!');
     console.log(loomie);
 
     // go back to map
     navigate('Map', null);
-  }
-  else{
+  } else {
     console.log('Capture failed');
 
     // reset state
     stt.setBallState(LOOMBALL_STATE.ANI_ESCAPED);
   }
-}
+};

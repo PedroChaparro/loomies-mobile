@@ -4,11 +4,15 @@ import { iBabylonProvider } from '@src/context/BabylonProvider';
 import { iModelProvider } from '@src/context/ModelProvider';
 import { iUserPositionContext } from '@src/context/UserPositionProvider';
 import { TLoomball, TWildLoomies } from '@src/types/types';
-import { instantiatedEntriesScale, instantiatedEntriesTranslate, instantiatedEntriesRotate } from '../Map3D/utilsVertex';
+import {
+  instantiatedEntriesScale,
+  instantiatedEntriesTranslate,
+  instantiatedEntriesRotate
+} from '../Map3D/utilsVertex';
 
 import {
-    controllerEscaped,
-    controllerFall,
+  controllerEscaped,
+  controllerFall,
   controllerGrabbable,
   controllerGrabbed,
   controllerNone,
@@ -26,13 +30,6 @@ import { LOOMBALL_STATE } from './CaptureLoomie3D';
 const LOOMBALL_CAMERA_DISTANCE = 2;
 const LOOMBALL_SCALE = 0.4;
 const LOOMBALL_INITIAL_POS = new Vector3(0, -0.5, LOOMBALL_CAMERA_DISTANCE);
-//const LOOMBALL_INITIAL_STATE = LOOMBALL_STATE.GRABBABLE;
-
-// animation constants
-
-const ANI_THROW_GRAVITY = -17;
-const ANI_THROW_DURATION = 500; // milliseconds
-const ANI_FPS = 30;
 
 export interface iAniState {
   // babylon related
@@ -46,7 +43,7 @@ export interface iAniState {
   attemptToCatch: () => Promise<[boolean, TWildLoomies | null]>;
   setBallState: (_state: LOOMBALL_STATE) => void;
 
-  // loomie 
+  // loomie
   loomieHeight: number;
 
   // objects
@@ -138,10 +135,10 @@ export class CaptureSM {
       ballSpeed: Vector3.Zero(),
       ballAcc: Vector3.Zero(),
       aniStartTime: 0,
-      aniEndTime: 0,
+      aniEndTime: 0
     };
 
-    this.stt.setBallState(this.stt.state)
+    this.stt.setBallState(this.stt.state);
     this.controllers = new Map<LOOMBALL_STATE, iStateController>();
 
     // setup state controllers
@@ -160,7 +157,7 @@ export class CaptureSM {
     cameraCapture: Babylon.Camera,
     babylonContext: iBabylonProvider,
     modelContext: iModelProvider,
-    userPositionContext: iUserPositionContext,
+    userPositionContext: iUserPositionContext
   ) {
     this.stt.sceneCapture = sceneCapture;
     this.stt.cameraCapture = cameraCapture;
@@ -210,7 +207,10 @@ export class CaptureSM {
           loomieSerial.toString(),
           sceneCapture
         );
-        const modelEnv = await this.stt.modelContext.instantiateModel('ENV_GRASS', sceneCapture);
+        const modelEnv = await this.stt.modelContext.instantiateModel(
+          'ENV_GRASS',
+          sceneCapture
+        );
         const modelBall = await this.stt.modelContext.cloneModel(
           `loomball-${loomball.serial.toString().padStart(3, '0')}`,
           sceneCapture
@@ -233,7 +233,6 @@ export class CaptureSM {
         instantiatedEntriesTranslate(modelLoomie, Vector3.Zero());
         instantiatedEntriesScale(modelLoomie, Vector3.One());
         instantiatedEntriesRotate(modelLoomie, Math.PI);
-
 
         const modelBall2 = await this.stt.modelContext.cloneModel(
           `loomball-${loomball.serial.toString().padStart(3, '0')}`,
@@ -294,9 +293,9 @@ export class CaptureSM {
         // origin from which throw the loomball
 
         const throwOrigin = Babylon.MeshBuilder.CreateSphere(
-        'loomball_hitbox',
-        { diameter: 0.4, segments: 6, sideOrientation: 2 },
-        sceneCapture
+          'loomball_hitbox',
+          { diameter: 0.4, segments: 6, sideOrientation: 2 },
+          sceneCapture
         );
         throwOrigin.isPickable = false;
         throwOrigin.visibility = 0;
@@ -313,7 +312,7 @@ export class CaptureSM {
 
         const ballDummy = Babylon.MeshBuilder.CreateDisc(
           'ballDummy',
-           { radius: 0.16, sideOrientation: 2 },
+          { radius: 0.16, sideOrientation: 2 },
           sceneCapture
         );
         ballDummy.isPickable = false;
@@ -328,7 +327,6 @@ export class CaptureSM {
         this.stt.ballInitialOrigin = initialOriginBall;
         this.stt.cameraDummy = cameraDummy;
         this.stt.ballDummy = ballDummy;
-
       } catch (error) {
         console.error(error);
       }
@@ -356,16 +354,16 @@ export class CaptureSM {
   }
 
   getFrameUpdateCallback(): () => void {
-    console.log("Get frame update callback");
+    console.log('Get frame update callback');
     const controller = this.controllers.get(this.stt.state);
-    console.log("Controller frame", controller?.frame);
-    if (controller?.frame){
+    console.log('Controller frame', controller?.frame);
+    if (controller?.frame) {
       const callback = controller.frame;
 
       return () => {
-        console.log("getFrameUpdateCallback");
+        console.log('getFrameUpdateCallback');
         callback(this.stt);
-      }
+      };
     }
 
     return () => {

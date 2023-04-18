@@ -1,25 +1,36 @@
 import * as Babylon from '@babylonjs/core';
 import { Vector3 } from '@babylonjs/core';
 import { instantiatedEntriesScale } from '../Map3D/utilsVertex';
-import { LOOMBALL_STATE } from "./CaptureLoomie3D";
-import { aniThrowCalculatePosition, throwCalculateSpeeds, collidedWithObject, fallCalculateSpeeds, fallCalculatePosition, attemptToCatch} from './utilsAnimation';
-import { iAniState } from "./utilsCapture";
+import { LOOMBALL_STATE } from './CaptureLoomie3D';
+import {
+  aniThrowCalculatePosition,
+  throwCalculateSpeeds,
+  collidedWithObject,
+  fallCalculateSpeeds,
+  fallCalculatePosition,
+  attemptToCatch
+} from './utilsAnimation';
+import { iAniState } from './utilsCapture';
 
 export interface iStateController {
-  onPointerDown?: (_state: iAniState, _pointerInfo: Babylon.PointerInfo) => void;
+  onPointerDown?: (
+    _state: iAniState,
+    _pointerInfo: Babylon.PointerInfo
+  ) => void;
   onPointerUp?: (_state: iAniState, _pointerInfo: Babylon.PointerInfo) => void;
-  onPointerMove?: (_state: iAniState, _pointerInfo: Babylon.PointerInfo) => void;
+  onPointerMove?: (
+    _state: iAniState,
+    _pointerInfo: Babylon.PointerInfo
+  ) => void;
   frame?: (_state: iAniState) => void;
 }
 
 // control constants
 
 const LOOMBALL_CAMERA_DISTANCE = 2;
-const LOOMBALL_SCALE = 0.4;
 const LOOMBALL_RADIUS = 0.2;
 
 export const LOOMBALL_SPAWN_POS = new Vector3(0, -2, LOOMBALL_CAMERA_DISTANCE);
-const LOOMBALL_INITIAL_POS = new Vector3(0, -0.5, LOOMBALL_CAMERA_DISTANCE);
 export const LOOMBALL_INITIAL_STATE = LOOMBALL_STATE.ANI_RETURNING;
 
 // animation constants
@@ -31,12 +42,11 @@ export const ANI_FALL_DURATION = 1000; // milliseconds
 export const ANI_FALL_DURATION_EXTENDED = 2000; // milliseconds
 export const ANI_FALL_GRAVITY = -17;
 
-const ANI_FPS = 30;
 const LOOMBALL_MINIMUN_THROW_FORCE = 0.04;
 
 // state NONE | =====================================================
 
-export const controllerNone: iStateController = { }
+export const controllerNone: iStateController = {};
 
 // state GRABBABLE | =====================================================
 
@@ -59,7 +69,7 @@ export const controllerGrabbable: iStateController = {
     stt.cameraCapture.detachControl();
     console.log('grabbed on');
   }
-}
+};
 
 // state ANI_GRABBED | =====================================================
 
@@ -80,11 +90,10 @@ export const controllerGrabbed: iStateController = {
 
     // throw loomball
 
-    console.log("ballDir", stt.ballDir);
+    console.log('ballDir', stt.ballDir);
 
-    if (stt.ballDir.y > LOOMBALL_MINIMUN_THROW_FORCE){
-
-      console.log("THROW ===========================");
+    if (stt.ballDir.y > LOOMBALL_MINIMUN_THROW_FORCE) {
+      console.log('THROW ===========================');
       stt.setBallState(LOOMBALL_STATE.ANI_THROW);
 
       // config animation
@@ -97,7 +106,7 @@ export const controllerGrabbed: iStateController = {
       // use dummy ball position
 
       const ballAbsPos = stt.ballDummy.getAbsolutePosition();
-      stt.ballModel.parent = stt.cameraDummy; 
+      stt.ballModel.parent = stt.cameraDummy;
 
       stt.ballPosCurrLocal = stt.ballDummy.position;
       stt.ballPosCurr = ballAbsPos;
@@ -111,7 +120,9 @@ export const controllerGrabbed: iStateController = {
 
       // normalized vector
 
-      const norma = Babylon.Vector2.Normalize(new Babylon.Vector2(stt.ballDir.x, stt.ballDir.y));
+      const norma = Babylon.Vector2.Normalize(
+        new Babylon.Vector2(stt.ballDir.x, stt.ballDir.y)
+      );
       throwCalculateSpeeds(stt, Math.atan2(norma.y, norma.x));
 
       return;
@@ -135,7 +146,8 @@ export const controllerGrabbed: iStateController = {
     // pointer outside plane
 
     if (!pickinfo.hit) {
-      if (controllerGrabbed.onPointerUp) controllerGrabbed?.onPointerUp(stt, _pi);
+      if (controllerGrabbed.onPointerUp)
+        controllerGrabbed?.onPointerUp(stt, _pi);
       return;
     }
     if (!pickinfo.pickedPoint) return;
@@ -158,7 +170,7 @@ export const controllerGrabbed: iStateController = {
     stt.ballPosCurr = Vector3.Lerp(absolutePos, stt.ballTarget, 0.6);
 
     // get local position
-    stt.ballModel.setAbsolutePosition(stt.ballPosCurr)
+    stt.ballModel.setAbsolutePosition(stt.ballPosCurr);
     stt.ballPosCurrLocal = stt.ballModel.position;
 
     // calculate direction based on local positions
@@ -166,11 +178,13 @@ export const controllerGrabbed: iStateController = {
     stt.ballPosPrevLocal = stt.ballPosCurrLocal.clone();
 
     // update dummy objects
-    stt.cameraDummy.setAbsolutePosition((stt.cameraCapture as Babylon.ArcRotateCamera).globalPosition);
+    stt.cameraDummy.setAbsolutePosition(
+      (stt.cameraCapture as Babylon.ArcRotateCamera).globalPosition
+    );
     stt.cameraDummy.lookAt(Vector3.Zero());
     stt.ballDummy.setAbsolutePosition(stt.ballPosCurr);
   }
-}
+};
 
 // state ANI_RETURNING | =====================================================
 
@@ -184,15 +198,15 @@ export const controllerReturning: iStateController = {
 
     // merge if too close
 
-    if (Vector3.Distance(stt.ballTarget, absolutePos) < 0.02){
+    if (Vector3.Distance(stt.ballTarget, absolutePos) < 0.02) {
       stt.setBallState(LOOMBALL_STATE.GRABBABLE);
       stt.ballModel.setAbsolutePosition(stt.ballTarget);
-      console.log("Arrived");
+      console.log('Arrived');
     }
 
     controllerGrabbed.frame && controllerGrabbed.frame(stt);
   }
-}
+};
 
 // state ANI_THROW | =====================================================
 
@@ -201,10 +215,10 @@ export const controllerThrow: iStateController = {
     if (!stt.ballInitialOrigin) return;
     if (!stt.ballModel) return;
     if (!stt.loomieModel) return;
-    
+
     // did it ended already?
 
-    if ((new Date()).getTime() > stt.aniEndTime){
+    if (new Date().getTime() > stt.aniEndTime) {
       // DEBUG: set state to returning
       //stt.state = LOOMBALL_STATE.ANI_RETURNING;
       //stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
@@ -241,7 +255,7 @@ export const controllerThrow: iStateController = {
     stt.ballPosCurr = stt.ballModel.getAbsolutePosition();
     stt.ballPosCurrLocal = stt.ballModel.position;
   }
-}
+};
 
 // state ANI_FALL | =====================================================
 
@@ -249,10 +263,10 @@ export const controllerFall: iStateController = {
   frame: (stt) => {
     if (!stt.ballInitialOrigin) return;
     if (!stt.ballModel) return;
-    
+
     // did it ended already?
 
-    if ((new Date()).getTime() > stt.aniEndTime){
+    if (new Date().getTime() > stt.aniEndTime) {
       //stt.setBallState(LOOMBALL_STATE.ANI_RETURNING);
       //stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
 
@@ -273,7 +287,7 @@ export const controllerFall: iStateController = {
     stt.ballPosCurr = stt.ballModel.getAbsolutePosition();
     stt.ballPosCurrLocal = stt.ballModel.position;
   }
-}
+};
 
 // state ANI_ESCAPED | =====================================================
 
@@ -293,4 +307,4 @@ export const controllerEscaped: iStateController = {
 
     instantiatedEntriesScale(stt.loomieModel, Vector3.One());
   }
-}
+};

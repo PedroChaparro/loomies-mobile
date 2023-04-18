@@ -26,8 +26,8 @@ export const LoomieDetails = ({ route }: IProps) => {
   // toggle render loop on focus events
   useFocusEffect(
     React.useCallback(() => {
-      showScene( APP_SCENE.DETAILS );
-      return () => showScene( APP_SCENE.NONE );
+      showScene(APP_SCENE.DETAILS);
+      return () => showScene(APP_SCENE.NONE);
     }, [])
   );
 

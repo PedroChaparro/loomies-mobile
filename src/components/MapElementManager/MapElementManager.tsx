@@ -49,9 +49,7 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
     updateCountTiles,
     coordsGlobalToMap
   } = useContext(MapContext);
-  const {
-    getCurrentScene
-  } = useContext(BabylonContext);
+  const { getCurrentScene } = useContext(BabylonContext);
   const { userPosition } = useContext(UserPositionContext);
   const { showInfoToast } = useToastAlert();
 
@@ -281,7 +279,6 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
   // add event on 3D model click
 
   useScenePointerObservable(props.scene, (pointerInfo: Babylon.PointerInfo) => {
-
     if (getCurrentScene() != APP_SCENE.MAP) return;
     if (pointerInfo.type == Babylon.PointerEventTypes.POINTERTAP) {
       if (!userPosition) return;
@@ -310,7 +307,6 @@ export const MapElementManager: React.FC<{ scene: Babylon.Scene | null }> = (
       }
 
       // it's a gym
-
       else if (meshName == 'hitbox_gym') {
         const gym = mapGyms.current.find((obj) => {
           return obj.meshHitbox == pointerInfo.pickInfo?.pickedMesh;

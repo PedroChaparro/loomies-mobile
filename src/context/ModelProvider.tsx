@@ -65,7 +65,6 @@ export const ModelProvider = (props: { children: ReactNode }) => {
       }
 
       return model;
-      
     } catch (e) {
       console.error(e);
     }

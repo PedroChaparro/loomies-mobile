@@ -3,7 +3,7 @@ import { NavigationProp, RouteProp, useFocusEffect } from '@react-navigation/cor
 import { View, Text, Pressable, Image, StyleSheet } from 'react-native';
 import { TWildLoomies } from '@src/types/types';
 import { MapContext } from '@src/context/MapProvider';
-import { getItemsService, getLoomballsService } from '@src/services/user.services';
+import { getLoomballsService } from '@src/services/user.services';
 import { TLoomball } from '@src/types/types';
 import { requestCaptureLoomieAttempt } from '@src/services/capture.services';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
@@ -11,7 +11,6 @@ import { CaptureLoomie3D, LOOMBALL_STATE } from '@src/components/CaptureLoomie3D
 import { images } from '@src/utils/utils';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
-import { navigate } from '@src/navigation/RootNavigation';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import { LOOMBALL_INITIAL_STATE } from '@src/components/CaptureLoomie3D/animations';
 

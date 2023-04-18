@@ -64,7 +64,6 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
   const [cameraCapture, setCameraCapture] = useState<Babylon.Camera>();
 
   const showScene = (scene: APP_SCENE) => {
-
     switch (scene) {
       case APP_SCENE.NONE:
         showSceneNone();
@@ -88,17 +87,17 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
   };
 
   const showSceneMap = async () => {
-    await delay (500);
+    await delay(500);
     setCurrentScene(APP_SCENE.MAP);
   };
 
   const showSceneDetails = async () => {
-    await delay (500);
+    await delay(500);
     setCurrentScene(APP_SCENE.DETAILS);
   };
 
   const showSceneCapture = async () => {
-    await delay (500);
+    await delay(500);
     setCurrentScene(APP_SCENE.CAPTURE);
   };
 
