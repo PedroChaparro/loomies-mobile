@@ -18,6 +18,25 @@ export type TCaughtLoomies = {
   experience: number;
 };
 
+export type TCaughtLoomieToRender = {
+  _id: string;
+  serial: number;
+  name: string;
+  types: Array<string>;
+  rarity: string;
+  hp: number;
+  attack: number;
+  defense: number;
+  is_busy: boolean;
+  owner: string;
+  level: number;
+  experience: number;
+  // Property to render the sword icon in the loomie card
+  is_in_team?: boolean;
+  // Property to render a red border around the loomie card
+  is_selected?: boolean;
+};
+
 export type TWildLoomies = {
   _id: string;
   serial: number;
@@ -34,6 +53,21 @@ export type TWildLoomies = {
   level: number;
   experience: number;
 };
+
+export type TGymLoomieProtector = {
+  _id: string;
+  serial: number;
+  name: string;
+  level: number;
+};
+
+export interface TGymInfo {
+  _id: string;
+  name: string;
+  owner: string;
+  protectors: TGymLoomieProtector[];
+  was_reward_claimed: boolean;
+}
 
 // Shared interface between the items and the loomballs
 export type TInventoryItem = {
@@ -56,6 +90,13 @@ export type TItem = {
 
 export type TLoomball = {
   _id: string;
+  serial: number;
+  name: string;
+  quantity: number;
+};
+
+export type TReward = {
+  id: string;
   serial: number;
   name: string;
   quantity: number;

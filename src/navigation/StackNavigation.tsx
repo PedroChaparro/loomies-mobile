@@ -8,6 +8,7 @@ import { Signup } from '../pages/Signup';
 import { BottomNavigation } from './BottomNavigation';
 import { EmailValidationView } from '../pages/EmailValidationView';
 import { NewCodeView } from '../pages/NewCodeView';
+import { UpdateLoomieTeamView } from '../pages/UpdateLoomieTeamView';
 import { LoomieDetails } from '@src/pages/LoomieDetails';
 import { ResetPasswordView } from '../pages/ResetPasswordView';
 import { ChangePasswordView } from '../pages/ChangePasswordView';
@@ -54,6 +55,10 @@ export const StackNavigation = () => {
               <Stack.Screen name='Application' component={BottomNavigation} />
 
               <Stack.Screen name='LoomieDetails' component={LoomieDetails} />
+              <Stack.Screen
+                name='UpdateLoomieTeam'
+                component={UpdateLoomieTeamView}
+              />
             </Stack.Navigator>
           </ModelProvider>
         </MapProvider>

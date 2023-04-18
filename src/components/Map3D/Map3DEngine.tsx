@@ -4,8 +4,8 @@
  * Manages the Babylon 3D engine
  */
 
-import React, { FunctionComponent, useEffect, useRef, useContext } from 'react';
-import { SafeAreaView, View, Button, ViewProps } from 'react-native';
+import React, { useEffect, useRef, useContext } from 'react';
+import { SafeAreaView, View, Button } from 'react-native';
 import { EngineView } from '@babylonjs/react-native';
 
 import * as Babylon from '@babylonjs/core';
@@ -52,7 +52,7 @@ const ANI_LERP_SPEED = 0.2;
 const ANI_LERP_MERGE_DISTANCE_POSITION = 0.1;
 const ANI_LERP_MERGE_DISTANCE_ROTATION = Tools.ToRadians(1);
 
-export const Map3DEngine: FunctionComponent<ViewProps> = () => {
+export const Map3DEngine = () => {
   // user position debug method
   const { userPosition, debugMovePosition } = useContext(UserPositionContext);
   const { deviceYaw } = useContext(SensorContext);

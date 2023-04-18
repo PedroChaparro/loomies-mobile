@@ -9,14 +9,20 @@ interface IProps {
 }
 
 export const LoomieLevelBar = ({ level, experience, color }: IProps) => {
+  const nextLevelRequiredExperience = getRequiredExperienceFromLevel(level + 1);
+
   let currentLevelPercentage =
     (experience * 100) / getRequiredExperienceFromLevel(level + 1);
 
   currentLevelPercentage = Math.min(currentLevelPercentage, 100);
-
   return (
     <View style={Styles.levelContainer}>
-      <Text style={Styles.levelLabel}>Lvl {level}</Text>
+      <View style={Styles.levelTextsContainer}>
+        <Text style={Styles.levelLabel}>Lvl {level}</Text>
+        <Text numberOfLines={1} style={Styles.levelLabel}>
+          Exp {Math.floor(experience)}
+        </Text>
+      </View>
       <View style={Styles.levelBackground}>
         <View
           style={{
@@ -26,7 +32,12 @@ export const LoomieLevelBar = ({ level, experience, color }: IProps) => {
           }}
         ></View>
       </View>
-      <Text style={Styles.levelLabel}>Lvl {level + 1}</Text>
+      <View style={Styles.levelTextsContainer}>
+        <Text style={Styles.levelLabel}>Lvl {level + 1}</Text>
+        <Text numberOfLines={1} style={Styles.levelLabel}>
+          Exp {Math.ceil(nextLevelRequiredExperience)}
+        </Text>
+      </View>
     </View>
   );
 };
@@ -35,10 +46,15 @@ const Styles = StyleSheet.create({
   levelContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginVertical: 12
   },
+  levelTextsContainer: {
+    maxWidth: 84
+  },
   levelLabel: {
-    minWidth: 64,
+    minWidth: 68,
+    maxWidth: 84,
     textAlign: 'center',
     color: '#7c7c7c'
   },

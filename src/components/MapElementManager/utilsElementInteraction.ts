@@ -43,3 +43,20 @@ export const LoomieEnterCaptureView = async (
 
   navigate('Capture', { loomieId });
 };
+
+export const GymIsCloseFromUser = (
+  userPosition: iPosition,
+  gymPosition: iPosition
+) => {
+  // check distance
+
+  const from = new Vector2(gymPosition.lon, gymPosition.lat);
+  const to = new Vector2(userPosition.lon, userPosition.lat);
+
+  if (Vector2.Distance(from, to) >= PLAYER_REACH_RADIUS) {
+    console.log('INFO: Too far away from Gym ', Vector2.Distance(from, to));
+    return false;
+  }
+
+  return true;
+};

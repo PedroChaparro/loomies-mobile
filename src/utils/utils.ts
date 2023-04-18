@@ -56,14 +56,12 @@ export const images: {
 
 export function getRequiredExperienceFromLevel(level: number): number {
   return (
-    Math.log10(level) * GAME_EXPERIENCE_FACTOR + GAME_MIN_REQUIRED_EXPERIENCE
+    Math.log10(level) * Number(GAME_EXPERIENCE_FACTOR) +
+    Number(GAME_MIN_REQUIRED_EXPERIENCE)
   );
 }
 
 export function incrementStatFromLevel(stat: number, level: number): number {
-  const factor = level > 1 ? 1 / 8 : 0;
-  const largeDecimal = stat + stat * (factor * level);
-
-  // Fix to 2 decimals
-  return Number(largeDecimal.toFixed(2));
+  const largeDecimal = stat * (1 + (1 / 8) * (level - 1));
+  return Math.floor(largeDecimal);
 }
