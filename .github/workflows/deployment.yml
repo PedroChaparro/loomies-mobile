@@ -40,7 +40,7 @@ jobs:
           echo "MAP_DEBUG=false" >> .env
           echo "GAME_MIN_REQUIRED_EXPERIENCE=100" >> .env
           echo "GAME_EXPERIENCE_FACTOR=1000" >> .env
-          echo "PLAYER_REACH_RADIUS=0.0008" >> .env
+          echo "PLAYER_REACH_RADIUS=0.008" >> .env
 
       - name: Install yarn dependencies
         run: yarn install --from-lock-file
