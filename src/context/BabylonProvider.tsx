@@ -140,7 +140,6 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
       camera.inertialPanningY = 0;
       camera.inertialRadiusOffset = 0;
     });
-
   };
 
   const getCurrentScene = () => {

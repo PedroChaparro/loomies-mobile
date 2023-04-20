@@ -21,6 +21,7 @@ export const LoomieEnterCaptureView = async (
 
   if (Vector2.Distance(from, to) >= PLAYER_REACH_RADIUS) {
     console.log('INFO: Too far away from Loomie ', Vector2.Distance(from, to));
+    showToast('Too far awawy from Loomie');
     return;
   }
 
