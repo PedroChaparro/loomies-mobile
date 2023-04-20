@@ -9,17 +9,23 @@ const { API_URL } = CONFIG;
 
 // throw ball service
 
+export enum CAPTURE_RESULT {
+  CAPTURED,
+  ESCAPED,
+  NOTFOUND
+}
+
 export const requestCaptureLoomieAttempt = async (
   userPos: iPosition,
   loomieId: string,
   loomballId: string,
   failed = false
-): Promise<boolean> => {
+): Promise<CAPTURE_RESULT> => {
   try {
     // get access token from the storage
     const [accessToken, error] = await getStorageData('accessToken');
     if (error || !accessToken) {
-      return false;
+      return CAPTURE_RESULT.NOTFOUND;
     }
 
     // make request
@@ -41,12 +47,12 @@ export const requestCaptureLoomieAttempt = async (
     // cast check
     const rawData: object = response.data;
     if ((rawData as iRequestCaptureLoomieAttempt) === undefined) {
-      return false;
+      return CAPTURE_RESULT.NOTFOUND;
     }
 
     const data: iRequestCaptureLoomieAttempt =
       rawData as iRequestCaptureLoomieAttempt;
-    return data.capture;
+    return data.capture ? CAPTURE_RESULT.CAPTURED : CAPTURE_RESULT.ESCAPED;
   } catch (error) {
     // If 401, try to refresh the access token and retry the request
     if (
@@ -58,6 +64,7 @@ export const requestCaptureLoomieAttempt = async (
       return await requestCaptureLoomieAttempt(userPos, loomieId, loomballId);
     }
 
-    return false;
+    // fallback to not found
+    return CAPTURE_RESULT.NOTFOUND;
   }
 };

@@ -17,7 +17,10 @@ import { useScenePointerObservable } from '@src/hooks/useScenePointerObservable'
 import { CaptureSM } from './utilsCapture';
 import { useRegisterBeforeRender } from '@src/hooks/useRegisterBeforeRender';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
-import { requestCaptureLoomieAttempt } from '@src/services/capture.services';
+import {
+  CAPTURE_RESULT,
+  requestCaptureLoomieAttempt
+} from '@src/services/capture.services';
 import { WebXRSessionManager, WebXRTrackingState } from '@babylonjs/core/XR';
 const { MAP_DEBUG } = CONFIG;
 
@@ -162,16 +165,18 @@ export const CaptureLoomie3D = ({
       }
     );
 
-  const attemptToCatch = async (): Promise<[boolean, TWildLoomies | null]> => {
+  const attemptToCatch = async (): Promise<
+    [CAPTURE_RESULT, TWildLoomies | null]
+  > => {
     if (userPosition) {
       const captured = await requestCaptureLoomieAttempt(
         userPosition,
         loomie._id,
         loomball._id
       );
-      if (captured) return [captured, loomie];
+      return [captured, loomie];
     }
-    return [false, null];
+    return [CAPTURE_RESULT.NOTFOUND, null];
   };
 
   // create / update state machine

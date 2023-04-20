@@ -3,6 +3,7 @@ import { Vector3 } from '@babylonjs/core';
 import { iBabylonProvider } from '@src/context/BabylonProvider';
 import { iModelProvider } from '@src/context/ModelProvider';
 import { iUserPositionContext } from '@src/context/UserPositionProvider';
+import { CAPTURE_RESULT } from '@src/services/capture.services';
 import { TLoomball, TWildLoomies } from '@src/types/types';
 import {
   instantiatedEntriesScale,
@@ -40,7 +41,7 @@ export interface iAniState {
   userPositionContext: iUserPositionContext;
 
   // callbacks
-  attemptToCatch: () => Promise<[boolean, TWildLoomies | null]>;
+  attemptToCatch: () => Promise<[CAPTURE_RESULT, TWildLoomies | null]>;
   setBallState: (_state: LOOMBALL_STATE) => void;
 
   // loomie

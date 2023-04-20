@@ -7,7 +7,9 @@ import {
   ANI_THROW_GRAVITY
 } from './animations';
 import { LOOMBALL_STATE } from './CaptureLoomie3D';
+import { CAPTURE_RESULT } from '@src/services/capture.services';
 import { iAniState } from './utilsCapture';
+import { useToastAlert } from '@src/hooks/useToastAlert';
 
 export const collidedWithObject = (
   pointerInfo: Babylon.PointerInfo,
@@ -120,25 +122,41 @@ export const fallCalculatePosition = (stt: iAniState): Babylon.Vector3 => {
 };
 
 export const attemptToCatch = async (stt: iAniState) => {
+  // get toast
+  const { showInfoToast } = useToastAlert();
+
   // get user position
   const userPos = stt.userPositionContext.userPosition;
   if (!userPos) return;
 
   // fetch API
   const [captured, loomie] = await stt.attemptToCatch();
-  console.log(captured);
 
-  if (captured) {
-    // print loomie info
-    console.log('Congratulations! Loomie captured!');
-    console.log(loomie);
+  switch (captured) {
+    case CAPTURE_RESULT.CAPTURED:
+      // print loomie info
+      console.log('CAPTURE_RESULT.CAPTURED');
+      console.log(loomie);
 
-    // go back to map
-    navigate('Map', null);
-  } else {
-    console.log('Capture failed');
+      // go back to map
+      navigate('Map', null);
+      break;
+    case CAPTURE_RESULT.ESCAPED:
+      showInfoToast('Loomie escaped');
 
-    // reset state
-    stt.setBallState(LOOMBALL_STATE.ANI_ESCAPED);
+      console.log('CAPTURE_RESULT.ESCAPED');
+
+      // reset state
+      stt.setBallState(LOOMBALL_STATE.ANI_ESCAPED);
+      break;
+    case CAPTURE_RESULT.NOTFOUND:
+      // loomie disappeared
+      showInfoToast('Loomie escaped');
+
+      console.log('CAPTURE_RESULT.NOTFOUND');
+
+      // or user lost connection
+      navigate('Map', null);
+      break;
   }
 };
