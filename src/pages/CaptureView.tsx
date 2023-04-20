@@ -207,8 +207,6 @@ const styles = StyleSheet.create({
   scene: {
     width: '100%',
     height: '100%',
-    borderWidth: 2,
-    borderColor: 'red',
   },
   circle: {
     height:220, 

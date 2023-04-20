@@ -3,6 +3,7 @@ import { Vector3 } from '@babylonjs/core';
 import { navigate } from '@src/navigation/RootNavigation';
 import {
   ANI_FALL_DURATION,
+  ANI_RETURNING_DURATION,
   ANI_THROW_DURATION,
   ANI_THROW_GRAVITY
 } from './animations';
@@ -26,6 +27,16 @@ export const collidedWithObject = (
   }
 
   return false;
+};
+
+// returning animation
+
+export const returningCalculatePosition = (stt: iAniState): Babylon.Vector3 => {
+  const now = new Date().getTime();
+  const progress = (now - stt.aniStartTime) / ANI_RETURNING_DURATION;
+  console.log('progress', progress);
+
+  return Vector3.Lerp(stt.ballPosInitialLocal, stt.ballTarget, progress);
 };
 
 // throw animation

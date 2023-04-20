@@ -96,7 +96,7 @@ export class CaptureSM {
     modelContext: iModelProvider,
     userPositionContext: iUserPositionContext,
 
-    attemptToCatch: () => Promise<[boolean, TWildLoomies | null]>,
+    attemptToCatch: () => Promise<[CAPTURE_RESULT, TWildLoomies | null]>,
     setBallState: (_state: LOOMBALL_STATE) => void
   ) {
     this.stt = {
@@ -139,11 +139,9 @@ export class CaptureSM {
       aniEndTime: 0
     };
 
-    this.stt.setBallState(this.stt.state);
-    this.controllers = new Map<LOOMBALL_STATE, iStateController>();
-
     // setup state controllers
 
+    this.controllers = new Map<LOOMBALL_STATE, iStateController>();
     this.controllers.set(LOOMBALL_STATE.NONE, controllerNone);
     this.controllers.set(LOOMBALL_STATE.GRABBABLE, controllerGrabbable);
     this.controllers.set(LOOMBALL_STATE.ANI_GRABBED, controllerGrabbed);
@@ -151,6 +149,12 @@ export class CaptureSM {
     this.controllers.set(LOOMBALL_STATE.ANI_THROW, controllerThrow);
     this.controllers.set(LOOMBALL_STATE.ANI_FALL, controllerFall);
     this.controllers.set(LOOMBALL_STATE.ANI_ESCAPED, controllerEscaped);
+
+    // initialize state
+
+    this.stt.setBallState(this.stt.state);
+    const setup = this.controllers.get(this.stt.state)?.setup;
+    if (setup) setup(this.stt);
   }
 
   updateProps(
@@ -180,10 +184,10 @@ export class CaptureSM {
     // config camera
     const camera = cameraCapture as Babylon.ArcRotateCamera;
 
-    // not panning
+    // no panning
     //camera.panningSensibility = 0;
 
-    //// limit camera zoom
+    // limit camera zoom
     camera.lowerRadiusLimit = 7;
     //camera.upperRadiusLimit = camera.lowerRadiusLimit;
 

@@ -8,11 +8,13 @@ import {
   collidedWithObject,
   fallCalculateSpeeds,
   fallCalculatePosition,
-  attemptToCatch
+  attemptToCatch,
+  returningCalculatePosition
 } from './utilsAnimation';
 import { iAniState } from './utilsCapture';
 
 export interface iStateController {
+  setup?: (_state: iAniState) => void;
   onPointerDown?: (
     _state: iAniState,
     _pointerInfo: Babylon.PointerInfo
@@ -34,6 +36,8 @@ export const LOOMBALL_SPAWN_POS = new Vector3(0, -2, LOOMBALL_CAMERA_DISTANCE);
 export const LOOMBALL_INITIAL_STATE = LOOMBALL_STATE.ANI_RETURNING;
 
 // animation constants
+
+export const ANI_RETURNING_DURATION = 500; // milliseconds
 
 export const ANI_THROW_DURATION = 500; // milliseconds
 export const ANI_THROW_GRAVITY = -17;
@@ -83,6 +87,7 @@ export const controllerGrabbed: iStateController = {
 
     // return to state returning
 
+    controllerReturning.setup && controllerReturning.setup(stt);
     stt.setBallState(LOOMBALL_STATE.ANI_RETURNING);
     stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
     stt.cameraCapture?.attachControl();
@@ -189,22 +194,30 @@ export const controllerGrabbed: iStateController = {
 // state ANI_RETURNING | =====================================================
 
 export const controllerReturning: iStateController = {
+  setup: (stt) => {
+    if (!stt.ballModel) return;
+
+    stt.aniStartTime = new Date().getTime();
+    stt.aniEndTime = stt.aniStartTime + ANI_RETURNING_DURATION;
+    stt.ballPosInitialLocal = stt.ballModel.position;
+  },
   frame: (stt) => {
     if (!stt.ballInitialOrigin) return;
     if (!stt.ballModel) return;
 
-    const absolutePos = stt.ballModel.getAbsolutePosition();
-    stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
+    stt.ballTarget = stt.ballInitialOrigin.position;
 
     // merge if too close
 
-    if (Vector3.Distance(stt.ballTarget, absolutePos) < 0.02) {
+    if (new Date().getTime() > stt.aniEndTime) {
       stt.setBallState(LOOMBALL_STATE.GRABBABLE);
-      stt.ballModel.setAbsolutePosition(stt.ballTarget);
+      stt.ballModel.position = new Vector3().copyFrom(stt.ballTarget);
       console.log('Arrived');
+
+      return;
     }
 
-    controllerGrabbed.frame && controllerGrabbed.frame(stt);
+    stt.ballModel.position = returningCalculatePosition(stt);
   }
 };
 
@@ -220,6 +233,7 @@ export const controllerThrow: iStateController = {
 
     if (new Date().getTime() > stt.aniEndTime) {
       // DEBUG: set state to returning
+      //controllerReturning.setup && controllerReturning.setup(stt);
       //stt.state = LOOMBALL_STATE.ANI_RETURNING;
       //stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
 
@@ -267,9 +281,6 @@ export const controllerFall: iStateController = {
     // did it ended already?
 
     if (new Date().getTime() > stt.aniEndTime) {
-      //stt.setBallState(LOOMBALL_STATE.ANI_RETURNING);
-      //stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
-
       // try to capture
 
       stt.setBallState(LOOMBALL_STATE.NONE);
@@ -301,6 +312,7 @@ export const controllerEscaped: iStateController = {
 
     stt.ballModel.parent = stt.cameraCapture;
     stt.ballModel.position = new Babylon.Vector3().copyFrom(LOOMBALL_SPAWN_POS);
+    controllerReturning.setup && controllerReturning.setup(stt);
     stt.setBallState(LOOMBALL_STATE.ANI_RETURNING);
 
     // restore Loomie visibility
