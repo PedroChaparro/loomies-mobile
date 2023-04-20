@@ -31,6 +31,7 @@ import {
 import { CONFIG } from '@src/services/config.services';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
+import { useFocusEffect } from '@react-navigation/native';
 const { MAP_DEBUG } = CONFIG;
 
 const DELAY_FETCH_WILD_LOOMIES = 10000; // 4 seconds
@@ -330,6 +331,13 @@ export const MapElementManager: React.FC<{
       }
     }
   });
+
+  // toggle render loop on focus events
+  useFocusEffect(
+    React.useCallback(() => {
+      if (readyToDrawElements.current) fetchWildLoomies();
+    }, [])
+  );
 
   return <></>;
 };
