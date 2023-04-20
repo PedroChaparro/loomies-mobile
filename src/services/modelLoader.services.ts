@@ -1,42 +1,56 @@
 import * as Babylon from '@babylonjs/core';
 import '@babylonjs/loaders/glTF';
-import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
+import { Platform } from 'react-native';
 
-export const MODEL_RESOURCE: { [key: string]: NodeRequire } = {
-  'MAP_CIRCLE_INDICATOR': require('@assets/models/map/indicator/circleIndicator.glb'),
-  'MAP_PLAYER': require('@assets/models/map/indicator/player.glb'),
-  'MAP_GYM': require('@assets/models/map/gym/gym.glb'),
-  '1': require('@assets/models/loomies/001/001.glb'),
-  '2': require('@assets/models/loomies/002/002.glb'),
-  '3': require('@assets/models/loomies/003/003.glb'),
-  '4': require('@assets/models/loomies/004/004.glb'),
-  '5': require('@assets/models/loomies/005/005.glb'),
-  '6': require('@assets/models/loomies/006/006.glb'),
-  '7': require('@assets/models/loomies/007/007.glb'),
-  '8': require('@assets/models/loomies/008/008.glb'),
-  '9': require('@assets/models/loomies/009/009.glb'),
-  '10': require('@assets/models/loomies/010/010.glb'),
-  '11': require('@assets/models/loomies/011/011.glb'),
-  '12': require('@assets/models/loomies/012/012.glb'),
-  '13': require('@assets/models/loomies/013/013.glb'),
-  '14': require('@assets/models/loomies/014/014.glb'),
-  '15': require('@assets/models/loomies/015/015.glb'),
-  '16': require('@assets/models/loomies/016/016.glb'),
-  '17': require('@assets/models/loomies/017/017.glb'),
-  '18': require('@assets/models/loomies/018/018.glb'),
-  '19': require('@assets/models/loomies/019/019.glb')
+const isAndroid = Platform.OS === 'android';
+const assetPrefix = isAndroid ? 'custom/' : '';
+
+/**
+ * Workaround for different path between OS
+ *
+ * https://forum.babylonjs.com/t/load-local-app-gltf-glb-mesh-in-babylon-react-native/30888/23
+ * https://github.com/unimonkiez/react-native-asset/issues/25
+ *
+ * @param path relative path from asset directory
+ * @returns Sanitized Uri with app:// scheme
+ */
+export function resolveAssetUri(path: string) {
+  return `app:///${assetPrefix}${path}`;
+}
+
+export const MODEL_RESOURCE: { [key: string]: string } = {
+  'MAP_CIRCLE_INDICATOR': 'circleIndicator.glb',
+  'MAP_PLAYER': 'player.glb',
+  'MAP_GYM': 'gym.glb',
+  '1': '001.glb',
+  '2': '002.glb',
+  '3': '003.glb',
+  '4': '004.glb',
+  '5': '005.glb',
+  '6': '006.glb',
+  '7': '007.glb',
+  '8': '008.glb',
+  '9': '009.glb',
+  '10': '010.glb',
+  '11': '011.glb',
+  '12': '012.glb',
+  '13': '013.glb',
+  '14': '014.glb',
+  '15': '015.glb',
+  '16': '016.glb',
+  '17': '017.glb',
+  '18': '018.glb',
+  '19': '019.glb'
 };
 
 export const LoadModel = async (
-  model: NodeRequire,
+  model: string,
   scene: Babylon.Scene
 ): Promise<Babylon.AssetContainer | null> => {
   try {
-    const sceneGLBUri = resolveAssetSource(model).uri;
-
     const container = await Babylon.SceneLoader.LoadAssetContainerAsync(
       '',
-      sceneGLBUri,
+      resolveAssetUri(model),
       scene
     );
 

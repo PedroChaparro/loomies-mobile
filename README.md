@@ -23,3 +23,5 @@ The project was tested to work with the following specs:
 - If you change the `.env` file, restart the react-native server using the
   `yarn start:cache` command instead of the `yarn start` one, that will clear
   the `.env` file cache, otherwise, your changes will not take effect.
+
+- Before running make sure to link the assets with `yarn assets:link`.
