@@ -9,13 +9,9 @@ import { useEngineRenderLoop } from '@src/hooks/useEngineRenderLoop';
 import { useEngine } from '@babylonjs/react-native';
 
 export const enum APP_SCENE {
-  // eslint-disable-next-line no-unused-vars
   NONE,
-  // eslint-disable-next-line no-unused-vars
   MAP,
-  // eslint-disable-next-line no-unused-vars
   DETAILS,
-  // eslint-disable-next-line no-unused-vars
   CAPTURE
 }
 

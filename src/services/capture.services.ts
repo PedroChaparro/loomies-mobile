@@ -9,7 +9,7 @@ const { API_URL } = CONFIG;
 
 // throw ball service
 
-export enum CAPTURE_RESULT {
+export const enum CAPTURE_RESULT {
   CAPTURED,
   ESCAPED,
   NOTFOUND
