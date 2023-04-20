@@ -1,0 +1,93 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/models/loomies/001.glb",
+      "sha1": "687525eac05630d3904ae878b9f2d4f98bc31953"
+    },
+    {
+      "path": "assets/models/loomies/002.glb",
+      "sha1": "f009266f219daab95291fe6dd7a57e6da7910924"
+    },
+    {
+      "path": "assets/models/loomies/003.glb",
+      "sha1": "3ddb9dfd2588dd6820240b0c092a0427250e260a"
+    },
+    {
+      "path": "assets/models/loomies/004.glb",
+      "sha1": "c62283341fba6ef62fc8814043b796333b985cd2"
+    },
+    {
+      "path": "assets/models/loomies/005.glb",
+      "sha1": "053290f44b2a26234756b8813a836b6e8f058a6a"
+    },
+    {
+      "path": "assets/models/loomies/006.glb",
+      "sha1": "712f3dc0ddadfc902299749951936a43ee3b865c"
+    },
+    {
+      "path": "assets/models/loomies/007.glb",
+      "sha1": "ea0985ab9c58df0b30bcf8cf2cf14cd11e062a56"
+    },
+    {
+      "path": "assets/models/loomies/008.glb",
+      "sha1": "f7454489ce0ee470c300ac989a5b313f3ec305ac"
+    },
+    {
+      "path": "assets/models/loomies/009.glb",
+      "sha1": "848227421a472d22afa858fb19a32f5d4b39defe"
+    },
+    {
+      "path": "assets/models/loomies/010.glb",
+      "sha1": "406ef7618c39b1a0608ff2b0b3208d193badf6d8"
+    },
+    {
+      "path": "assets/models/loomies/011.glb",
+      "sha1": "50e653d08dbf15a77ef2d3de67a9614afb894e59"
+    },
+    {
+      "path": "assets/models/loomies/012.glb",
+      "sha1": "a90bdb697a9275064d51467bc64bb4559ac5eaeb"
+    },
+    {
+      "path": "assets/models/loomies/013.glb",
+      "sha1": "977c0c9f24647b04a66c81053cbe949788977d6a"
+    },
+    {
+      "path": "assets/models/loomies/014.glb",
+      "sha1": "c9dd715e77ee83fe5c2c74c85796aeaf3efac34d"
+    },
+    {
+      "path": "assets/models/loomies/015.glb",
+      "sha1": "24b164e2dce281699ede6f7b61bb2b8f1240a532"
+    },
+    {
+      "path": "assets/models/loomies/016.glb",
+      "sha1": "b6f587dff2c2829f9442f360690e373b0587095d"
+    },
+    {
+      "path": "assets/models/loomies/017.glb",
+      "sha1": "a48ec27041ea2780a53de4ad709517a6df105daa"
+    },
+    {
+      "path": "assets/models/loomies/018.glb",
+      "sha1": "6ad3aded87e2b0f668306010ccec659dd39267ba"
+    },
+    {
+      "path": "assets/models/loomies/019.glb",
+      "sha1": "0e6cb31b05ff1624667d47c44dbac8b724d4bdc3"
+    },
+    {
+      "path": "assets/models/map/gym/gym.glb",
+      "sha1": "7289d9d76c66ce96278d2cda4c86a44149a5e050"
+    },
+    {
+      "path": "assets/models/map/indicator/circleIndicator.glb",
+      "sha1": "6f3c074f736d5463a6478bff7a8134b10d80e5a3"
+    },
+    {
+      "path": "assets/models/map/indicator/player.glb",
+      "sha1": "a6c8b8efaa353971111af304d51632211eff3bb6"
+    }
+  ]
+}

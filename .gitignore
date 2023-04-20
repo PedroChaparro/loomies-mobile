@@ -68,3 +68,6 @@ package-lock.json
 
 # Ignore blender backup file
 *.blend1
+
+# Ignore redundant model linked files
+android/app/src/main/assets/
