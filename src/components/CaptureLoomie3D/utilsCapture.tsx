@@ -195,7 +195,6 @@ export class CaptureSM {
     camera.lowerAlphaLimit = Math.PI * (0.5 - 0.2);
     camera.upperAlphaLimit = Math.PI * (0.5 + 0.2);
 
-    //camera.angularSensibilityX = 20000;
     camera.angularSensibilityX = 12000;
     camera.angularSensibilityY = camera.angularSensibilityX;
 
@@ -235,26 +234,27 @@ export class CaptureSM {
         instantiatedEntriesScale(modelLoomie, Vector3.One());
         instantiatedEntriesRotate(modelLoomie, Math.PI);
 
-        const modelBall2 = await this.stt.modelContext.cloneModel(
-          `loomball-${loomball.serial.toString().padStart(3, '0')}`,
-          sceneCapture
-        );
-        if (modelBall2) {
-          modelBall2.position.y = height;
-          modelBall2.scaling = Vector3.One().scale(LOOMBALL_SCALE);
-        }
-
         // make camera target the Loomie at the middle
 
         camera.setTarget(new Vector3(0, height / 2, 0));
 
-        //// position ball relative to the camera
+        // DEBUG: Target loomball
+        //const modelBall2 = await this.stt.modelContext.cloneModel(
+          //`loomball-${loomball.serial.toString().padStart(3, '0')}`,
+          //sceneCapture
+        //);
+        //if (modelBall2) {
+          //modelBall2.position.y = height;
+          //modelBall2.scaling = Vector3.One().scale(LOOMBALL_SCALE);
+        //}
+
+        // position ball relative to the camera
 
         modelBall.scaling = Vector3.One().scale(LOOMBALL_SCALE);
         modelBall.position = new Vector3().copyFrom(LOOMBALL_SPAWN_POS);
         modelBall.parent = cameraCapture;
 
-        //// loomball initial position
+        // loomball initial position
 
         const initialOriginBall = Babylon.MeshBuilder.CreateBox(
           'initialOriginBall',
@@ -266,6 +266,7 @@ export class CaptureSM {
         );
         initialOriginBall.parent = cameraCapture;
         initialOriginBall.isPickable = false;
+        initialOriginBall.visibility = 0;
 
         //// loomball hitbox
 
@@ -277,6 +278,7 @@ export class CaptureSM {
         hitbox.scaling = Vector3.One().scale(LOOMBALL_SCALE);
         hitbox.parent = modelBall;
         hitbox.isPickable = true;
+        hitbox.visibility = 0;
 
         //// scratch pad
 
@@ -309,7 +311,7 @@ export class CaptureSM {
           sceneCapture
         );
         cameraDummy.isPickable = false;
-        //cameraDummy.visibility = 0;
+        cameraDummy.visibility = 0;
 
         const ballDummy = Babylon.MeshBuilder.CreateDisc(
           'ballDummy',
@@ -318,6 +320,7 @@ export class CaptureSM {
         );
         ballDummy.isPickable = false;
         ballDummy.parent = cameraDummy;
+        ballDummy.visibility = 0;
 
         // set state
 
