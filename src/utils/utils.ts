@@ -1,4 +1,5 @@
-import { GAME_MIN_REQUIRED_EXPERIENCE, GAME_EXPERIENCE_FACTOR } from '@env';
+import { CONFIG } from '@src/services/config.services';
+const { GAME_MIN_REQUIRED_EXPERIENCE, GAME_EXPERIENCE_FACTOR } = CONFIG;
 import { ImageSourcePropType } from 'react-native';
 
 export const colors: {

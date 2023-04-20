@@ -53,7 +53,6 @@ export const StackNavigation = () => {
               />
               {/* Views that includes the bottom tabs navigation */}
               <Stack.Screen name='Application' component={BottomNavigation} />
-
               <Stack.Screen name='LoomieDetails' component={LoomieDetails} />
               <Stack.Screen
                 name='UpdateLoomieTeam'
