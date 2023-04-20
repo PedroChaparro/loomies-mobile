@@ -70,6 +70,7 @@ jobs:
       # -- Build and sign the Android app
       - name: Build Android
         run: |
+          yarn assets:link
           cd android
           ./gradlew assembleRelease --no-daemon
 
