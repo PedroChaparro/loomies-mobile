@@ -14,6 +14,28 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-Loomies-LoomiesTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-Loomies-LoomiesTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		4AA43D8D1EA34DFF95676A72 /* gym.glb in Resources */ = {isa = PBXBuildFile; fileRef = AC2935B2F2F64AD59017C5FB /* gym.glb */; };
+		E434C2345C384FCD86EB6F20 /* player.glb in Resources */ = {isa = PBXBuildFile; fileRef = E8FC1EEC18D64EFEA6A0EE2E /* player.glb */; };
+		05335AB349BB4A3D8515FB5B /* 001.glb in Resources */ = {isa = PBXBuildFile; fileRef = FF9FA26B1C2F4A2C95FD9A9B /* 001.glb */; };
+		8E296DE85304470F9013234F /* 002.glb in Resources */ = {isa = PBXBuildFile; fileRef = 841553CCFBB74A60919D2CA6 /* 002.glb */; };
+		6C4701EDF03949EC9AFF4D57 /* 003.glb in Resources */ = {isa = PBXBuildFile; fileRef = BC0AD9B7F2A4423BA559022F /* 003.glb */; };
+		08DC264F656643998D30A8D4 /* 004.glb in Resources */ = {isa = PBXBuildFile; fileRef = 89E3135E66E64ACD9F047FD3 /* 004.glb */; };
+		A343B42FC3904FFDAA485212 /* 005.glb in Resources */ = {isa = PBXBuildFile; fileRef = 2A90F403991B40E9BCE1746C /* 005.glb */; };
+		21CE0D0B90D84CB7B6A2C631 /* 006.glb in Resources */ = {isa = PBXBuildFile; fileRef = 5AB24003209348E09512A0E9 /* 006.glb */; };
+		9A0506DD16604F229A95C3F5 /* 007.glb in Resources */ = {isa = PBXBuildFile; fileRef = 1A33EFB0F11845BB9B1CB7D8 /* 007.glb */; };
+		3FFFB98D84E04B609E568786 /* 008.glb in Resources */ = {isa = PBXBuildFile; fileRef = 9EAEA7C2739B4F0290B627B6 /* 008.glb */; };
+		7974AB586C554AEE93508B70 /* 009.glb in Resources */ = {isa = PBXBuildFile; fileRef = 381EA7BA798246C28C2F11C9 /* 009.glb */; };
+		FF94F6AB9AF7457E841DC731 /* 010.glb in Resources */ = {isa = PBXBuildFile; fileRef = A8EBEB818D7847B6B280CA08 /* 010.glb */; };
+		8F16989B20BA4E9DA1189DB2 /* 011.glb in Resources */ = {isa = PBXBuildFile; fileRef = 82ED71B903564FD1AEFC1C1C /* 011.glb */; };
+		4781BCEFE83644CFA6ADA388 /* 012.glb in Resources */ = {isa = PBXBuildFile; fileRef = 89EE834037F5490E9EC93198 /* 012.glb */; };
+		D6107E31A9BA445796F8BBE6 /* 013.glb in Resources */ = {isa = PBXBuildFile; fileRef = E19221D4B50642A49B444B2A /* 013.glb */; };
+		9925C42A8A104F26A606ADEC /* 014.glb in Resources */ = {isa = PBXBuildFile; fileRef = BCB52863A19A4A9394AF8039 /* 014.glb */; };
+		1D10E7A63A3B4EC0930E792C /* 015.glb in Resources */ = {isa = PBXBuildFile; fileRef = F64FCD210ED0455DB07D0323 /* 015.glb */; };
+		6A8F2D6F2B3B4492BC54A1AC /* 016.glb in Resources */ = {isa = PBXBuildFile; fileRef = E8F5A0ABEBA84AFB8DC72A96 /* 016.glb */; };
+		D6CCA0F85116442C8E402206 /* 017.glb in Resources */ = {isa = PBXBuildFile; fileRef = B71E5F518AD547B08EEB7DCE /* 017.glb */; };
+		B36863F3F737466496AF0519 /* 018.glb in Resources */ = {isa = PBXBuildFile; fileRef = A1C3ADAE00484DFE9D0AF3D4 /* 018.glb */; };
+		F89705057F6E42EB8424B592 /* 019.glb in Resources */ = {isa = PBXBuildFile; fileRef = 3EFD409DC7A94022AE996970 /* 019.glb */; };
+		C0BC27EB6CB946B685E49981 /* circleIndicator.glb in Resources */ = {isa = PBXBuildFile; fileRef = E07DE678C1AB40268D073E51 /* circleIndicator.glb */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +66,28 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Loomies/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-Loomies-LoomiesTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Loomies-LoomiesTests.release.xcconfig"; path = "Target Support Files/Pods-Loomies-LoomiesTests/Pods-Loomies-LoomiesTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		AC2935B2F2F64AD59017C5FB /* gym.glb */ = {isa = PBXFileReference; name = "gym.glb"; path = "../assets/models/map/gym/gym.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E8FC1EEC18D64EFEA6A0EE2E /* player.glb */ = {isa = PBXFileReference; name = "player.glb"; path = "../assets/models/map/indicator/player.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		FF9FA26B1C2F4A2C95FD9A9B /* 001.glb */ = {isa = PBXFileReference; name = "001.glb"; path = "../assets/models/loomies/001.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		841553CCFBB74A60919D2CA6 /* 002.glb */ = {isa = PBXFileReference; name = "002.glb"; path = "../assets/models/loomies/002.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		BC0AD9B7F2A4423BA559022F /* 003.glb */ = {isa = PBXFileReference; name = "003.glb"; path = "../assets/models/loomies/003.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		89E3135E66E64ACD9F047FD3 /* 004.glb */ = {isa = PBXFileReference; name = "004.glb"; path = "../assets/models/loomies/004.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		2A90F403991B40E9BCE1746C /* 005.glb */ = {isa = PBXFileReference; name = "005.glb"; path = "../assets/models/loomies/005.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		5AB24003209348E09512A0E9 /* 006.glb */ = {isa = PBXFileReference; name = "006.glb"; path = "../assets/models/loomies/006.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		1A33EFB0F11845BB9B1CB7D8 /* 007.glb */ = {isa = PBXFileReference; name = "007.glb"; path = "../assets/models/loomies/007.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9EAEA7C2739B4F0290B627B6 /* 008.glb */ = {isa = PBXFileReference; name = "008.glb"; path = "../assets/models/loomies/008.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		381EA7BA798246C28C2F11C9 /* 009.glb */ = {isa = PBXFileReference; name = "009.glb"; path = "../assets/models/loomies/009.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		A8EBEB818D7847B6B280CA08 /* 010.glb */ = {isa = PBXFileReference; name = "010.glb"; path = "../assets/models/loomies/010.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		82ED71B903564FD1AEFC1C1C /* 011.glb */ = {isa = PBXFileReference; name = "011.glb"; path = "../assets/models/loomies/011.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		89EE834037F5490E9EC93198 /* 012.glb */ = {isa = PBXFileReference; name = "012.glb"; path = "../assets/models/loomies/012.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E19221D4B50642A49B444B2A /* 013.glb */ = {isa = PBXFileReference; name = "013.glb"; path = "../assets/models/loomies/013.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		BCB52863A19A4A9394AF8039 /* 014.glb */ = {isa = PBXFileReference; name = "014.glb"; path = "../assets/models/loomies/014.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		F64FCD210ED0455DB07D0323 /* 015.glb */ = {isa = PBXFileReference; name = "015.glb"; path = "../assets/models/loomies/015.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E8F5A0ABEBA84AFB8DC72A96 /* 016.glb */ = {isa = PBXFileReference; name = "016.glb"; path = "../assets/models/loomies/016.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B71E5F518AD547B08EEB7DCE /* 017.glb */ = {isa = PBXFileReference; name = "017.glb"; path = "../assets/models/loomies/017.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		A1C3ADAE00484DFE9D0AF3D4 /* 018.glb */ = {isa = PBXFileReference; name = "018.glb"; path = "../assets/models/loomies/018.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3EFD409DC7A94022AE996970 /* 019.glb */ = {isa = PBXFileReference; name = "019.glb"; path = "../assets/models/loomies/019.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E07DE678C1AB40268D073E51 /* circleIndicator.glb */ = {isa = PBXFileReference; name = "circleIndicator.glb"; path = "../assets/models/map/indicator/circleIndicator.glb"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +166,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				0CC8BF39AD85445497C9A421 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -147,6 +192,36 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
+		};
+		0CC8BF39AD85445497C9A421 /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				AC2935B2F2F64AD59017C5FB /* gym.glb */,
+				E8FC1EEC18D64EFEA6A0EE2E /* player.glb */,
+				FF9FA26B1C2F4A2C95FD9A9B /* 001.glb */,
+				841553CCFBB74A60919D2CA6 /* 002.glb */,
+				BC0AD9B7F2A4423BA559022F /* 003.glb */,
+				89E3135E66E64ACD9F047FD3 /* 004.glb */,
+				2A90F403991B40E9BCE1746C /* 005.glb */,
+				5AB24003209348E09512A0E9 /* 006.glb */,
+				1A33EFB0F11845BB9B1CB7D8 /* 007.glb */,
+				9EAEA7C2739B4F0290B627B6 /* 008.glb */,
+				381EA7BA798246C28C2F11C9 /* 009.glb */,
+				A8EBEB818D7847B6B280CA08 /* 010.glb */,
+				82ED71B903564FD1AEFC1C1C /* 011.glb */,
+				89EE834037F5490E9EC93198 /* 012.glb */,
+				E19221D4B50642A49B444B2A /* 013.glb */,
+				BCB52863A19A4A9394AF8039 /* 014.glb */,
+				F64FCD210ED0455DB07D0323 /* 015.glb */,
+				E8F5A0ABEBA84AFB8DC72A96 /* 016.glb */,
+				B71E5F518AD547B08EEB7DCE /* 017.glb */,
+				A1C3ADAE00484DFE9D0AF3D4 /* 018.glb */,
+				3EFD409DC7A94022AE996970 /* 019.glb */,
+				E07DE678C1AB40268D073E51 /* circleIndicator.glb */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -244,6 +319,28 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				4AA43D8D1EA34DFF95676A72 /* gym.glb in Resources */,
+				E434C2345C384FCD86EB6F20 /* player.glb in Resources */,
+				05335AB349BB4A3D8515FB5B /* 001.glb in Resources */,
+				8E296DE85304470F9013234F /* 002.glb in Resources */,
+				6C4701EDF03949EC9AFF4D57 /* 003.glb in Resources */,
+				08DC264F656643998D30A8D4 /* 004.glb in Resources */,
+				A343B42FC3904FFDAA485212 /* 005.glb in Resources */,
+				21CE0D0B90D84CB7B6A2C631 /* 006.glb in Resources */,
+				9A0506DD16604F229A95C3F5 /* 007.glb in Resources */,
+				3FFFB98D84E04B609E568786 /* 008.glb in Resources */,
+				7974AB586C554AEE93508B70 /* 009.glb in Resources */,
+				FF94F6AB9AF7457E841DC731 /* 010.glb in Resources */,
+				8F16989B20BA4E9DA1189DB2 /* 011.glb in Resources */,
+				4781BCEFE83644CFA6ADA388 /* 012.glb in Resources */,
+				D6107E31A9BA445796F8BBE6 /* 013.glb in Resources */,
+				9925C42A8A104F26A606ADEC /* 014.glb in Resources */,
+				1D10E7A63A3B4EC0930E792C /* 015.glb in Resources */,
+				6A8F2D6F2B3B4492BC54A1AC /* 016.glb in Resources */,
+				D6CCA0F85116442C8E402206 /* 017.glb in Resources */,
+				B36863F3F737466496AF0519 /* 018.glb in Resources */,
+				F89705057F6E42EB8424B592 /* 019.glb in Resources */,
+				C0BC27EB6CB946B685E49981 /* circleIndicator.glb in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

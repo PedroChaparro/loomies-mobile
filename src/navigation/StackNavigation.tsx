@@ -27,7 +27,7 @@ export const StackNavigation = () => {
       <MapProvider>
         <ModelProvider>
           <Stack.Navigator
-            initialRouteName='Map'
+            initialRouteName='Login'
             screenOptions={{ headerShown: false }}
           >
             {/* Views that are not included in the bottom tabs navigation but are reachable using the navigator hook */}

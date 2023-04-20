@@ -34,6 +34,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
+      - name: Create .env file
+        run: |
+          echo "API_URL=${{ secrets.DEPLOYMENT_API_URL }}" > .env
+          echo "MAP_DEBUG=false" >> .env
+          echo "GAME_MIN_REQUIRED_EXPERIENCE=100" >> .env
+          echo "GAME_EXPERIENCE_FACTOR=1000" >> .env
+          echo "PLAYER_REACH_RADIUS=0.0008" >> .env
+
       - name: Install yarn dependencies
         run: yarn install --from-lock-file
 
@@ -62,12 +70,8 @@ jobs:
       # -- Build and sign the Android app
       - name: Build Android
         run: |
+          yarn assets:link
           cd android
-          API_URL=${{ secrets.DEPLOYMENT_API_URL }}
-          MAP_DEBUG=false
-          GAME_MIN_REQUIRED_EXPERIENCE=100
-          GAME_EXPERIENCE_FACTOR=1000
-          PLAYER_REACH_RADIUS=0.0008
           ./gradlew assembleRelease --no-daemon
 
       - name: Sign Android

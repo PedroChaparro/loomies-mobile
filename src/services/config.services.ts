@@ -1,7 +1,11 @@
-import { API_URL, MAP_DEBUG, PLAYER_REACH_RADIUS } from '@env';
+import Config from 'react-native-config';
 
 export const CONFIG = {
-  API_URL,
-  MAP_DEBUG: MAP_DEBUG == 'true',
-  PLAYER_REACH_RADIUS: parseFloat(PLAYER_REACH_RADIUS)
+  API_URL: Config.API_URL,
+  MAP_DEBUG: Config.MAP_DEBUG == 'true',
+  GAME_MIN_REQUIRED_EXPERIENCE: Config.GAME_MIN_REQUIRED_EXPERIENCE,
+  GAME_EXPERIENCE_FACTOR: Config.GAME_EXPERIENCE_FACTOR,
+  PLAYER_REACH_RADIUS: Config.PLAYER_REACH_RADIUS
+    ? parseFloat(Config.PLAYER_REACH_RADIUS)
+    : 0.008
 };
