@@ -7,6 +7,7 @@ import React, { createContext, useEffect, useState, ReactNode } from 'react';
 import * as Babylon from '@babylonjs/core';
 import { useEngineRenderLoop } from '@src/hooks/useEngineRenderLoop';
 import { useEngine } from '@babylonjs/react-native';
+import { ArcRotateCamera } from '@babylonjs/core';
 
 export const enum APP_SCENE {
   NONE,
@@ -79,6 +80,7 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
   const showSceneNone = async () => {
     clearScene(sceneDetails);
     clearScene(sceneCapture);
+    stopCameras();
     setCurrentScene(APP_SCENE.NONE);
   };
 
@@ -109,6 +111,22 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
       });
       if (!scene.meshes.length) break;
     }
+  };
+
+  const stopCameras = () => {
+    if (!cameraMap) return;
+    if (!cameraDetails) return;
+    if (!cameraCapture) return;
+
+    [cameraMap, cameraDetails, cameraCapture].forEach((cameraOri) => {
+      const camera = cameraOri as ArcRotateCamera;
+
+      camera.inertialAlphaOffset = 0;
+      camera.inertialBetaOffset = 0;
+      camera.inertialPanningX = 0;
+      camera.inertialPanningY = 0;
+      camera.inertialRadiusOffset = 0;
+    });
   };
 
   const getCurrentScene = () => {
