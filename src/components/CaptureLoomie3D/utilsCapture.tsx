@@ -28,7 +28,7 @@ import { LOOMBALL_STATE } from './CaptureLoomie3D';
 
 // control constants
 
-const LOOMBALL_CAMERA_DISTANCE = 2;
+const LOOMBALL_CAMERA_DISTANCE = 2.1;
 const LOOMBALL_SCALE = 0.4;
 const LOOMBALL_INITIAL_POS = new Vector3(0, -0.5, LOOMBALL_CAMERA_DISTANCE);
 
@@ -84,9 +84,6 @@ export class CaptureSM {
   //setState:
 
   stt: iAniState;
-
-  //sceneCapture?: Babylon.Scene;
-  //cameraCapture?: Babylon.Camera;
   controllers: Map<LOOMBALL_STATE, iStateController>;
 
   constructor(
@@ -185,28 +182,27 @@ export class CaptureSM {
     const camera = cameraCapture as Babylon.ArcRotateCamera;
 
     // no panning
-    //camera.panningSensibility = 0;
+    camera.panningSensibility = 0;
 
     // limit camera zoom
     camera.lowerRadiusLimit = 7;
-    //camera.upperRadiusLimit = camera.lowerRadiusLimit;
+    camera.upperRadiusLimit = camera.lowerRadiusLimit;
 
-    //// limit camera angle
-    //camera.lowerBetaLimit = Math.PI * (0.5 - 0.15);
-    //camera.upperBetaLimit = Math.PI * (0.5 - 0.1);
+    // limit camera angle
+    camera.lowerBetaLimit = Math.PI * (0.5 - 0.3);
+    camera.upperBetaLimit = Math.PI * (0.5 - 0.1);
 
-    //camera.lowerAlphaLimit = Math.PI * (0.5 - 0.05);
-    //camera.upperAlphaLimit = Math.PI * (0.5 + 0.05);
+    camera.lowerAlphaLimit = Math.PI * (0.5 - 0.2);
+    camera.upperAlphaLimit = Math.PI * (0.5 + 0.2);
 
     //camera.angularSensibilityX = 20000;
-    //camera.angularSensibilityY = camera.angularSensibilityX;
+    camera.angularSensibilityX = 12000;
+    camera.angularSensibilityY = camera.angularSensibilityX;
 
     // setup scene
 
     (async () => {
       try {
-        console.log('instantiate a thing or two');
-
         // models
         const modelLoomie = await this.stt.modelContext.instantiateModel(
           loomieSerial.toString(),
@@ -359,20 +355,17 @@ export class CaptureSM {
   }
 
   getFrameUpdateCallback(): () => void {
-    console.log('Get frame update callback');
     const controller = this.controllers.get(this.stt.state);
-    console.log('Controller frame', controller?.frame);
+    console.log(`Info: Controller frame ${controller?.frame}`);
     if (controller?.frame) {
       const callback = controller.frame;
 
       return () => {
-        console.log('getFrameUpdateCallback');
         callback(this.stt);
       };
     }
 
     return () => {
-      //console.log(`current state ${this.stt.state}`);
       return;
     };
   }

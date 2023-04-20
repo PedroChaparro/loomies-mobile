@@ -4,7 +4,7 @@ import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 import { ModelContext } from '@src/context/ModelProvider';
 import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView, View } from 'react-native';
-import { instantiatedEntriesTranslate } from '../Map3D/utilsVertex';
+import { instantiatedEntriesRotate, instantiatedEntriesTranslate } from '../Map3D/utilsVertex';
 
 import { CONFIG } from '@src/services/config.services';
 const { MAP_DEBUG } = CONFIG;
@@ -42,6 +42,10 @@ export const Loomie3DModelPreview = ({
       // limit camera angle
       camera.lowerBetaLimit = Math.PI * (0.5 - 0.1);
       camera.upperBetaLimit = Math.PI * (0.5 + 0.1);
+
+      // tilt camera
+      camera.alpha = Math.PI/4;
+      camera.beta = Math.PI/8;
     }
 
     // transparent background

@@ -1,24 +1,21 @@
+import React, { useContext, useEffect, useRef } from 'react';
+import { SafeAreaView, View } from 'react-native';
 import * as Babylon from '@babylonjs/core';
 import { EngineView } from '@babylonjs/react-native';
-import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
-import { ModelContext } from '@src/context/ModelProvider';
-import React, {
-  useContext,
-  useEffect,
-  useRef,
-} from 'react';
-import { SafeAreaView, View } from 'react-native';
 
-import { CONFIG } from '@src/services/config.services';
-import { TLoomball, TWildLoomies } from '@src/types/types';
-import { useScenePointerObservable } from '@src/hooks/useScenePointerObservable';
-import { CaptureSM } from './utilsCapture';
-import { useRegisterBeforeRender } from '@src/hooks/useRegisterBeforeRender';
-import { UserPositionContext } from '@src/context/UserPositionProvider';
 import {
   CAPTURE_RESULT,
   requestCaptureLoomieAttempt
 } from '@src/services/capture.services';
+import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
+import { ModelContext } from '@src/context/ModelProvider';
+import { UserPositionContext } from '@src/context/UserPositionProvider';
+import { useRegisterBeforeRender } from '@src/hooks/useRegisterBeforeRender';
+import { useScenePointerObservable } from '@src/hooks/useScenePointerObservable';
+
+import { TLoomball, TWildLoomies } from '@src/types/types';
+import { CaptureSM } from './utilsCapture';
+import { CONFIG } from '@src/services/config.services';
 const { MAP_DEBUG } = CONFIG;
 
 interface iCaptureLoomie3D {
@@ -65,7 +62,6 @@ export const CaptureLoomie3D = ({
 
       const state = stateMachine.current.stt.state;
       const controller = stateMachine.current.controllers.get(state);
-      //console.log(`State State ${state}`);
 
       if (controller?.frame) {
         const callback = controller.frame;
@@ -88,8 +84,6 @@ export const CaptureLoomie3D = ({
           // pointer down
 
           case Babylon.PointerEventTypes.POINTERDOWN:
-            console.log(stateMachine.current.stt.state);
-            console.log('Look at me');
             stateMachine.current.onPointerDown(pointerInfo);
             break;
 
@@ -129,8 +123,6 @@ export const CaptureLoomie3D = ({
     if (!sceneCapture) return;
     if (!cameraCapture) return;
 
-    console.log('position', userPosition);
-
     // create scene
     if (!stateMachine.current) {
       stateMachine.current = new CaptureSM(
@@ -149,7 +141,7 @@ export const CaptureLoomie3D = ({
 
     // update
     else {
-      console.log('UPDATING MACHINE PROPS');
+      console.log('Info: Updating machine props');
       stateMachine.current.updateProps(
         sceneCapture,
         cameraCapture,
@@ -180,7 +172,7 @@ export const CaptureLoomie3D = ({
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
       <View style={{ flex: 1 }}>
         {getCurrentScene() == APP_SCENE.CAPTURE && (
           <EngineView camera={cameraCapture} displayFrameRate={MAP_DEBUG} />

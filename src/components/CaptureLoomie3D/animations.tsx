@@ -71,7 +71,6 @@ export const controllerGrabbable: iStateController = {
     stt.setBallState(LOOMBALL_STATE.ANI_GRABBED);
     stt.ballTarget = stt.ballModel.getAbsolutePosition();
     stt.cameraCapture.detachControl();
-    console.log('grabbed on');
   }
 };
 
@@ -91,14 +90,10 @@ export const controllerGrabbed: iStateController = {
     stt.setBallState(LOOMBALL_STATE.ANI_RETURNING);
     stt.ballTarget = stt.ballInitialOrigin.getAbsolutePosition();
     stt.cameraCapture?.attachControl();
-    console.log('grabbed off');
 
     // throw loomball
 
-    console.log('ballDir', stt.ballDir);
-
     if (stt.ballDir.y > LOOMBALL_MINIMUN_THROW_FORCE) {
-      console.log('THROW ===========================');
       stt.setBallState(LOOMBALL_STATE.ANI_THROW);
 
       // config animation
@@ -158,8 +153,6 @@ export const controllerGrabbed: iStateController = {
     if (!pickinfo.pickedPoint) return;
 
     // set target
-    //console.log("direction", stt.ballDir);
-    //console.log("Here we are again");
     stt.ballTarget = pickinfo.pickedPoint;
   },
 
@@ -212,7 +205,6 @@ export const controllerReturning: iStateController = {
     if (new Date().getTime() > stt.aniEndTime) {
       stt.setBallState(LOOMBALL_STATE.GRABBABLE);
       stt.ballModel.position = new Vector3().copyFrom(stt.ballTarget);
-      console.log('Arrived');
 
       return;
     }

@@ -87,16 +87,19 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
   const showSceneMap = async () => {
     await delay(500);
     setCurrentScene(APP_SCENE.MAP);
+    stopCameras();
   };
 
   const showSceneDetails = async () => {
     await delay(500);
     setCurrentScene(APP_SCENE.DETAILS);
+    stopCameras();
   };
 
   const showSceneCapture = async () => {
     await delay(500);
     setCurrentScene(APP_SCENE.CAPTURE);
+    stopCameras();
   };
 
   const clearScene = (scene: Babylon.Scene | undefined) => {
@@ -118,15 +121,26 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
     if (!cameraDetails) return;
     if (!cameraCapture) return;
 
+    // reset transforms
+
+    [cameraDetails, cameraCapture].forEach((cameraOri) => {
+      const camera = cameraOri as ArcRotateCamera;
+      camera.position = new Babylon.Vector3(0, 0, 0);
+      camera.rotation = new Babylon.Vector3(0, 0, 0);
+    });
+
+    // stop movement
+
     [cameraMap, cameraDetails, cameraCapture].forEach((cameraOri) => {
       const camera = cameraOri as ArcRotateCamera;
-
+      camera.cameraRotation = new Babylon.Vector2(0, 0);
       camera.inertialAlphaOffset = 0;
       camera.inertialBetaOffset = 0;
       camera.inertialPanningX = 0;
       camera.inertialPanningY = 0;
       camera.inertialRadiusOffset = 0;
     });
+
   };
 
   const getCurrentScene = () => {

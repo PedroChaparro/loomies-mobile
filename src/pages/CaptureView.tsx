@@ -1,13 +1,18 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { NavigationProp, RouteProp, useFocusEffect } from '@react-navigation/core';
+import {
+  NavigationProp,
+  RouteProp,
+  useFocusEffect
+} from '@react-navigation/core';
 import { View, Text, Pressable, Image, StyleSheet } from 'react-native';
 import { TWildLoomies } from '@src/types/types';
 import { MapContext } from '@src/context/MapProvider';
 import { getLoomballsService } from '@src/services/user.services';
 import { TLoomball } from '@src/types/types';
-import { requestCaptureLoomieAttempt } from '@src/services/capture.services';
-import { UserPositionContext } from '@src/context/UserPositionProvider';
-import { CaptureLoomie3D, LOOMBALL_STATE } from '@src/components/CaptureLoomie3D/CaptureLoomie3D';
+import {
+  CaptureLoomie3D,
+  LOOMBALL_STATE
+} from '@src/components/CaptureLoomie3D/CaptureLoomie3D';
 import { images } from '@src/utils/utils';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
@@ -25,7 +30,6 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
 
   const [loomie, setLoomie] = useState<TWildLoomies | null>(null);
   const { getWildLoomies } = useContext(MapContext);
-  const { userPosition } = useContext(UserPositionContext);
   const { showScene } = useContext(BabylonContext);
 
   // state
@@ -37,12 +41,12 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
 
   const setBallState = (state: LOOMBALL_STATE) => {
     ballState.current = state;
-    switch (ballState.current){
+    console.log(`Info: Capture animation state: ${state}`);
 
+    switch (ballState.current) {
       // decrease loomball quantity
 
-      case LOOMBALL_STATE.ANI_THROW:{
-
+      case LOOMBALL_STATE.ANI_THROW: {
         // update ball quantity
 
         let currBall: TLoomball | null = null;
@@ -50,10 +54,10 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
         setBallSelected((ball) => {
           currBall = ball;
           return ball;
-        })
+        });
 
-        if (currBall){
-          if ((currBall as TLoomball).quantity > 0){
+        if (currBall) {
+          if ((currBall as TLoomball).quantity > 0) {
             (currBall as TLoomball).quantity -= 1;
             setBallSelected(currBall);
           }
@@ -63,23 +67,22 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
       }
 
       // refresh user Loomballs on escape
-      
+
       case LOOMBALL_STATE.ANI_ESCAPED:
         fetchLoomballs();
         break;
     }
-  }
+  };
 
   // fetch user loomballs
 
   const fetchLoomballs = () => {
-
     (async () => {
       const loomballs = await getLoomballsService();
 
       // if no loomballs return to map
-      if (!loomballs.length){
-        navigation?.navigate("Map");
+      if (!loomballs.length) {
+        navigation?.navigate('Map');
         showInfoToast("You don't have any Loomballs to catch this Loomie");
       }
 
@@ -89,42 +92,34 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
       // still has balls of this kind available?
       let available = false;
 
-      if (ballSelected){
+      if (ballSelected) {
         available = loomballs.some((ball) => {
-          return (ball._id == ballSelected._id);
-        })
+          return ball._id == ballSelected._id;
+        });
       }
 
       // select the first one in the array
-      if (!available && loomballs.length){
+      if (!available && loomballs.length) {
         setBallSelected(loomballs[0]);
       }
 
+      // TODO: Delete me once you implement switching loomballs
       console.log(loomballs);
-
+      console.log(balls);
     })();
   };
 
-  const throwLoomball = async () => {
-    if (!userPosition) return;
-    if (!ballSelected) return;
-    if (!loomie) return;
-
-    const success = await requestCaptureLoomieAttempt (userPosition, ballSelected._id, loomie._id);
-  }
-
   const escape = () => {
-    navigation?.navigate("Map");
-  }
+    navigation?.navigate('Map');
+  };
 
   useEffect(() => {
-
     // get loomie
 
     const wildLoomies = getWildLoomies();
     const foundLoomie = wildLoomies.find((wild) => {
       return wild._id == route.params.loomieId;
-    })
+    });
 
     // loomie not found, probably it just stopped existing
 
@@ -134,65 +129,68 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
     }
 
     setLoomie(foundLoomie);
-    console.log("INFO: Loomie exists", foundLoomie);
+    console.log('INFO: Loomie exists', foundLoomie);
 
     // get user loomballs
 
     fetchLoomballs();
-    
   }, []);
 
   // toggle render loop on focus events
   useFocusEffect(
     React.useCallback(() => {
-      //showScene( APP_SCENE.DETAILS );
-      return () => showScene( APP_SCENE.NONE );
+      //showScene( APP_SCENE.CAPTURE );
+      return () => showScene(APP_SCENE.NONE);
     }, [])
   );
 
   return (
     <View style={styles.container}>
-
       <View style={styles.scene}>
-        { loomie && ballSelected && <CaptureLoomie3D loomie={loomie} loomball={ballSelected} setBallState={setBallState} /> }
+        {loomie && ballSelected && (
+          <CaptureLoomie3D
+            loomie={loomie}
+            loomball={ballSelected}
+            setBallState={setBallState}
+          />
+        )}
       </View>
 
-      { /* header */ }
+      {/* header */}
       <View style={styles.circle}></View>
-      { loomie && <Text style={styles.title} >{loomie.name}</Text> }
-      { loomie && <Text style={styles.subtitle} >Level {loomie.level}</Text>}
+      {loomie && <Text style={styles.title}>{loomie.name}</Text>}
+      {loomie && <Text style={styles.subtitle}>Level {loomie.level}</Text>}
 
-      { /* loomball bubble */ }
+      {/* loomball bubble */}
       <Pressable
         style={styles.bubbleLoomball}
         onPress={() => {
-          //setBallSelected(balls[1]);
-          console.log("1");
+          console.log('Pressed loomball bubble');
         }}
       >
-        <Image
-          style={{width:65, height:65}}
-          source={images['LOOMBALL']}
-        />
+        <Image style={{ width: 65, height: 65 }} source={images['LOOMBALL']} />
       </Pressable>
 
       <Pressable
         style={styles.bubbleLoomballAmount}
         onPress={() => {
-          console.log("1");
+          console.log('Pressed loomball bubble');
         }}
       >
-      <Text style={{ color: "black" }} >{ballSelected ? ballSelected.quantity : ''}</Text>
+        <Text style={{ color: 'black' }}>
+          {ballSelected ? ballSelected.quantity : ''}
+        </Text>
       </Pressable>
 
-      { /* scape bubble */ }
-      <Pressable
-        style={styles.bubbleEscape}
-        onPress={escape}
-      >
-        <MaterialCommunityIcons size={30} name={"run"} color={"white"} style={{transform: [{ scaleX: -1 }]}} />
+      {/* scape bubble */}
+      <Pressable style={styles.bubbleEscape} onPress={escape}>
+        <MaterialCommunityIcons
+          size={30}
+          name={'run'}
+          color={'white'}
+          style={{ transform: [{ scaleX: -1 }] }}
+        />
       </Pressable>
-
     </View>
   );
 };
@@ -200,38 +198,38 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent:'center',
-    alignItems:'center',
-    backgroundColor:'#289d75',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black'
   },
   scene: {
     width: '100%',
-    height: '100%',
+    height: '100%'
   },
   circle: {
-    height:220, 
+    height: 220,
     width: 230,
-    borderRadius:200, 
-    backgroundColor:'#ED4A5F', 
-    position:'absolute', 
-    top:-160, 
-    transform: [{scaleX: 2}]
+    borderRadius: 200,
+    backgroundColor: '#ED4A5F',
+    position: 'absolute',
+    top: -160,
+    transform: [{ scaleX: 2 }]
   },
   title: {
-    position:'absolute', 
-    top:10, 
-    fontSize:18, 
-    fontWeight: 'bold', 
-    color:'white',
-    userSelect: "none"
+    position: 'absolute',
+    top: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+    userSelect: 'none'
   },
   subtitle: {
-    position:'absolute', 
-    top:32, 
-    fontSize:14, 
-    fontWeight: 'middle', 
-    color:'white',
-    userSelect: "none"
+    position: 'absolute',
+    top: 32,
+    fontSize: 14,
+    fontWeight: 'middle',
+    color: 'white',
+    userSelect: 'none'
   },
   bubbleLoomball: {
     borderWidth: 1,
@@ -258,7 +256,7 @@ const styles = StyleSheet.create({
     height: 30,
     backgroundColor: '#ffffff',
     borderRadius: 200,
-    userSelect: "none"
+    userSelect: 'none'
   },
   bubbleEscape: {
     borderWidth: 1,
@@ -272,5 +270,5 @@ const styles = StyleSheet.create({
     left: 15,
     backgroundColor: '#00000022',
     borderRadius: 200
-  },
+  }
 });

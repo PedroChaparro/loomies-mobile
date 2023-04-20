@@ -34,7 +34,6 @@ export const collidedWithObject = (
 export const returningCalculatePosition = (stt: iAniState): Babylon.Vector3 => {
   const now = new Date().getTime();
   const progress = (now - stt.aniStartTime) / ANI_RETURNING_DURATION;
-  console.log('progress', progress);
 
   return Vector3.Lerp(stt.ballPosInitialLocal, stt.ballTarget, progress);
 };
@@ -68,7 +67,7 @@ export const throwCalculateSpeeds = (stt: iAniState, angle: number) => {
 
   stt.ballSpeed = new Vector3(vx, vy, vz);
   stt.ballAcc = new Vector3(a, g, 0);
-  console.log('ANGLE', Babylon.Tools.ToDegrees(angle));
+  console.log(`Info: Angle ${Babylon.Tools.ToDegrees(angle)}`);
 };
 
 export const aniThrowCalculatePosition = (stt: iAniState): Babylon.Vector3 => {
