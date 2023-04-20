@@ -240,12 +240,12 @@ export class CaptureSM {
 
         // DEBUG: Target loomball
         //const modelBall2 = await this.stt.modelContext.cloneModel(
-          //`loomball-${loomball.serial.toString().padStart(3, '0')}`,
-          //sceneCapture
+        //`loomball-${loomball.serial.toString().padStart(3, '0')}`,
+        //sceneCapture
         //);
         //if (modelBall2) {
-          //modelBall2.position.y = height;
-          //modelBall2.scaling = Vector3.One().scale(LOOMBALL_SCALE);
+        //modelBall2.position.y = height;
+        //modelBall2.scaling = Vector3.One().scale(LOOMBALL_SCALE);
         //}
 
         // position ball relative to the camera
