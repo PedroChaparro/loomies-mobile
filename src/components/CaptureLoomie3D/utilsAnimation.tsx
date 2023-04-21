@@ -144,29 +144,44 @@ export const attemptToCatch = async (stt: iAniState) => {
 
   switch (captured) {
     case CAPTURE_RESULT.CAPTURED:
-      // print loomie info
-      console.log('CAPTURE_RESULT.CAPTURED');
-      console.log(loomie);
+      {
+        // print loomie info
+        console.log('CAPTURE_RESULT.CAPTURED');
+        console.log(loomie);
 
-      // go back to map
-      navigate('Map', null);
+        // remove captured loomie
+        const loomies = stt.mapContext.getWildLoomies();
+
+        const updatedLoomies = loomies.filter((wild) => {
+          return wild._id != loomie?._id;
+        });
+
+        stt.mapContext.setWildLoomies(updatedLoomies);
+
+        // go back to map
+        navigate('Map', null);
+      }
       break;
     case CAPTURE_RESULT.ESCAPED:
-      showInfoToast('Loomie escaped');
+      {
+        showInfoToast('Loomie escaped');
 
-      console.log('CAPTURE_RESULT.ESCAPED');
+        console.log('CAPTURE_RESULT.ESCAPED');
 
-      // reset state
-      stt.setBallState(LOOMBALL_STATE.ANI_ESCAPED);
+        // reset state
+        stt.setBallState(LOOMBALL_STATE.ANI_ESCAPED);
+      }
       break;
     case CAPTURE_RESULT.NOTFOUND:
-      // loomie disappeared
-      showInfoToast('Loomie escaped');
+      {
+        // loomie disappeared
+        showInfoToast('Loomie escaped');
 
-      console.log('CAPTURE_RESULT.NOTFOUND');
+        console.log('CAPTURE_RESULT.NOTFOUND');
 
-      // or user lost connection
-      navigate('Map', null);
+        // or user lost connection
+        navigate('Map', null);
+      }
       break;
   }
 };

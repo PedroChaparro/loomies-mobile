@@ -1,6 +1,7 @@
 import * as Babylon from '@babylonjs/core';
 import { Vector3 } from '@babylonjs/core';
 import { iBabylonProvider } from '@src/context/BabylonProvider';
+import { iMapProvider } from '@src/context/MapProvider';
 import { iModelProvider } from '@src/context/ModelProvider';
 import { iUserPositionContext } from '@src/context/UserPositionProvider';
 import { CAPTURE_RESULT } from '@src/services/capture.services';
@@ -39,6 +40,7 @@ export interface iAniState {
   babylonContext: iBabylonProvider;
   modelContext: iModelProvider;
   userPositionContext: iUserPositionContext;
+  mapContext: iMapProvider;
 
   // callbacks
   attemptToCatch: () => Promise<[CAPTURE_RESULT, TWildLoomies | null]>;
@@ -92,6 +94,7 @@ export class CaptureSM {
     babylonContext: iBabylonProvider,
     modelContext: iModelProvider,
     userPositionContext: iUserPositionContext,
+    mapContext: iMapProvider,
 
     attemptToCatch: () => Promise<[CAPTURE_RESULT, TWildLoomies | null]>,
     setBallState: (_state: LOOMBALL_STATE) => void
@@ -102,6 +105,7 @@ export class CaptureSM {
       babylonContext,
       modelContext,
       userPositionContext,
+      mapContext,
 
       // callbacks
 
@@ -159,13 +163,15 @@ export class CaptureSM {
     cameraCapture: Babylon.Camera,
     babylonContext: iBabylonProvider,
     modelContext: iModelProvider,
-    userPositionContext: iUserPositionContext
+    userPositionContext: iUserPositionContext,
+    mapContext: iMapProvider
   ) {
     this.stt.sceneCapture = sceneCapture;
     this.stt.cameraCapture = cameraCapture;
     this.stt.babylonContext = babylonContext;
     this.stt.modelContext = modelContext;
     this.stt.userPositionContext = userPositionContext;
+    this.stt.mapContext = mapContext;
   }
 
   setup(loomieSerial: number, loomball: TLoomball) {

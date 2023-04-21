@@ -25,7 +25,7 @@ export interface iGridPosition {
 
 export const GRIDMAP_SIZE = 3; // only uneven numbers
 
-interface iMapProvider {
+export interface iMapProvider {
   getMapOrigin: () => iPosition | null;
   setMapOrigin: (_pos: iPosition) => void;
   coordsGlobalToMap: (_pos: iPosition) => Vector3;

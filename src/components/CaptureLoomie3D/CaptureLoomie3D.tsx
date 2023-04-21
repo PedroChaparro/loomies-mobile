@@ -16,6 +16,7 @@ import { useScenePointerObservable } from '@src/hooks/useScenePointerObservable'
 import { TLoomball, TWildLoomies } from '@src/types/types';
 import { CaptureSM } from './utilsCapture';
 import { CONFIG } from '@src/services/config.services';
+import { MapContext } from '@src/context/MapProvider';
 const { MAP_DEBUG } = CONFIG;
 
 interface iCaptureLoomie3D {
@@ -49,6 +50,7 @@ export const CaptureLoomie3D = ({
   const babylonContext = useContext(BabylonContext);
   const modelContext = useContext(ModelContext);
   const userPositionContext = useContext(UserPositionContext);
+  const mapContext = useContext(MapContext);
 
   // stores the ballState
   const stateMachine = useRef<CaptureSM | null>(null);
@@ -131,6 +133,7 @@ export const CaptureLoomie3D = ({
         babylonContext,
         modelContext,
         userPositionContext,
+        mapContext,
 
         attemptToCatch,
         setBallState
@@ -147,14 +150,22 @@ export const CaptureLoomie3D = ({
         cameraCapture,
         babylonContext,
         modelContext,
-        userPositionContext
+        userPositionContext,
+        mapContext
       );
     }
 
     return () => {
       // destroy everything
     };
-  }, [sceneCapture, cameraCapture, babylonContext, modelContext, userPosition]);
+  }, [
+    sceneCapture,
+    cameraCapture,
+    babylonContext,
+    modelContext,
+    userPosition,
+    mapContext
+  ]);
 
   // none state create scene
   useEffect(() => {

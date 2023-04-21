@@ -332,10 +332,10 @@ export const MapElementManager: React.FC<{
     }
   });
 
-  // toggle render loop on focus events
+  // force update displayed models
   useFocusEffect(
     React.useCallback(() => {
-      if (readyToDrawElements.current) fetchWildLoomies();
+      drawWildLoomies();
     }, [])
   );
 
