@@ -30,6 +30,8 @@ import {
 // debug
 import { CONFIG } from '@src/services/config.services';
 import { useToastAlert } from '@src/hooks/useToastAlert';
+import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
+import { useFocusEffect } from '@react-navigation/native';
 const { MAP_DEBUG } = CONFIG;
 
 const DELAY_FETCH_WILD_LOOMIES = 10000; // 4 seconds
@@ -41,7 +43,6 @@ const HITBOX_DIAMETER = 1.8;
 export const MapElementManager: React.FC<{
   scene: Babylon.Scene | null;
 }> = (props) => {
-  const { showErrorToast } = useToastAlert();
   const { instantiateModel } = useContext(ModelContext);
   const { setCurrentModalGymId } = useContext(GymsModalContext);
 
@@ -55,7 +56,10 @@ export const MapElementManager: React.FC<{
     updateCountTiles,
     coordsGlobalToMap
   } = useContext(MapContext);
+  const { getCurrentScene } = useContext(BabylonContext);
   const { userPosition } = useContext(UserPositionContext);
+  const { showInfoToast } = useToastAlert();
+
   const mapGyms = useRef<iMapObject[]>([]);
   const mapWildLoomies = useRef<iMapObject[]>([]);
   const readyToDrawElements = useRef<boolean>(false);
@@ -282,11 +286,11 @@ export const MapElementManager: React.FC<{
   // add event on 3D model click
 
   useScenePointerObservable(props.scene, (pointerInfo: Babylon.PointerInfo) => {
+    if (getCurrentScene() != APP_SCENE.MAP) return;
     if (pointerInfo.type == Babylon.PointerEventTypes.POINTERTAP) {
       if (!userPosition) return;
-      if (!pointerInfo.pickInfo) return;
-      if (!pointerInfo.pickInfo.hit) return;
-      if (!pointerInfo.pickInfo.pickedMesh) return;
+      if (!pointerInfo.pickInfo?.hit) return;
+      if (!pointerInfo.pickInfo?.pickedMesh) return;
 
       const meshName = pointerInfo.pickInfo.pickedMesh.name;
       console.log('Info: Touched', meshName);
@@ -300,7 +304,12 @@ export const MapElementManager: React.FC<{
 
         if (!loomie) return;
 
-        LoomieEnterCaptureView(userPosition, loomie.origin, loomie.id);
+        LoomieEnterCaptureView(
+          userPosition,
+          loomie.origin,
+          loomie.id,
+          showInfoToast
+        );
       }
 
       // it's a gym
@@ -315,11 +324,18 @@ export const MapElementManager: React.FC<{
           // Set the information for the gym modal
           setCurrentModalGymId(gym.id);
         } else {
-          showErrorToast('You are too far from the gym');
+          showInfoToast('You are too far away from this gym');
         }
       }
     }
   });
+
+  // force update displayed models
+  useFocusEffect(
+    React.useCallback(() => {
+      drawWildLoomies();
+    }, [])
+  );
 
   return <></>;
 };

@@ -290,3 +290,12 @@ export const instantiatedEntriesRotate = (
     rootNode.rotate(Babylon.Axis.Y, radians, Babylon.Space.LOCAL);
   });
 };
+
+export const instantiatedEntriesScale = (
+  entries: Babylon.InstantiatedEntries,
+  scale: Babylon.Vector3
+) => {
+  entries.rootNodes.forEach((rootNode) => {
+    rootNode.scaling = scale;
+  });
+};
