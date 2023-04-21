@@ -1,3 +1,10 @@
+/*
+ * animations:
+ *
+ * Every animation is one object, each object can implement certain events
+ * which will be triggered by the Babylon engine.
+ */
+
 import * as Babylon from '@babylonjs/core';
 import { Vector3 } from '@babylonjs/core';
 import { instantiatedEntriesScale } from '../Map3D/utilsVertex';
@@ -10,8 +17,8 @@ import {
   fallCalculatePosition,
   attemptToCatch,
   returningCalculatePosition
-} from './utilsAnimation';
-import { iAniState } from './utilsCapture';
+} from './utilsAnimations';
+import { iAniState } from './CaptureSM';
 
 export interface iStateController {
   setup?: (_state: iAniState) => void;

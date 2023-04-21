@@ -1,3 +1,9 @@
+/*
+ * utilsAnimations:
+ *
+ * Extra methods for animations to use
+ */
+
 import * as Babylon from '@babylonjs/core';
 import { Vector3 } from '@babylonjs/core';
 import { navigate } from '@src/navigation/RootNavigation';
@@ -9,7 +15,7 @@ import {
 } from './animations';
 import { LOOMBALL_STATE } from './CaptureLoomie3D';
 import { CAPTURE_RESULT } from '@src/services/capture.services';
-import { iAniState } from './utilsCapture';
+import { iAniState } from './CaptureSM';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 
 export const collidedWithObject = (
@@ -32,10 +38,12 @@ export const collidedWithObject = (
 // returning animation
 
 export const returningCalculatePosition = (stt: iAniState): Babylon.Vector3 => {
+  if (!stt.ballModel) return Vector3.Zero();
+
   const now = new Date().getTime();
   const progress = (now - stt.aniStartTime) / ANI_RETURNING_DURATION;
 
-  return Vector3.Lerp(stt.ballPosInitialLocal, stt.ballTarget, progress);
+  return Vector3.Lerp(stt.ballModel.position, stt.ballTarget, progress);
 };
 
 // throw animation

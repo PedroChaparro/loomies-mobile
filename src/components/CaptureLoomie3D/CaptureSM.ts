@@ -1,3 +1,11 @@
+/*
+ * CaptureSM:
+ *
+ * It setups the initial conditions for the scene
+ * It's manages all the animations
+ * It's executes the events for the current animation
+ */
+
 import * as Babylon from '@babylonjs/core';
 import { Vector3 } from '@babylonjs/core';
 import { iBabylonProvider } from '@src/context/BabylonProvider';

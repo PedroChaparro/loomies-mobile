@@ -1,3 +1,10 @@
+/*
+ * CaptureLoomie3D:
+ *
+ * It's a middle man between the Babylon engine and the State Machine
+ * It syncs the events running in the Babylon engine with those of the SM
+ */
+
 import React, { useContext, useEffect, useRef } from 'react';
 import { SafeAreaView, View } from 'react-native';
 import * as Babylon from '@babylonjs/core';
@@ -14,7 +21,7 @@ import { useRegisterBeforeRender } from '@src/hooks/useRegisterBeforeRender';
 import { useScenePointerObservable } from '@src/hooks/useScenePointerObservable';
 
 import { TLoomball, TWildLoomies } from '@src/types/types';
-import { CaptureSM } from './utilsCapture';
+import { CaptureSM } from './CaptureSM';
 import { CONFIG } from '@src/services/config.services';
 import { MapContext } from '@src/context/MapProvider';
 const { MAP_DEBUG } = CONFIG;
@@ -144,7 +151,7 @@ export const CaptureLoomie3D = ({
 
     // update
     else {
-      console.log('Info: Updating machine props');
+      console.log('Info: Updating SM props');
       stateMachine.current.updateProps(
         sceneCapture,
         cameraCapture,
