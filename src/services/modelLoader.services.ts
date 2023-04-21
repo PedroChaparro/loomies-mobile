@@ -53,9 +53,9 @@ export const MODEL_RESOURCE: { [key: string]: string } = {
 
   // loomballs
 
-  'loomball-008': 'loomball.glb',
-  'loomball-009': 'loomball.glb',
-  'loomball-010': 'loomball.glb'
+  'loomball-008': 'loomball1.glb',
+  'loomball-009': 'loomball2.glb',
+  'loomball-010': 'loomball3.glb'
 };
 
 export const LoadModel = async (
