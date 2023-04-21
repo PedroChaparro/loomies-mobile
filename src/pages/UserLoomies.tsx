@@ -99,7 +99,7 @@ export const UserLoomies = ({ navigation }: IProps) => {
       <LoomiesGrid
         loomies={loomies}
         markBusyLoomies={false}
-        markTeamLoomies={false}
+        markSelectedLoomies={false}
         elementsCallback={goToDetails}
         listHeaderComponent={redirectionHeader}
       />

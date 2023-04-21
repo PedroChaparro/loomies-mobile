@@ -71,13 +71,8 @@ export const Map3DEngine = () => {
   } = useContext(MapContext);
 
   // engine related
-  const {
-    engine,
-    sceneMap,
-
-    cameraMap,
-    getCurrentScene
-  } = useContext(BabylonContext);
+  const { engine, sceneMap, cameraMap, getCurrentScene } =
+    useContext(BabylonContext);
 
   // map drawing
   const { cloneModel } = useContext(ModelContext);
@@ -449,7 +444,7 @@ export const Map3DEngine = () => {
 
   return (
     <>
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'red' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
         <View style={{ flex: 1 }}>
           {!!MAP_DEBUG && (
             <>

@@ -19,9 +19,14 @@ export function resolveAssetUri(path: string) {
 }
 
 export const MODEL_RESOURCE: { [key: string]: string } = {
+  // map models
+
   'MAP_CIRCLE_INDICATOR': 'circleIndicator.glb',
   'MAP_PLAYER': 'player.glb',
   'MAP_GYM': 'gym.glb',
+
+  // loomie models
+
   '1': '001.glb',
   '2': '002.glb',
   '3': '003.glb',
@@ -40,7 +45,17 @@ export const MODEL_RESOURCE: { [key: string]: string } = {
   '16': '016.glb',
   '17': '017.glb',
   '18': '018.glb',
-  '19': '019.glb'
+  '19': '019.glb',
+
+  // environment models
+
+  'ENV_GRASS': 'grass.glb',
+
+  // loomballs
+
+  'loomball-008': 'loomball1.glb',
+  'loomball-009': 'loomball2.glb',
+  'loomball-010': 'loomball3.glb'
 };
 
 export const LoadModel = async (

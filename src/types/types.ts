@@ -50,6 +50,8 @@ export type TWildLoomies = {
   latitude: number;
   longitude: number;
   generated_at: number; // timestamp
+  level: number;
+  experience: number;
 };
 
 export type TGymLoomieProtector = {
@@ -86,7 +88,7 @@ export type TItem = {
   quantity: number;
 };
 
-export type TLoombal = {
+export type TLoomball = {
   _id: string;
   serial: number;
   name: string;

@@ -36,3 +36,9 @@ export interface iRequestWildLoomieExists {
   message: string;
   loomie_id: string;
 }
+
+export interface iRequestCaptureLoomieAttempt {
+  error: boolean;
+  capture: boolean;
+  message: string;
+}

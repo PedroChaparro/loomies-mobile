@@ -6,7 +6,7 @@ import { colors } from '@src/utils/utils';
 import { LoomieLevelBar } from '@src/components/LoomieDetails/LoomieLevelBar';
 import { LoomieStatsTable } from '@src/components/LoomieDetails/LoomieStatsTable';
 import { LoomieTypes } from '@src/components/LoomieDetails/LoomieTypes';
-import { BabylonContext } from '@src/context/BabylonProvider';
+import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 import { Loomie3DModelPreview } from '@src/components/LoomieDetails/Loomie3DModelPreview';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { FuseLoomiesModal } from '@src/components/Modals/FuseLoomiesModal';
@@ -18,7 +18,7 @@ interface IProps {
 export const LoomieDetails = ({ route }: IProps) => {
   const [showFuseModal, setShowFuseModal] = useState(false);
   const [loomie, setLoomie] = useState<TCaughtLoomieToRender | null>(null);
-  const { showSceneDetails, showSceneNone } = useContext(BabylonContext);
+  const { showScene } = useContext(BabylonContext);
 
   const toggleFuseModalVisibility = () => {
     setShowFuseModal(!showFuseModal);
@@ -33,8 +33,8 @@ export const LoomieDetails = ({ route }: IProps) => {
   // toggle render loop on focus events
   useFocusEffect(
     React.useCallback(() => {
-      showSceneDetails();
-      return () => showSceneNone();
+      showScene(APP_SCENE.DETAILS);
+      return () => showScene(APP_SCENE.NONE);
     }, [])
   );
 
@@ -52,12 +52,14 @@ export const LoomieDetails = ({ route }: IProps) => {
         />
       )}
       <View style={{ ...Styles.background, backgroundColor: typeColor }}>
-        <Pressable
-          style={Styles.fuseFloatingButton}
-          onPress={toggleFuseModalVisibility}
-        >
-          <MaterialCommunityIcon name='merge' color={'white'} size={32} />
-        </Pressable>
+        {loomie.is_busy == false && (
+          <Pressable
+            style={Styles.fuseFloatingButton}
+            onPress={toggleFuseModalVisibility}
+          >
+            <MaterialCommunityIcon name='merge' color={'white'} size={32} />
+          </Pressable>
+        )}
         <View style={Styles.scenario}>
           <Loomie3DModelPreview serial={loomie.serial} color={typeColor} />
         </View>

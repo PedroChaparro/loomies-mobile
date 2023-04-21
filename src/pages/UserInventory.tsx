@@ -4,7 +4,7 @@ import { EmptyMessage } from '@src/components/EmptyMessage';
 import { ItemGrid } from '@src/components/ItemsGrid/ItemsGrid';
 import { getItemsService } from '@src/services/user.services';
 import { ItemGridSkeleton } from '@src/skeletons/ItemsGrid/ItemsGridSkeleton';
-import { TItem, TLoombal, TInventoryItem } from '@src/types/types';
+import { TItem, TLoomball, TInventoryItem } from '@src/types/types';
 import React, { useEffect, useState } from 'react';
 
 interface IProps {
@@ -15,7 +15,7 @@ interface IProps {
 export const UserInventory = ({ navigation }: IProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [items, setItems] = useState<TItem[]>([]);
-  const [loomballs, setLoomballs] = useState<TLoombal[]>([]);
+  const [loomballs, setLoomballs] = useState<TLoomball[]>([]);
   const [inventory, setInventory] = useState<TInventoryItem[]>([]);
 
   // Function to redirect to the map view in case the user doesn't have any loomies

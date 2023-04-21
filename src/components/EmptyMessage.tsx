@@ -56,6 +56,7 @@ const Styles = StyleSheet.create({
     // Add a separation between the dots of the dotted border
   },
   boxText: {
-    color: '#5C5C5C'
+    color: '#5C5C5C',
+    textAlign: 'center'
   }
 });

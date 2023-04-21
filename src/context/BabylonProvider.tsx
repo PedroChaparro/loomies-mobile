@@ -7,27 +7,26 @@ import React, { createContext, useEffect, useState, ReactNode } from 'react';
 import * as Babylon from '@babylonjs/core';
 import { useEngineRenderLoop } from '@src/hooks/useEngineRenderLoop';
 import { useEngine } from '@babylonjs/react-native';
+import { ArcRotateCamera } from '@babylonjs/core';
 
 export const enum APP_SCENE {
-  // eslint-disable-next-line no-unused-vars
   NONE,
-  // eslint-disable-next-line no-unused-vars
   MAP,
-  // eslint-disable-next-line no-unused-vars
-  DETAILS
+  DETAILS,
+  CAPTURE
 }
 
-interface iBabylonProvider {
+export interface iBabylonProvider {
   engine: Babylon.Engine | undefined;
   sceneMap: Babylon.Scene | undefined;
   sceneDetails: Babylon.Scene | undefined;
+  sceneCapture: Babylon.Scene | undefined;
 
   cameraMap: Babylon.Camera | undefined;
   cameraDetails: Babylon.Camera | undefined;
+  cameraCapture: Babylon.Camera | undefined;
 
-  showSceneNone: () => void;
-  showSceneMap: () => void;
-  showSceneDetails: () => void;
+  showScene: (_scene: APP_SCENE) => void;
   getCurrentScene: () => APP_SCENE;
 }
 
@@ -35,17 +34,13 @@ export const BabylonContext = createContext<iBabylonProvider>({
   engine: undefined,
   sceneMap: undefined,
   sceneDetails: undefined,
+  sceneCapture: undefined,
 
   cameraMap: undefined,
   cameraDetails: undefined,
+  cameraCapture: undefined,
 
-  showSceneNone: () => {
-    return;
-  },
-  showSceneMap: () => {
-    return;
-  },
-  showSceneDetails: () => {
+  showScene: (_scene: APP_SCENE) => {
     return;
   },
   getCurrentScene: () => APP_SCENE.NONE
@@ -58,31 +53,92 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
   const engine = useEngine();
   const [sceneMap, setSceneMap] = useState<Babylon.Scene>();
   const [sceneDetails, setSceneDetails] = useState<Babylon.Scene>();
+  const [sceneCapture, setSceneCapture] = useState<Babylon.Scene>();
   const [currentScene, setCurrentScene] = useState<APP_SCENE>(APP_SCENE.MAP);
 
   const [cameraMap, setCameraMap] = useState<Babylon.Camera>();
   const [cameraDetails, setCameraDetails] = useState<Babylon.Camera>();
+  const [cameraCapture, setCameraCapture] = useState<Babylon.Camera>();
 
-  const showSceneNone = () => {
+  const showScene = (scene: APP_SCENE) => {
+    switch (scene) {
+      case APP_SCENE.NONE:
+        showSceneNone();
+        break;
+      case APP_SCENE.MAP:
+        showSceneMap();
+        break;
+      case APP_SCENE.DETAILS:
+        showSceneDetails();
+        break;
+      case APP_SCENE.CAPTURE:
+        showSceneCapture();
+        break;
+    }
+  };
+
+  const showSceneNone = async () => {
+    clearScene(sceneDetails);
+    clearScene(sceneCapture);
+    stopCameras();
     setCurrentScene(APP_SCENE.NONE);
-    clearSceneDetails();
   };
 
-  const showSceneMap = () => {
+  const showSceneMap = async () => {
+    await delay(500);
     setCurrentScene(APP_SCENE.MAP);
+    stopCameras();
   };
 
-  const showSceneDetails = () => {
-    clearSceneDetails();
+  const showSceneDetails = async () => {
+    await delay(500);
     setCurrentScene(APP_SCENE.DETAILS);
+    stopCameras();
   };
 
-  const clearSceneDetails = () => {
-    if (!sceneDetails) return;
+  const showSceneCapture = async () => {
+    await delay(500);
+    setCurrentScene(APP_SCENE.CAPTURE);
+    stopCameras();
+  };
+
+  const clearScene = (scene: Babylon.Scene | undefined) => {
+    if (!scene) return;
+    console.log(`Info: Disposing scene ${scene.metadata.name}`);
 
     // dispose resources
-    sceneDetails.meshes.forEach((mesh) => {
-      mesh.dispose();
+    for (let i = 0; i < 10; i++) {
+      scene.meshes.forEach((mesh) => {
+        console.log(`Info: Disposing (try ${i}) "${mesh.name}"`);
+        mesh.dispose();
+      });
+      if (!scene.meshes.length) break;
+    }
+  };
+
+  const stopCameras = () => {
+    if (!cameraMap) return;
+    if (!cameraDetails) return;
+    if (!cameraCapture) return;
+
+    // reset transforms
+
+    [cameraDetails, cameraCapture].forEach((cameraOri) => {
+      const camera = cameraOri as ArcRotateCamera;
+      camera.position = new Babylon.Vector3(0, 0, 0);
+      camera.rotation = new Babylon.Vector3(0, 0, 0);
+    });
+
+    // stop movement
+
+    [cameraMap, cameraDetails, cameraCapture].forEach((cameraOri) => {
+      const camera = cameraOri as ArcRotateCamera;
+      camera.cameraRotation = new Babylon.Vector2(0, 0);
+      camera.inertialAlphaOffset = 0;
+      camera.inertialBetaOffset = 0;
+      camera.inertialPanningX = 0;
+      camera.inertialPanningY = 0;
+      camera.inertialRadiusOffset = 0;
     });
   };
 
@@ -97,13 +153,15 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
 
     // create scenes
 
-    const sceneDetails = new Babylon.Scene(engine);
     const sceneMap = new Babylon.Scene(engine);
+    const sceneDetails = new Babylon.Scene(engine);
+    const sceneCapture = new Babylon.Scene(engine);
 
     // metadata
 
     sceneMap.metadata = { name: 'SceneMap' };
     sceneDetails.metadata = { name: 'SceneDetails' };
+    sceneCapture.metadata = { name: 'SceneCapture' };
 
     // cameras
 
@@ -113,7 +171,10 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
     sceneDetails.createDefaultCamera(true, true, true);
     if (sceneDetails.activeCamera) setCameraDetails(sceneDetails.activeCamera);
 
-    // scene loomie details light
+    sceneCapture.createDefaultCamera(true, true, true);
+    if (sceneCapture.activeCamera) setCameraCapture(sceneCapture.activeCamera);
+
+    // lights (only those that need it)
 
     new Babylon.HemisphericLight(
       'light',
@@ -121,10 +182,17 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
       sceneDetails
     );
 
+    new Babylon.HemisphericLight(
+      'light',
+      new Babylon.Vector3(0, 1, 0),
+      sceneCapture
+    );
+
     // set
 
-    setSceneDetails(sceneDetails);
     setSceneMap(sceneMap);
+    setSceneDetails(sceneDetails);
+    setSceneCapture(sceneCapture);
 
     return () => {
       // dispose engine
@@ -144,6 +212,9 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
       case APP_SCENE.DETAILS:
         if (sceneDetails) sceneDetails.render();
         break;
+      case APP_SCENE.CAPTURE:
+        if (sceneCapture) sceneCapture.render();
+        break;
     }
   });
 
@@ -153,13 +224,13 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
         engine,
         sceneMap,
         sceneDetails,
+        sceneCapture,
 
         cameraMap,
         cameraDetails,
+        cameraCapture,
 
-        showSceneNone,
-        showSceneMap,
-        showSceneDetails,
+        showScene,
         getCurrentScene
       }}
     >
@@ -167,3 +238,8 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
     </BabylonContext.Provider>
   );
 };
+
+const delay = (ms: number): Promise<void> =>
+  new Promise((resolve): void => {
+    setTimeout(resolve, ms);
+  });
