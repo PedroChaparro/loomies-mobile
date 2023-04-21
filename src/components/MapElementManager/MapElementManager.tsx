@@ -43,7 +43,6 @@ const HITBOX_DIAMETER = 1.8;
 export const MapElementManager: React.FC<{
   scene: Babylon.Scene | null;
 }> = (props) => {
-  const { showErrorToast } = useToastAlert();
   const { instantiateModel } = useContext(ModelContext);
   const { setCurrentModalGymId } = useContext(GymsModalContext);
 
@@ -290,9 +289,8 @@ export const MapElementManager: React.FC<{
     if (getCurrentScene() != APP_SCENE.MAP) return;
     if (pointerInfo.type == Babylon.PointerEventTypes.POINTERTAP) {
       if (!userPosition) return;
-      if (!pointerInfo.pickInfo) return;
-      if (!pointerInfo.pickInfo.hit) return;
-      if (!pointerInfo.pickInfo.pickedMesh) return;
+      if (!pointerInfo.pickInfo?.hit) return;
+      if (!pointerInfo.pickInfo?.pickedMesh) return;
 
       const meshName = pointerInfo.pickInfo.pickedMesh.name;
       console.log('Info: Touched', meshName);
@@ -326,7 +324,7 @@ export const MapElementManager: React.FC<{
           // Set the information for the gym modal
           setCurrentModalGymId(gym.id);
         } else {
-          showErrorToast('You are too far from the gym');
+          showInfoToast('You are too far away from this gym');
         }
       }
     }
