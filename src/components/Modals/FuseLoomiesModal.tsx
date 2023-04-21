@@ -77,12 +77,10 @@ export const FuseLoomiesModal = ({
     if (error) {
       showErrorToast(
         response['message'] ||
-          'There was an error merging your loomies, please try again later'
+          'There was an error merging your Loomies, please try again later'
       );
     } else {
-      showSuccessToast(
-        response['message'] || 'Your loomies was merging successfully'
-      );
+      showSuccessToast('Your Loomies were merged successfully');
       navigate('Application', { screen: 'LoomieTeamView' });
     }
   };
