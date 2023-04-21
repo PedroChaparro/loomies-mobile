@@ -1,4 +1,5 @@
-import { GAME_MIN_REQUIRED_EXPERIENCE, GAME_EXPERIENCE_FACTOR } from '@env';
+import { CONFIG } from '@src/services/config.services';
+const { GAME_MIN_REQUIRED_EXPERIENCE, GAME_EXPERIENCE_FACTOR } = CONFIG;
 import { ImageSourcePropType } from 'react-native';
 
 export const colors: {
@@ -54,7 +55,8 @@ export const images: {
 
 export function getRequiredExperienceFromLevel(level: number): number {
   return (
-    Math.log10(level) * GAME_EXPERIENCE_FACTOR + GAME_MIN_REQUIRED_EXPERIENCE
+    Math.log10(level) * Number(GAME_EXPERIENCE_FACTOR) +
+    Number(GAME_MIN_REQUIRED_EXPERIENCE)
   );
 }
 
