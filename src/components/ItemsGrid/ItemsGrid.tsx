@@ -7,9 +7,10 @@ import { ItemDetailsModal } from '../Modals/ItemDetailsModal';
 interface IProps {
   items: Array<TItem>;
   inventory: Array<TInventoryItem>;
+  refresh: () => void;
 }
 
-export const ItemGrid = ({ inventory, items }: IProps) => {
+export const ItemGrid = ({ inventory, items, refresh }: IProps) => {
   const [itemModalVisible, setItemModalVisible] = useState(true);
   const [selectedItem, setSelectedItem] = useState<TItem | null>(null);
 
@@ -20,6 +21,8 @@ export const ItemGrid = ({ inventory, items }: IProps) => {
   const handleItemPress = (item: TInventoryItem) => {
     // Find the item by the id and show the information
     const clickedItem = items.find((i) => i._id === item._id);
+
+    console.log(inventory);
 
     if (clickedItem) {
       setSelectedItem(clickedItem);
@@ -34,9 +37,11 @@ export const ItemGrid = ({ inventory, items }: IProps) => {
           isVisible={itemModalVisible}
           toggleVisibility={toggleItemModalVisibility}
           item={selectedItem}
+          refresh={refresh}
         />
       )}
       <FlatList
+        extraData={inventory}
         data={inventory}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (

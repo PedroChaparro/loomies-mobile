@@ -1,29 +1,43 @@
 import { TItem } from '@src/types/types';
 import { images } from '@src/utils/utils';
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { CustomButton } from '../CustomButton';
+import { UseItemOutCombatModal } from './UseItemOutCombat';
 
 interface IProps {
   isVisible: boolean;
   toggleVisibility: () => void;
   item: TItem;
+  refresh: () => void;
 }
 
 export const ItemDetailsModal = ({
   isVisible,
   toggleVisibility,
-  item
+  item,
+  refresh
 }: IProps) => {
   const itemSerial = item.serial.toString().padStart(3, '0');
+  const [showUseItemOutCombatModal, setShowUseItemOutCombatModal] =
+    useState(false);
 
-  const handleUseNow = () => {
-    console.log('TODO: Use the item...');
+  const toggleUseItemOutCombatModalVisibility = () => {
+    setShowUseItemOutCombatModal(!showUseItemOutCombatModal);
+    refresh();
   };
 
   return (
     <Modal isVisible={isVisible} onBackdropPress={toggleVisibility}>
+      {showUseItemOutCombatModal && (
+        <UseItemOutCombatModal
+          isVisible={showUseItemOutCombatModal}
+          selectedItem={item}
+          toggleVisibilityCallback={toggleUseItemOutCombatModalVisibility}
+          closeModalItem={toggleVisibility}
+        />
+      )}
       <View style={Styles.container}>
         <View style={Styles.background}>
           <View style={Styles.cardImageBg} />
@@ -46,7 +60,7 @@ export const ItemDetailsModal = ({
             <CustomButton
               title='Use now'
               type='primary'
-              callback={handleUseNow}
+              callback={toggleUseItemOutCombatModalVisibility}
             />
           )}
         </View>

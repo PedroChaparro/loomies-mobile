@@ -15,8 +15,12 @@ interface IProps {
 export const UserInventory = ({ navigation }: IProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [items, setItems] = useState<TItem[]>([]);
-  const [loomballs, setLoomballs] = useState<TLoomball[]>([]);
   const [inventory, setInventory] = useState<TInventoryItem[]>([]);
+  const [refresh, setRefresh] = useState(true);
+
+  const refreshPage = () => {
+    setRefresh(!refresh);
+  };
 
   // Function to redirect to the map view in case the user doesn't have any loomies
   const goToMap = () => {
@@ -27,27 +31,19 @@ export const UserInventory = ({ navigation }: IProps) => {
     const [response, error] = await getItemsService();
     if (error) return;
     setItems(response.items);
-    setLoomballs(response.loomballs);
-    setLoading(false);
-  };
 
-  useEffect(() => {
-    getInventory();
-  }, []);
+    const responseItems: TItem[] = response.items;
+    const responseLoomballs: TLoomball[] = response.loomballs;
 
-  useEffect(() => {
-    if (loading) return;
-
-    // Get the shared properties from the items and loomballs
-    const inventory: TInventoryItem[] = [
-      ...items.map((item) => ({
+    const mergeInventory: TInventoryItem[] = [
+      ...responseItems.map((item) => ({
         _id: item._id,
         type: 'item',
         serial: item.serial,
         name: item.name,
         quantity: item.quantity
       })),
-      ...loomballs.map((loomball) => ({
+      ...responseLoomballs.map((loomball) => ({
         _id: loomball._id,
         type: 'loomball',
         serial: loomball.serial,
@@ -56,8 +52,14 @@ export const UserInventory = ({ navigation }: IProps) => {
       }))
     ];
 
-    setInventory(inventory);
-  }, [loading]);
+    setInventory(mergeInventory);
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getInventory();
+  }, [refresh]);
 
   if (loading) return <ItemGridSkeleton />;
 
@@ -73,7 +75,7 @@ export const UserInventory = ({ navigation }: IProps) => {
 
   return (
     <Container>
-      <ItemGrid inventory={inventory} items={items} />
+      <ItemGrid inventory={inventory} items={items} refresh={refreshPage} />
     </Container>
   );
 };

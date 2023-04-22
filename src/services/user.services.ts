@@ -270,6 +270,7 @@ export const putLoomieTeam = async (
   }
 };
 
+//Call the endpoint to merge two loomies
 export const fuseLoomies = async (
   loomie1: string,
   loomie2: string,
@@ -301,6 +302,48 @@ export const fuseLoomies = async (
     ) {
       await refreshRequest();
       return await fuseLoomies(loomie1, loomie2, 2);
+    }
+
+    if (Axios.isAxiosError(error)) {
+      return [error.response?.data, true];
+    }
+
+    return [null, true];
+  }
+};
+
+//Call the endpoint to use an item out of combat
+export const useItemOutCombat = async (
+  itemId: string,
+  loomiId: string,
+  callNumber = 1
+): Promise<[any, boolean]> => {
+  try {
+    const [accessToken, error] = await getStorageData('accessToken');
+    if (error || !accessToken) return [null, true];
+
+    const response = await Axios.post(
+      `${API_URL}/items/use`,
+      {
+        item_id: itemId,
+        loomie_id: loomiId
+      },
+      {
+        headers: {
+          'Access-Token': accessToken
+        }
+      }
+    );
+    return [response.data, false];
+  } catch (error) {
+    // Return the custom error message if exists
+    if (
+      Axios.isAxiosError(error) &&
+      error.response?.status === 401 &&
+      callNumber === 1
+    ) {
+      await refreshRequest();
+      return await useItemOutCombat(itemId, loomiId, 2);
     }
 
     if (Axios.isAxiosError(error)) {

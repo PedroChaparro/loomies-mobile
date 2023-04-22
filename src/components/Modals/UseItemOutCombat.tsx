@@ -1,31 +1,36 @@
-import { getLoomiesRequest, fuseLoomies } from '@src/services/user.services';
-import { TCaughtLoomieToRender, TCaughtLoomies } from '@src/types/types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
-import { LoomiesGrid } from '../CaughtLoomiesGrid/LoomiesGrid';
 import { CustomButton } from '../CustomButton';
-import { useToastAlert } from '@src/hooks/useToastAlert';
-import { navigate } from '@src/navigation/RootNavigation';
+import { TCaughtLoomieToRender, TCaughtLoomies, TItem } from '@src/types/types';
+import {
+  getLoomiesRequest,
+  useItemOutCombat
+} from '@src/services/user.services';
 import { EmptyMessage } from '../EmptyMessage';
+import { LoomiesGrid } from '../CaughtLoomiesGrid/LoomiesGrid';
+import { navigate } from '@src/navigation/RootNavigation';
+import { useToastAlert } from '@src/hooks/useToastAlert';
 
 interface IProps {
-  selectedLoomie: TCaughtLoomieToRender;
+  selectedItem: TItem;
   isVisible: boolean;
   toggleVisibilityCallback: () => void;
+  closeModalItem: () => void;
 }
 
-export const FuseLoomiesModal = ({
-  selectedLoomie,
+export const UseItemOutCombatModal = ({
+  selectedItem,
   isVisible,
-  toggleVisibilityCallback
+  toggleVisibilityCallback,
+  closeModalItem
 }: IProps) => {
   const { showErrorToast, showSuccessToast } = useToastAlert();
   const [team, setTeam] = useState<string>();
-  const [fuseLoomie, setFuseLoomie] = useState<string>('');
+  const [useInLoomie, setUseInLoomie] = useState<string>('');
   const [loomies, setLoomies] = useState<TCaughtLoomieToRender[]>();
 
-  // Request to obtain the loomies
+  //Get loomies for use the item
   const fetchLoomies = async () => {
     const [response, err] = await getLoomiesRequest();
     if (err) return;
@@ -41,16 +46,12 @@ export const FuseLoomiesModal = ({
       };
     });
 
-    // Filter loomies to show only the ones that can be merged
-    const fuseCandidates = loomiesWithTeamProperty.filter((loomie) => {
-      return (
-        loomie._id !== selectedLoomie._id &&
-        loomie.serial === selectedLoomie.serial &&
-        !loomie.is_busy
-      );
+    // Filter the loomies to show only the ones that are not busy
+    const notBusy = loomiesWithTeamProperty.filter((loomie) => {
+      return !loomie.is_busy;
     });
 
-    setLoomies(fuseCandidates);
+    setLoomies(notBusy);
   };
 
   useEffect(() => {
@@ -62,34 +63,34 @@ export const FuseLoomiesModal = ({
     const loomie = loomies?.find((loomie) => loomie._id === loomieId);
     if (loomie?.is_busy) return;
 
-    setFuseLoomie(loomieId);
+    setUseInLoomie(loomieId);
     setTeam(loomieId);
-
-    console.log('Loomie pressed: ', loomieId);
   }, []);
 
-  const callfuseLoomies = async () => {
-    if (fuseLoomie !== '') {
-      const [response, error] = await fuseLoomies(
-        selectedLoomie._id,
-        fuseLoomie as string
+  const goToMap = () => {
+    toggleVisibilityCallback();
+    navigate('Map', null);
+  };
+
+  //Call the funtion useItemOutCombat
+  const callUseItemOutCombat = async () => {
+    if (useInLoomie !== '') {
+      const [response, error] = await useItemOutCombat(
+        selectedItem._id,
+        useInLoomie as string
       );
       toggleVisibilityCallback;
       if (error) {
         showErrorToast(
           response['message'] ||
-            'There was an error merging your Loomies, please try again later'
+            'There was an error using the item, please try again later'
         );
       } else {
-        showSuccessToast('Your Loomies were merged successfully');
-        navigate('Application', { screen: 'LoomieTeamView' });
+        showSuccessToast('The item was used successfully');
+        toggleVisibilityCallback();
+        closeModalItem();
       }
     }
-  };
-
-  const goToMap = () => {
-    toggleVisibilityCallback();
-    navigate('Map', null);
   };
 
   if (!loomies) return null;
@@ -101,11 +102,11 @@ export const FuseLoomiesModal = ({
       onBackdropPress={toggleVisibilityCallback}
       style={Styles.modal}
     >
-      <Text style={Styles.modalTitle}>Merge Loomies</Text>
+      <Text style={Styles.modalTitle}>Use {selectedItem.name} in:</Text>
       <View style={{ flex: 1, marginVertical: 8 }}>
         {loomies.length === 0 ? (
           <EmptyMessage
-            text={`You have to catch another "${selectedLoomie.name}" to merge it`}
+            text={`You don't have any Loomies yet to use the item`}
             showButton={true}
             buttonText='Catch Loomies'
             buttonCallback={goToMap}
@@ -122,9 +123,9 @@ export const FuseLoomiesModal = ({
       {loomies.length === 0 ? null : (
         <View style={Styles.containerButton}>
           <CustomButton
-            title='Merge'
+            title='Use Item'
             type='primary'
-            callback={callfuseLoomies}
+            callback={callUseItemOutCombat}
           />
         </View>
       )}
