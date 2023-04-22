@@ -62,7 +62,6 @@ export const LoomieCard = ({
               ...Styles.background,
               ...renderBorder(),
               backgroundColor: typeColor,
-              elevation: loomie.is_in_team ? 6 : 2
             }}
           >
             {/* Show an sword if the loomie is in the loomie team of the user */}
@@ -128,7 +127,8 @@ const Styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     shadowColor: '#7c7c7c',
-    borderWidth: 3
+    borderWidth: 3, 
+    elevation: 4,
   },
   floatingIconContainer: {
     position: 'absolute',
@@ -178,6 +178,7 @@ const Styles = StyleSheet.create({
     color: '#5C5C5C',
     // 40pt equals 2 lines with the current font size
     height: 40,
-    fontWeight: '500'
+    fontWeight: '500',
+    marginTop: 2
   }
 });
