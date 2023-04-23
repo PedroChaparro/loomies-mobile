@@ -1,0 +1,50 @@
+export enum TYPE {
+  start,
+  ERROR,
+  COMBAT_TIMEOUT,
+  GYM_ATTACK_CANDIDATE,
+  GYM_ATTACK_DODGED,
+  USER_LOOMIE_WEAKENED,
+  UPDATE_PLAYER_LOOMIE,
+  UPDATE_USER_LOOMIE_HP,
+  USER_HAS_LOST,
+  USER_ATTACK_DODGED,
+  GYM_LOOMIE_WEAKENED,
+  UPDATE_GYM_LOOMIE,
+  UPDATE_GYM_LOOMIE_HP,
+  USER_HAS_WON
+}
+
+export interface iCombatMessage {
+  type: string;
+  message: string;
+  payload?: iPayload_START | iPayload_UPDATE_USER_LOOMIE_HP;
+}
+
+export interface iPayload_START {
+  gym: iLoomie;
+  player: iLoomie;
+}
+
+export interface iLoomie {
+  _id: string;
+  attack: number;
+  boosted_attack: number;
+  boosted_defense: number;
+  boosted_hp: number;
+  defense: number;
+  experience: number;
+  hp: number;
+  is_busy: boolean;
+  level: number;
+  max_hp: number;
+  name: string;
+  rarity: string;
+  serial: number;
+  types: string[];
+}
+
+export interface iPayload_UPDATE_USER_LOOMIE_HP {
+  hp: number;
+  loomie_id: string;
+}
