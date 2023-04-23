@@ -10,10 +10,15 @@ import { TGymInfo, TGymLoomieProtector, TReward } from '../../../types/types';
 import { getPosition } from '@src/services/geolocation.services';
 import { requestRewards } from '@src/services/map.services';
 import { useToastAlert } from '@src/hooks/useToastAlert';
+import { navigate } from '@src/navigation/RootNavigation';
+import { getCombatToken } from '@src/components/Combat/combatUtils';
+import { UserPositionContext } from '@src/context/UserPositionProvider';
+import { iCombatViewParams } from '@src/pages/CombatView';
 
 export const ModalGym = () => {
   const { isGymModalOpen, currentModalGymId, toggleGymModalVisibility } =
     useContext(GymsModalContext);
+  const { userPosition } = useContext(UserPositionContext);
 
   const { showErrorToast } = useToastAlert();
   const [rewardsModalVisible, setRewardsModalVisible] = useState(false);
@@ -52,6 +57,24 @@ export const ModalGym = () => {
         setReward(reward || []);
       }
     }
+  };
+
+  // start combat
+  const goToCombat = async () => {
+    if (!gymInfo) return;
+    if (!userPosition) return;
+
+    // get token
+
+    const combatToken = await getCombatToken(userPosition, gymInfo._id);
+    if (!combatToken) return;
+
+    const params: iCombatViewParams = {
+      gym: gymInfo,
+      combatToken: combatToken
+    }
+
+    navigate('Combat', params);
   };
 
   // Open the second modal if the user has claimed the rewards successfully
@@ -132,6 +155,7 @@ export const ModalGym = () => {
                 type='primary'
                 callback={() => {
                   console.log('Challenge');
+                  goToCombat();
                 }}
               />
             </View>
