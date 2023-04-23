@@ -7,7 +7,14 @@ import { CombatUI } from '@src/components/Combat/CombatUI';
 import { navigate } from '@src/navigation/RootNavigation';
 import { TGymInfo } from '@src/types/types';
 import { CONFIG } from '@src/services/config.services';
-import { iCombatMessage, iPayload_START, iPayload_UPDATE_USER_LOOMIE_HP, iLoomie, TYPE } from '@src/types/combatInterfaces';
+import {
+  iCombatMessage,
+  iPayload_START,
+  iPayload_UPDATE_USER_LOOMIE_HP,
+  iLoomie,
+  TYPE,
+  iPayload_UPDATE_PLAYER_LOOMIE
+} from '@src/types/combatInterfaces';
 const { WS_URL } = CONFIG;
 
 interface iPayload {
@@ -28,7 +35,6 @@ interface iCombatViewProps {
 }
 
 export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
-
   // web socket
   const url = `${WS_URL}/combat?token=${route.params.combatToken}`;
   const { sendMessage, lastMessage, readyState } = useWebSocket(url);
@@ -39,14 +45,13 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
 
   useEffect(() => {
     // make sure we have workable parameters
-    if (!route.params.gym || !route.params.combatToken) navigate('Map');
+    if (!route.params.gym || !route.params.combatToken) navigate('Map', null);
     console.log(url);
   }, []);
 
   // receive message
 
   useEffect(() => {
-
     if (!lastMessage?.data) return;
 
     // cast check
@@ -70,47 +75,99 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
     const messageType = data.type as keyof typeof TYPE;
     switch (TYPE[messageType]) {
 
-      case TYPE.start:{
+      // initial state
 
-        if ((data.payload as iPayload_START) === undefined) return;
-        const payload = data.payload as iPayload_START;
+      case TYPE.start:
+        {
+          if ((data.payload as iPayload_START) === undefined) return;
+          const payload = data.payload as iPayload_START;
 
-        console.log("start start start");
-        console.log(payload.gym);
+          console.log('start start start');
+          console.log(payload.gym);
 
-        setLoomieGym(payload.gym);
-        setLoomiePlayer(payload.player);
-      }
-      break;
+          setLoomieGym({ ...payload.gym, hp: payload.gym.boosted_hp });
+          setLoomiePlayer({ ...payload.player, hp: payload.player.boosted_hp });
+        }
+        break;
 
-      case TYPE.UPDATE_USER_LOOMIE_HP:{
-        if ((data.payload as iPayload_UPDATE_USER_LOOMIE_HP) === undefined) return;
-        const payload = data.payload as iPayload_UPDATE_USER_LOOMIE_HP;
+      // update user hp
 
-        console.log(payload.hp);
+      case TYPE.UPDATE_USER_LOOMIE_HP:
+        {
+          if ((data.payload as iPayload_UPDATE_USER_LOOMIE_HP) === undefined)
+            return;
+          const payload = data.payload as iPayload_UPDATE_USER_LOOMIE_HP;
 
-        setLoomiePlayer((loomie) => {
-          if (loomie) loomie.hp = payload.hp;
-          return loomie;
-        });
-      }
-      break;
+          console.log(payload.hp);
+
+          setLoomiePlayer((loomie) => {
+            if (loomie) {
+              loomie.hp = payload.hp;
+              return { ...loomie, hp: payload.hp };
+            }
+          });
+        }
+        break;
+
+      // update user loomie
+
+      case TYPE.UPDATE_PLAYER_LOOMIE:
+        {
+          if ((data.payload as iPayload_UPDATE_PLAYER_LOOMIE) === undefined)
+            return;
+          const payload = data.payload as iPayload_UPDATE_PLAYER_LOOMIE;
+
+          setLoomiePlayer({ ...payload.loomie, hp: payload.loomie.boosted_hp });
+        }
+        break;
+
+      // update gym hp
+
+      case TYPE.UPDATE_GYM_LOOMIE_HP:
+        {
+          if ((data.payload as iPayload_UPDATE_USER_LOOMIE_HP) === undefined)
+            return;
+          const payload = data.payload as iPayload_UPDATE_USER_LOOMIE_HP;
+
+          setLoomieGym((loomie) => {
+            if (loomie) {
+              loomie.hp = payload.hp;
+              return { ...loomie, hp: payload.hp };
+            }
+          });
+        }
+        break;
+
+      // update gym loomie
+
+      case TYPE.UPDATE_GYM_LOOMIE:
+        {
+          if ((data.payload as iPayload_UPDATE_PLAYER_LOOMIE) === undefined)
+            return;
+          const payload = data.payload as iPayload_UPDATE_PLAYER_LOOMIE;
+
+          setLoomieGym({ ...payload.loomie, hp: payload.loomie.boosted_hp });
+        }
+        break;
 
       default:
         console.log(`Warn: Message not recognized ${data.type}`);
         break;
     }
-
   }, [lastMessage]);
 
   const attack = () => {
-  }
+    const message = JSON.stringify({
+      type: TYPE[TYPE.USER_ATTACK] as string
+    });
 
+    console.log(message);
 
+    sendMessage(message, false);
+  };
 
   return (
     <>
-
       {/* 3D scene */}
 
       <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
@@ -124,7 +181,15 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
 
       {/* UI */}
 
-      <CombatUI gym={route.params.gym} loomiePlayer={loomiePlayer} loomieGym={loomieGym}/>
+      {loomiePlayer && loomieGym && (
+        <CombatUI
+          gym={route.params.gym}
+          loomiePlayer={loomiePlayer}
+          loomieGym={loomieGym}
+          inputAttack={attack}
+          inputDodge={attack}
+        />
+      )}
 
       <Text>{route.params.gym.name}</Text>
     </>

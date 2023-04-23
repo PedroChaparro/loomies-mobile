@@ -12,9 +12,11 @@ interface iPropsCombatUI {
   gym: TGymInfo;
   loomiePlayer: iLoomie;
   loomieGym: iLoomie;
+  inputAttack: () => void;
+  inputDodge: (_direction: boolean) => void;
 }
 
-export const CombatUI = ({gym, loomiePlayer, loomieGym}: iPropsCombatUI) => {
+export const CombatUI = ({gym, loomiePlayer, loomieGym, inputAttack, inputDodge}: iPropsCombatUI) => {
   return (
     <View style={styles.container}>
 
@@ -24,12 +26,19 @@ export const CombatUI = ({gym, loomiePlayer, loomieGym}: iPropsCombatUI) => {
       <Text style={styles.title}>{gym.name}</Text>
       <Text style={styles.subtitle}>{gym.owner ? gym.owner : 'Unclaimed'}</Text>
 
+      { /* inputs */ }
+
+      <View style={styles.middle}>
+        <Pressable style={{...styles.inputDodge, height: '100%'}} onPress={() => inputDodge(false)}>
+        </Pressable>
+        <Pressable style={{flexGrow: 1, backgroundColor: 'red'}} onPress={inputAttack}>
+        </Pressable>
+        <Pressable style={{...styles.inputDodge, height: '100%'}} onPress={() => inputDodge(true)}>
+        </Pressable>
+      </View>
+
       <View
-        style={{
-          ...styles.stack,
-          top: styles?.circle?.top + styles?.circle?.height + 7,
-          position: 'absolute'
-        }}
+        style={styles.top}
       >
         {/* enemy loomie info */}
 
@@ -69,6 +78,7 @@ export const CombatUI = ({gym, loomiePlayer, loomieGym}: iPropsCombatUI) => {
           </View>
         </View>
       </View>
+
 
       <View style={styles.bottom}>
 

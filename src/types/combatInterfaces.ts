@@ -1,24 +1,38 @@
 export enum TYPE {
+  // server -> client
+
   start,
+  UPDATE_PLAYER_LOOMIE,
+  UPDATE_USER_LOOMIE_HP,
+  UPDATE_GYM_LOOMIE,
+  UPDATE_GYM_LOOMIE_HP,
+
   ERROR,
   COMBAT_TIMEOUT,
   GYM_ATTACK_CANDIDATE,
   GYM_ATTACK_DODGED,
   USER_LOOMIE_WEAKENED,
-  UPDATE_PLAYER_LOOMIE,
-  UPDATE_USER_LOOMIE_HP,
   USER_HAS_LOST,
   USER_ATTACK_DODGED,
   GYM_LOOMIE_WEAKENED,
-  UPDATE_GYM_LOOMIE,
-  UPDATE_GYM_LOOMIE_HP,
-  USER_HAS_WON
+  USER_HAS_WON,
+
+
+  // client -> server
+
+  USER_USE_ITEM,
+  USER_CHANGE_LOOMIE,
+  USER_DODGE,
+  USER_ATTACK
 }
 
 export interface iCombatMessage {
   type: string;
   message: string;
-  payload?: iPayload_START | iPayload_UPDATE_USER_LOOMIE_HP;
+  payload?:
+    | iPayload_START
+    | iPayload_UPDATE_USER_LOOMIE_HP
+    | iPayload_UPDATE_PLAYER_LOOMIE;
 }
 
 export interface iPayload_START {
@@ -47,4 +61,8 @@ export interface iLoomie {
 export interface iPayload_UPDATE_USER_LOOMIE_HP {
   hp: number;
   loomie_id: string;
+}
+
+export interface iPayload_UPDATE_PLAYER_LOOMIE {
+  loomie: iLoomie;
 }

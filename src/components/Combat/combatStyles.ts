@@ -11,6 +11,10 @@ const colors = {
   loomieOFF: '#8D8D8D'
 };
 
+const HEADER_HEIGHT = -160 + 220 + 7;
+const TOP_HEIGHT = 0
+const BOTTOM_HEIGHT = 0
+
 export const styles = StyleSheet.create({
   container: {
     position: 'absolute',
@@ -29,6 +33,8 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '100%'
   },
+
+  // header
 
   circle: {
     height: 220,
@@ -72,7 +78,16 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
 
-  // botom
+  // top
+
+  top: {
+    width: '100%',
+    top: HEADER_HEIGHT,
+    position: 'absolute'
+  },
+  
+
+  // bottom
 
   bottom: {
     // backgroundColor: 'blue',
@@ -214,5 +229,23 @@ export const styles = StyleSheet.create({
 
   loomieOFF: {
     backgroundColor: colors.loomieOFF
+  },
+
+  // middle (inputs)
+
+  middle: {
+    position: 'absolute',
+    top: HEADER_HEIGHT + 110,
+    bottom: HEADER_HEIGHT + 100,
+    flexGrow: 1,
+    width: '100%',
+    backgroundColor: 'green',
+    flexDirection: 'row'
+  },
+
+  inputDodge: {
+    width: '20%',
+    backgroundColor: 'blue',
   }
+
 });
