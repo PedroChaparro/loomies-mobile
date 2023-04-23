@@ -3,14 +3,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { CustomButton } from '../CustomButton';
 import { TCaughtLoomieToRender, TCaughtLoomies, TItem } from '@src/types/types';
-import {
-  getLoomiesRequest,
-  useItemOutCombat
-} from '@src/services/user.services';
 import { EmptyMessage } from '../EmptyMessage';
 import { LoomiesGrid } from '../CaughtLoomiesGrid/LoomiesGrid';
 import { navigate } from '@src/navigation/RootNavigation';
 import { useToastAlert } from '@src/hooks/useToastAlert';
+import { useItemOutCombat } from '@src/services/items.services';
+import { getLoomiesRequest } from '@src/services/loomies.services';
 
 interface IProps {
   selectedItem: TItem;
@@ -102,7 +100,7 @@ export const UseItemOutCombatModal = ({
       onBackdropPress={toggleVisibilityCallback}
       style={Styles.modal}
     >
-      <Text style={Styles.modalTitle}>Use {selectedItem.name} in:</Text>
+      <Text style={Styles.modalTitle}>Apply {selectedItem.name} to:</Text>
       <View style={{ flex: 1, marginVertical: 8 }}>
         {loomies.length === 0 ? (
           <EmptyMessage

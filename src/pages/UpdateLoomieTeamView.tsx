@@ -1,8 +1,8 @@
 import {
   getLoomieTeamService,
-  getLoomiesRequest,
-  putLoomieTeam
-} from '@src/services/user.services';
+  putLoomieTeam,
+  getLoomiesRequest
+} from '@src/services/loomies.services';
 import { TCaughtLoomies, TCaughtLoomieToRender } from '@src/types/types';
 import React, { useEffect, useState } from 'react';
 import { LoomiesGrid } from '@src/components/CaughtLoomiesGrid/LoomiesGrid';
