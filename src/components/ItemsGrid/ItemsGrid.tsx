@@ -22,8 +22,6 @@ export const ItemGrid = ({ inventory, items, refresh }: IProps) => {
     // Find the item by the id and show the information
     const clickedItem = items.find((i) => i._id === item._id);
 
-    console.log(inventory);
-
     if (clickedItem) {
       setSelectedItem(clickedItem);
       toggleItemModalVisibility();
