@@ -25,7 +25,6 @@ export const UseItemOutCombatModal = ({
 }: IProps) => {
   const { showErrorToast, showSuccessToast } = useToastAlert();
   const [targetLoomie, setTargetLoomie] = useState<string>();
-  const [useInLoomie, setUseInLoomie] = useState<string>('');
   const [loomies, setLoomies] = useState<TCaughtLoomieToRender[]>();
 
   //Get loomies for use the item
@@ -61,9 +60,21 @@ export const UseItemOutCombatModal = ({
     const loomie = loomies?.find((loomie) => loomie._id === loomieId);
     if (loomie?.is_busy) return;
 
-    setUseInLoomie(loomieId);
+    // Update the state of the target loomie
     setTargetLoomie(loomieId);
   }, []);
+
+  useEffect(() => {
+    // Update the state of the loomies to mark the selected one
+    setLoomies(
+      loomies?.map((loomie) => {
+        return {
+          ...loomie,
+          is_selected: loomie._id === targetLoomie
+        };
+      })
+    );
+  }, [targetLoomie]);
 
   const goToMap = () => {
     toggleVisibilityCallback();
@@ -72,10 +83,10 @@ export const UseItemOutCombatModal = ({
 
   //Call the funtion useItemOutCombat
   const callUseItemOutCombat = async () => {
-    if (useInLoomie !== '') {
+    if (targetLoomie !== '') {
       const [response, error] = await useItemOutCombat(
         selectedItem._id,
-        useInLoomie as string
+        targetLoomie as string
       );
       toggleVisibilityCallback;
       if (error) {
