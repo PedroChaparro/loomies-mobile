@@ -1,4 +1,4 @@
-import { getLoomiesRequest, fuseLoomies } from '@src/services/user.services';
+import { fuseLoomies, getLoomiesRequest } from '@src/services/loomies.services';
 import { TCaughtLoomieToRender, TCaughtLoomies } from '@src/types/types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
