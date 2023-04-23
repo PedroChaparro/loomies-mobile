@@ -23,7 +23,7 @@ export const ItemDetailsModal = ({
   const [showUseItemOutCombatModal, setShowUseItemOutCombatModal] =
     useState(false);
 
-  const toggleUseItemOutCombatModalVisibility = () => {
+  const toggleLoomiesSelection = () => {
     setShowUseItemOutCombatModal(!showUseItemOutCombatModal);
     refresh();
   };
@@ -34,7 +34,7 @@ export const ItemDetailsModal = ({
         <UseItemOutCombatModal
           isVisible={showUseItemOutCombatModal}
           selectedItem={item}
-          toggleVisibilityCallback={toggleUseItemOutCombatModalVisibility}
+          toggleVisibilityCallback={toggleLoomiesSelection}
           closeModalItem={toggleVisibility}
         />
       )}
@@ -60,7 +60,7 @@ export const ItemDetailsModal = ({
             <CustomButton
               title='Use now'
               type='primary'
-              callback={toggleUseItemOutCombatModalVisibility}
+              callback={toggleLoomiesSelection}
             />
           )}
         </View>
