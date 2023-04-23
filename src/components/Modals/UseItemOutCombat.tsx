@@ -26,7 +26,7 @@ export const UseItemOutCombatModal = ({
   closeModalItem
 }: IProps) => {
   const { showErrorToast, showSuccessToast } = useToastAlert();
-  const [team, setTeam] = useState<string>();
+  const [loomieSelected, setLoomieSelected] = useState<string>();
   const [useInLoomie, setUseInLoomie] = useState<string>('');
   const [loomies, setLoomies] = useState<TCaughtLoomieToRender[]>();
 
@@ -37,8 +37,8 @@ export const UseItemOutCombatModal = ({
 
     const loomies: TCaughtLoomies[] = response.loomies;
 
-    const loomiesWithTeamProperty = loomies.map((loomie) => {
-      const isSelectedLoomie = team === loomie._id ? true : false;
+    const loomieSelectedFilter = loomies.map((loomie) => {
+      const isSelectedLoomie = loomieSelected === loomie._id ? true : false;
 
       return {
         ...loomie,
@@ -47,7 +47,7 @@ export const UseItemOutCombatModal = ({
     });
 
     // Filter the loomies to show only the ones that are not busy
-    const notBusy = loomiesWithTeamProperty.filter((loomie) => {
+    const notBusy = loomieSelectedFilter.filter((loomie) => {
       return !loomie.is_busy;
     });
 
@@ -56,7 +56,7 @@ export const UseItemOutCombatModal = ({
 
   useEffect(() => {
     fetchLoomies();
-  }, [team]);
+  }, [loomieSelected]);
 
   const handleLoomiePress = useCallback((loomieId: string) => {
     // If the loomie is busy, ignore the action
@@ -64,7 +64,7 @@ export const UseItemOutCombatModal = ({
     if (loomie?.is_busy) return;
 
     setUseInLoomie(loomieId);
-    setTeam(loomieId);
+    setLoomieSelected(loomieId);
   }, []);
 
   const goToMap = () => {
