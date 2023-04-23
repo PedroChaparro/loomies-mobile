@@ -34,7 +34,6 @@ def update_version(version):
     )
 
     new_package_json_content = package_json
-    print(new_package_json_content)
 
   with open('package.json', 'w') as file:
     file.write(new_package_json_content)
