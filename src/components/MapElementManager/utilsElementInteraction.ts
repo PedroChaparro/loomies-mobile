@@ -3,8 +3,7 @@ import { navigate } from '@src/navigation/RootNavigation';
 import { iPosition } from '@src/types/mapInterfaces';
 import { Vector2 } from '@babylonjs/core';
 import { requestWildLoomieExists } from '@src/services/map.services';
-import { getLoomballsService } from '@src/services/user.services';
-
+import { getLoomballsService } from '@src/services/items.services';
 import { CONFIG } from '@src/services/config.services';
 const { PLAYER_REACH_RADIUS } = CONFIG;
 

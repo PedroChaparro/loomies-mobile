@@ -2,7 +2,7 @@ import { NavigationProp } from '@react-navigation/native';
 import { Container } from '@src/components/Container';
 import { EmptyMessage } from '@src/components/EmptyMessage';
 import { ItemGrid } from '@src/components/ItemsGrid/ItemsGrid';
-import { getItemsService } from '@src/services/user.services';
+import { getItemsService } from '@src/services/items.services';
 import { ItemGridSkeleton } from '@src/skeletons/ItemsGrid/ItemsGridSkeleton';
 import { TItem, TLoomball, TInventoryItem } from '@src/types/types';
 import React, { useEffect, useState } from 'react';
