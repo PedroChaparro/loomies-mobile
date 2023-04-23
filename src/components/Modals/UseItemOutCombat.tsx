@@ -98,6 +98,7 @@ export const UseItemOutCombatModal = ({
       isVisible={isVisible}
       onBackButtonPress={toggleVisibilityCallback}
       onBackdropPress={toggleVisibilityCallback}
+      backdropOpacity={0}
       style={Styles.modal}
     >
       <Text style={Styles.modalTitle}>Apply {selectedItem.name} to:</Text>
