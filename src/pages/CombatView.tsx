@@ -156,12 +156,22 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
     }
   }, [lastMessage]);
 
-  const attack = () => {
+  const userAttack = () => {
     const message = JSON.stringify({
       type: TYPE[TYPE.USER_ATTACK] as string
     });
 
     console.log(message);
+
+    sendMessage(message, false);
+  };
+
+  const userDodge = (direction: boolean) => {
+    const message = JSON.stringify({
+      type: TYPE[TYPE.USER_DODGE] as string
+    });
+
+    console.log(message, direction);
 
     sendMessage(message, false);
   };
@@ -186,8 +196,8 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           gym={route.params.gym}
           loomiePlayer={loomiePlayer}
           loomieGym={loomieGym}
-          inputAttack={attack}
-          inputDodge={attack}
+          inputAttack={userAttack}
+          inputDodge={userDodge}
         />
       )}
 
