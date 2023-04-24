@@ -235,7 +235,7 @@ export const styles = StyleSheet.create({
 
   middle: {
     position: 'absolute',
-    top: HEADER_HEIGHT + 110,
+    top: HEADER_HEIGHT + 140,
     bottom: HEADER_HEIGHT + 100,
     flexGrow: 1,
     width: '100%',

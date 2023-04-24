@@ -1,5 +1,11 @@
-import React from 'react';
-import { View, Text, Pressable, Image } from 'react-native';
+import React, { useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  Pressable,
+  Animated,
+  GestureResponderEvent
+} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { styles } from './combatStyles';
@@ -7,6 +13,7 @@ import { Gap } from '../Gap';
 import { iLoomie } from '@src/types/combatInterfaces';
 import { TGymInfo } from '@src/types/types';
 import { CombatLoomieInfo } from './CombatLoomieInfo';
+import { iGridPosition } from '@src/context/MapProvider';
 
 interface iPropsCombatUI {
   gym: TGymInfo;
@@ -16,35 +23,107 @@ interface iPropsCombatUI {
   inputDodge: (_direction: boolean) => void;
 }
 
-export const CombatUI = ({gym, loomiePlayer, loomieGym, inputAttack, inputDodge}: iPropsCombatUI) => {
+const GIZMO_SIZE = 30;
+
+export const CombatUI = ({
+  gym,
+  loomiePlayer,
+  loomieGym,
+  inputAttack,
+  inputDodge
+}: iPropsCombatUI) => {
+  const [gizmoOrigin, setGizmoOrigin] = useState<iGridPosition>({ x: 0, y: 0 });
+  const [gizmoIcon, setGizmoIcon] = useState<string>('sword-cross');
+  const gizmoOpacity = useRef(new Animated.Value(0));
+
+  const showGizmo = (origin: iGridPosition, icon: string) => {
+    // reset
+
+    gizmoOpacity.current.setValue(1);
+
+    setGizmoOrigin({
+      x: origin.x - GIZMO_SIZE / 2,
+      y: origin.y - GIZMO_SIZE
+    });
+    setGizmoIcon(icon);
+
+    // start animation
+
+    Animated.parallel([
+      Animated.timing(gizmoOpacity.current, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true
+      })
+    ]).start();
+  };
+
+  const touchAttack = (event: GestureResponderEvent) => {
+    showGizmo(
+      { x: event.nativeEvent.pageX, y: event.nativeEvent.pageY },
+      'sword-cross'
+    );
+    inputAttack();
+  };
+
+  const touchDodge = (event: GestureResponderEvent, direction: boolean) => {
+    showGizmo(
+      { x: event.nativeEvent.pageX, y: event.nativeEvent.pageY },
+      'shield-half-full'
+    );
+    inputDodge(direction);
+  };
+
   return (
     <View style={styles.container}>
-
       {/* header */}
 
       <View style={styles.circle}></View>
       <Text style={styles.title}>{gym.name}</Text>
       <Text style={styles.subtitle}>{gym.owner ? gym.owner : 'Unclaimed'}</Text>
 
-      { /* inputs */ }
+      {/* inputs */}
 
       <View style={styles.middle}>
-        <Pressable style={{...styles.inputDodge, height: '100%'}} onPress={() => inputDodge(false)}>
-        </Pressable>
-        <Pressable style={{flexGrow: 1, backgroundColor: 'red'}} onPress={inputAttack}>
-        </Pressable>
-        <Pressable style={{...styles.inputDodge, height: '100%'}} onPress={() => inputDodge(true)}>
-        </Pressable>
+        <Pressable
+          style={{ ...styles.inputDodge, height: '100%' }}
+          onPress={(evt) => touchDodge(evt, false)}
+        ></Pressable>
+        <Pressable
+          style={{ flexGrow: 1, backgroundColor: 'red' }}
+          onPress={touchAttack}
+        ></Pressable>
+        <Pressable
+          style={{ ...styles.inputDodge, height: '100%' }}
+          onPress={(evt) => touchDodge(evt, true)}
+        ></Pressable>
       </View>
 
+      {/* input gizmo */}
+
       <View
-        style={styles.top}
+        style={{
+          position: 'absolute',
+          left: gizmoOrigin.x,
+          top: gizmoOrigin.y
+        }}
       >
+        <Animated.View style={{ opacity: gizmoOpacity.current }}
+            pointerEvents="none">
+          <MaterialCommunityIcons
+            size={GIZMO_SIZE}
+            name={gizmoIcon}
+            color={'white'}
+          />
+        </Animated.View>
+      </View>
+
+      <View style={styles.top}>
         {/* enemy loomie info */}
 
         <View style={{ ...styles.stack, height: 72 }}>
           <View style={{ ...styles.alignLeft, width: '70%' }}>
-            { loomieGym && <CombatLoomieInfo loomie={loomieGym}/> }
+            {loomieGym && <CombatLoomieInfo loomie={loomieGym} />}
           </View>
         </View>
 
@@ -55,23 +134,23 @@ export const CombatUI = ({gym, loomiePlayer, loomieGym, inputAttack, inputDodge}
             <View
               style={{ ...styles.loomieON, ...styles.loomieDiamond }}
             ></View>
-            <Gap size={10} direction={'horizontal'}/>
+            <Gap size={10} direction={'horizontal'} />
             <View
               style={{ ...styles.loomieON, ...styles.loomieDiamond }}
             ></View>
-            <Gap size={10} direction={'horizontal'}/>
+            <Gap size={10} direction={'horizontal'} />
             <View
               style={{ ...styles.loomieON, ...styles.loomieDiamond }}
             ></View>
-            <Gap size={10} direction={'horizontal'}/>
+            <Gap size={10} direction={'horizontal'} />
             <View
               style={{ ...styles.loomieActive, ...styles.loomieDiamond }}
             ></View>
-            <Gap size={10} direction={'horizontal'}/>
+            <Gap size={10} direction={'horizontal'} />
             <View
               style={{ ...styles.loomieOFF, ...styles.loomieDiamond }}
             ></View>
-            <Gap size={10} direction={'horizontal'}/>
+            <Gap size={10} direction={'horizontal'} />
             <View
               style={{ ...styles.loomieOFF, ...styles.loomieDiamond }}
             ></View>
@@ -79,14 +158,12 @@ export const CombatUI = ({gym, loomiePlayer, loomieGym, inputAttack, inputDodge}
         </View>
       </View>
 
-
       <View style={styles.bottom}>
-
         {/* user loomie info */}
 
         <View style={{ ...styles.stack, height: 72 }}>
           <View style={{ ...styles.alignRight, width: '70%' }}>
-            { loomiePlayer && <CombatLoomieInfo loomie={loomiePlayer}/> }
+            {loomiePlayer && <CombatLoomieInfo loomie={loomiePlayer} />}
           </View>
         </View>
 
