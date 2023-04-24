@@ -127,7 +127,13 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
               // queue display message
 
               const hpDiff = payload.hp - loomie.hp;
-              if (hpDiff < 0) queueMessage(hpDiff.toString(), false);
+              if (hpDiff < 0)
+                queueMessage(
+                  payload.was_critical
+                    ? `Effective attack! ${hpDiff}`
+                    : `${hpDiff}`,
+                  false
+                );
 
               // update hp
 
@@ -151,7 +157,13 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
               // queue display message
 
               const hpDiff = payload.hp - loomie.hp;
-              if (hpDiff < 0) queueMessage(hpDiff.toString(), true);
+              if (hpDiff < 0)
+                queueMessage(
+                  payload.was_critical
+                    ? `Effective attack! ${hpDiff}`
+                    : `${hpDiff}`,
+                  true
+                );
 
               // update hp
 

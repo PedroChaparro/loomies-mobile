@@ -46,6 +46,8 @@ export interface iPayload_START {
 export interface iPayload_UPDATE_USER_LOOMIE_HP {
   hp: number;
   loomie_id: string;
+  damage: number;
+  was_critical: boolean;
 }
 
 export interface iPayload_UPDATE_PLAYER_LOOMIE {
