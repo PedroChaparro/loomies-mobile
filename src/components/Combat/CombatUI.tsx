@@ -19,11 +19,15 @@ import {
   CombatFloatingMessage,
   iRefCombatFloatingMessage
 } from './CombatFloatingMessage';
+import { GymsModalContext } from '@src/context/GymsModalContext';
 
 interface iPropsCombatUI {
   gym: TGymInfo;
   loomiePlayer: iLoomie;
   loomieGym: iLoomie;
+  gymLoomiesLeft: number;
+  userLoomiesLeft: number;
+
   inputAttack: () => void;
   inputDodge: (_direction: boolean) => void;
   inputEscape: () => void;
@@ -35,11 +39,15 @@ interface iPropsCombatUI {
 
 const GIZMO_SIZE = 30;
 const MAX_DISPLAY_MESSAGES = [0, 1, 2, 3];
+const MAX_LOOMIES = [0, 1, 2, 3, 4, 5];
 
 export const CombatUI = ({
   gym,
   loomiePlayer,
   loomieGym,
+  gymLoomiesLeft,
+  userLoomiesLeft,
+
   inputAttack,
   inputDodge,
   inputEscape,
@@ -93,6 +101,39 @@ export const CombatUI = ({
       'shield-half-full'
     );
     inputDodge(direction);
+  };
+
+  // loomies left
+
+  const showLoomiesLeft = (quantity: number) => {
+    quantity--;
+
+    return (
+      <>
+        {MAX_LOOMIES.map((i) => (
+          <React.Fragment key={i}>
+            {i < quantity && (
+              <View
+                style={{ ...styles.loomieDiamond, ...styles.loomieON }}
+              ></View>
+            )}
+            {i == quantity && (
+              <View
+                style={{ ...styles.loomieDiamond, ...styles.loomieActive }}
+              ></View>
+            )}
+            {i > quantity && (
+              <View
+                style={{ ...styles.loomieDiamond, ...styles.loomieOFF }}
+              ></View>
+            )}
+            {i != MAX_LOOMIES.length - 1 && (
+              <Gap size={10} direction={'horizontal'} />
+            )}
+          </React.Fragment>
+        ))}
+      </>
+    );
   };
 
   // display message
@@ -187,31 +228,9 @@ export const CombatUI = ({
 
         {/* Enemy Loomies left */}
 
-        <View style={styles.enemyLoomiesContainer}>
-          <View style={styles.enemyLoomiesContainer2}>
-            <View
-              style={{ ...styles.loomieON, ...styles.loomieDiamond }}
-            ></View>
-            <Gap size={10} direction={'horizontal'} />
-            <View
-              style={{ ...styles.loomieON, ...styles.loomieDiamond }}
-            ></View>
-            <Gap size={10} direction={'horizontal'} />
-            <View
-              style={{ ...styles.loomieON, ...styles.loomieDiamond }}
-            ></View>
-            <Gap size={10} direction={'horizontal'} />
-            <View
-              style={{ ...styles.loomieActive, ...styles.loomieDiamond }}
-            ></View>
-            <Gap size={10} direction={'horizontal'} />
-            <View
-              style={{ ...styles.loomieOFF, ...styles.loomieDiamond }}
-            ></View>
-            <Gap size={10} direction={'horizontal'} />
-            <View
-              style={{ ...styles.loomieOFF, ...styles.loomieDiamond }}
-            ></View>
+        <View style={styles.loomiesLeftContainer}>
+          <View style={styles.loomiesLeftContainer2}>
+            {showLoomiesLeft(gymLoomiesLeft)}
           </View>
         </View>
       </View>
@@ -222,6 +241,22 @@ export const CombatUI = ({
         <View style={{ ...styles.stack, height: 72 }}>
           <View style={{ ...styles.alignRight, width: '70%' }}>
             {loomiePlayer && <CombatLoomieInfo loomie={loomiePlayer} />}
+          </View>
+        </View>
+
+        {/* user Loomies left */}
+
+        <View style={{ width: '100%', height: 20 }}>
+          <View
+            style={{
+              ...styles.loomiesLeftContainer,
+              position: 'absolute',
+              right: 0
+            }}
+          >
+            <View style={{ ...styles.loomiesLeftContainer2 }}>
+              {showLoomiesLeft(userLoomiesLeft)}
+            </View>
           </View>
         </View>
 

@@ -13,7 +13,9 @@ import {
   iPayload_UPDATE_USER_LOOMIE_HP,
   iLoomie,
   TYPE,
-  iPayload_UPDATE_PLAYER_LOOMIE
+  iPayload_UPDATE_PLAYER_LOOMIE,
+  iPayload_GYM_LOOMIE_WEAKENED,
+  iPayload_USER_LOOMIE_WEAKENED
 } from '@src/types/combatInterfaces';
 const { WS_URL } = CONFIG;
 
@@ -48,6 +50,8 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
   // state
   const [loomiePlayer, setLoomiePlayer] = useState<iLoomie>();
   const [loomieGym, setLoomieGym] = useState<iLoomie>();
+  const [gymLoomiesLeft, setGymLoomiesLeft] = useState<number>(0);
+  const [userLoomiesLeft, setUserLoomiesLeft] = useState<number>(0);
 
   // display message queue
   const displayMessageQueue = useRef<iDisplayMessage[]>([]);
@@ -94,10 +98,19 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           const payload = data.payload as iPayload_START;
 
           console.log('start start start');
-          console.log(payload.gym);
+          console.log(payload.gym_loomie);
 
-          setLoomieGym({ ...payload.gym, hp: payload.gym.boosted_hp });
-          setLoomiePlayer({ ...payload.player, hp: payload.player.boosted_hp });
+          setLoomieGym({
+            ...payload.gym_loomie,
+            hp: payload.gym_loomie.boosted_hp
+          });
+          setLoomiePlayer({
+            ...payload.player_loomie,
+            hp: payload.player_loomie.boosted_hp
+          });
+
+          setGymLoomiesLeft(payload.alive_gym_loomies);
+          setUserLoomiesLeft(payload.alive_user_loomies);
         }
         break;
 
@@ -177,12 +190,22 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
 
       case TYPE.GYM_LOOMIE_WEAKENED:
         {
+          if ((data.payload as iPayload_GYM_LOOMIE_WEAKENED) === undefined)
+            return;
+          const payload = data.payload as iPayload_GYM_LOOMIE_WEAKENED;
+
+          setGymLoomiesLeft(payload.alive_gym_loomies);
           queueMessage('Enemy Loomie has weakened', true);
         }
         break;
 
       case TYPE.USER_LOOMIE_WEAKENED:
         {
+          if ((data.payload as iPayload_USER_LOOMIE_WEAKENED) === undefined)
+            return;
+          const payload = data.payload as iPayload_USER_LOOMIE_WEAKENED;
+
+          setUserLoomiesLeft(payload.alive_user_loomies);
           queueMessage('Your Loomie has weakened', false);
         }
         break;
@@ -198,6 +221,28 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
       case TYPE.USER_ATTACK_DODGED:
         {
           queueMessage('Dodged', true);
+        }
+        break;
+
+      // win / loose
+
+      case TYPE.USER_HAS_WON:
+        {
+          setGymLoomiesLeft(0);
+          setLoomieGym((loomie) => {
+            if (loomie) return { ...loomie, hp: 0 };
+          });
+          queueMessage('You win', false);
+        }
+        break;
+
+      case TYPE.USER_HAS_LOST:
+        {
+          setUserLoomiesLeft(0);
+          setLoomiePlayer((loomie) => {
+            if (loomie) return { ...loomie, hp: 0 };
+          });
+          queueMessage('You have lost', false);
         }
         break;
 
@@ -282,6 +327,8 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           gym={route.params.gym}
           loomiePlayer={loomiePlayer}
           loomieGym={loomieGym}
+          gymLoomiesLeft={gymLoomiesLeft}
+          userLoomiesLeft={userLoomiesLeft}
           inputAttack={userAttack}
           inputDodge={userDodge}
           inputEscape={userEscape}

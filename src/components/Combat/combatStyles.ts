@@ -6,7 +6,7 @@ const colors = {
   healthGray: '#EDEDED',
   border: '#C2E9FF',
 
-  enemyLoomiesContainer: '#E8E8E8',
+  loomiesLeftContainer: '#E8E8E8',
   loomieActive: '#31B5FF',
   loomieOFF: '#8D8D8D'
 };
@@ -189,19 +189,19 @@ export const styles = StyleSheet.create({
 
   // remaining enemy loomies
 
-  enemyLoomiesContainer: {
+  loomiesLeftContainer: {
     marginHorizontal: 5,
     borderWidth: 3,
     borderColor: colors.border,
     borderRadius: 8,
 
-    backgroundColor: colors.enemyLoomiesContainer,
-    width: '50%',
-    height: 32,
-    marginTop: 5
+    backgroundColor: colors.border,
+    width: '40%',
+    height: 0,
+    marginTop: 10
   },
 
-  enemyLoomiesContainer2: {
+  loomiesLeftContainer2: {
     flexDirection: 'row',
     flex: 1,
 
@@ -213,8 +213,8 @@ export const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: colors.border,
 
-    width: 18,
-    height: 18,
+    width: 15,
+    height: 15,
     transform: [{ rotate: '45deg' }]
   },
 

@@ -31,12 +31,16 @@ export interface iCombatMessage {
   payload?:
     | iPayload_START
     | iPayload_UPDATE_USER_LOOMIE_HP
-    | iPayload_UPDATE_PLAYER_LOOMIE;
+    | iPayload_UPDATE_PLAYER_LOOMIE
+    | iPayload_GYM_LOOMIE_WEAKENED
+    | iPayload_USER_LOOMIE_WEAKENED;
 }
 
 export interface iPayload_START {
-  gym: iLoomie;
-  player: iLoomie;
+  alive_gym_loomies: number;
+  alive_user_loomies: number;
+  gym_loomie: iLoomie;
+  player_loomie: iLoomie;
 }
 
 export interface iPayload_UPDATE_USER_LOOMIE_HP {
@@ -46,6 +50,16 @@ export interface iPayload_UPDATE_USER_LOOMIE_HP {
 
 export interface iPayload_UPDATE_PLAYER_LOOMIE {
   loomie: iLoomie;
+}
+
+export interface iPayload_USER_LOOMIE_WEAKENED {
+  alive_user_loomies: number;
+  loomie_id: string;
+}
+
+export interface iPayload_GYM_LOOMIE_WEAKENED {
+  alive_gym_loomies: number;
+  loomie_id: string;
 }
 
 export interface iLoomie {
