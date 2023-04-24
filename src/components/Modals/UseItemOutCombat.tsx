@@ -95,7 +95,7 @@ export const UseItemOutCombatModal = ({
             'There was an error using the item, please try again later'
         );
       } else {
-        showSuccessToast('The item was used successfully');
+        showSuccessToast('Item applied successfully');
         toggleVisibilityCallback();
         closeModalItem();
       }
