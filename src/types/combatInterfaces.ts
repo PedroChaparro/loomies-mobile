@@ -17,7 +17,6 @@ export enum TYPE {
   GYM_LOOMIE_WEAKENED,
   USER_HAS_WON,
 
-
   // client -> server
 
   USER_USE_ITEM,
@@ -40,6 +39,15 @@ export interface iPayload_START {
   player: iLoomie;
 }
 
+export interface iPayload_UPDATE_USER_LOOMIE_HP {
+  hp: number;
+  loomie_id: string;
+}
+
+export interface iPayload_UPDATE_PLAYER_LOOMIE {
+  loomie: iLoomie;
+}
+
 export interface iLoomie {
   _id: string;
   attack: number;
@@ -56,13 +64,4 @@ export interface iLoomie {
   rarity: string;
   serial: number;
   types: string[];
-}
-
-export interface iPayload_UPDATE_USER_LOOMIE_HP {
-  hp: number;
-  loomie_id: string;
-}
-
-export interface iPayload_UPDATE_PLAYER_LOOMIE {
-  loomie: iLoomie;
 }

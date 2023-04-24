@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { createRef, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,11 @@ import { iLoomie } from '@src/types/combatInterfaces';
 import { TGymInfo } from '@src/types/types';
 import { CombatLoomieInfo } from './CombatLoomieInfo';
 import { iGridPosition } from '@src/context/MapProvider';
+import { iDisplayMessage } from '@src/pages/CombatView';
+import {
+  CombatFloatingMessage,
+  iRefCombatFloatingMessage
+} from './CombatFloatingMessage';
 
 interface iPropsCombatUI {
   gym: TGymInfo;
@@ -21,20 +26,34 @@ interface iPropsCombatUI {
   loomieGym: iLoomie;
   inputAttack: () => void;
   inputDodge: (_direction: boolean) => void;
+
+  queueUpdated: number;
+  getMessageQueue: () => iDisplayMessage[];
+  removeMessageFromQueue: (_ids: number[]) => void;
 }
 
 const GIZMO_SIZE = 30;
+const MAX_DISPLAY_MESSAGES = [0, 1, 2, 3];
 
 export const CombatUI = ({
   gym,
   loomiePlayer,
   loomieGym,
   inputAttack,
-  inputDodge
+  inputDodge,
+
+  queueUpdated,
+  getMessageQueue,
+  removeMessageFromQueue
 }: iPropsCombatUI) => {
+  // gizmo
   const [gizmoOrigin, setGizmoOrigin] = useState<iGridPosition>({ x: 0, y: 0 });
   const [gizmoIcon, setGizmoIcon] = useState<string>('sword-cross');
   const gizmoOpacity = useRef(new Animated.Value(0));
+
+  // display messages
+  const dispMsgs = useRef<(iRefCombatFloatingMessage | null)[]>([]);
+  const distMsgIndex = useRef<number>(0);
 
   const showGizmo = (origin: iGridPosition, icon: string) => {
     // reset
@@ -74,6 +93,31 @@ export const CombatUI = ({
     inputDodge(direction);
   };
 
+  // display message
+
+  useEffect(() => {
+    // consume all messages
+
+    const consumedIds: number[] = [];
+    const msgs = getMessageQueue();
+
+    msgs.forEach((msg) => {
+      // display message
+
+      const el =
+        dispMsgs.current[distMsgIndex.current % MAX_DISPLAY_MESSAGES.length];
+      if (el) el.updateMessage(msg.message);
+      distMsgIndex.current += 1;
+
+      // gather ids
+
+      consumedIds.push(msg.id);
+    });
+
+    // delete message
+    if (consumedIds.length) removeMessageFromQueue(consumedIds);
+  }, [queueUpdated]);
+
   return (
     <View style={styles.container}>
       {/* header */}
@@ -108,8 +152,10 @@ export const CombatUI = ({
           top: gizmoOrigin.y
         }}
       >
-        <Animated.View style={{ opacity: gizmoOpacity.current }}
-            pointerEvents="none">
+        <Animated.View
+          style={{ opacity: gizmoOpacity.current }}
+          pointerEvents='none'
+        >
           <MaterialCommunityIcons
             size={GIZMO_SIZE}
             name={gizmoIcon}
@@ -159,6 +205,20 @@ export const CombatUI = ({
       </View>
 
       <View style={styles.bottom}>
+        {/* game messages */}
+
+        <View style={styles.gameMessagesContainer}>
+          {MAX_DISPLAY_MESSAGES.map((i) => (
+            <CombatFloatingMessage
+              message='soso'
+              key={i}
+              ref={(ref) => {
+                dispMsgs.current.push(ref);
+              }}
+            />
+          ))}
+        </View>
+
         {/* user loomie info */}
 
         <View style={{ ...styles.stack, height: 72 }}>

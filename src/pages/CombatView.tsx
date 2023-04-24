@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NavigationProp, RouteProp } from '@react-navigation/core';
 import { View, Text, SafeAreaView } from 'react-native';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
+import useWebSocket from 'react-use-websocket';
 
 import { CombatUI } from '@src/components/Combat/CombatUI';
 import { navigate } from '@src/navigation/RootNavigation';
@@ -23,6 +23,11 @@ interface iPayload {
   payload: any;
 }
 
+export interface iDisplayMessage {
+  id: number;
+  message: string;
+}
+
 export interface iCombatViewParams {
   gym: TGymInfo;
   combatToken: string;
@@ -42,6 +47,10 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
   // state
   const [loomiePlayer, setLoomiePlayer] = useState<iLoomie>();
   const [loomieGym, setLoomieGym] = useState<iLoomie>();
+
+  // display message queue
+  const displayMessageQueue = useRef<iDisplayMessage[]>([]);
+  const [queueUpdated, setQueueUpdated] = useState<number>(0);
 
   useEffect(() => {
     // make sure we have workable parameters
@@ -72,9 +81,10 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
     console.log(data.type);
     console.log(data.payload);
 
+    queueMessage(data.type);
+
     const messageType = data.type as keyof typeof TYPE;
     switch (TYPE[messageType]) {
-
       // initial state
 
       case TYPE.start:
@@ -156,6 +166,8 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
     }
   }, [lastMessage]);
 
+  // user events
+
   const userAttack = () => {
     const message = JSON.stringify({
       type: TYPE[TYPE.USER_ATTACK] as string
@@ -174,6 +186,43 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
     console.log(message, direction);
 
     sendMessage(message, false);
+  };
+
+  // display message queue
+
+  const queueMessage = (message: string) => {
+    let currentId = 0;
+
+    // increase ids
+    setQueueUpdated((count) => {
+      currentId = count + 1;
+      return currentId;
+    });
+
+    // push
+    displayMessageQueue.current.push({ id: currentId, message: message });
+  };
+
+  const getMessageQueue = (): iDisplayMessage[] => displayMessageQueue.current;
+  const removeMessageFromQueue = (deletedIds: number[]) => {
+    // filter deleted ids
+
+    console.log(deletedIds);
+
+    displayMessageQueue.current = displayMessageQueue.current.filter((msg) => {
+      return (
+        undefined ==
+        deletedIds.find((id) => {
+          return id == msg.id;
+        })
+      );
+    });
+
+    // trigger update
+
+    //setQueueUpdated((count) => {
+    //return count + 1;
+    //});
   };
 
   return (
@@ -198,6 +247,9 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           loomieGym={loomieGym}
           inputAttack={userAttack}
           inputDodge={userDodge}
+          queueUpdated={queueUpdated}
+          getMessageQueue={getMessageQueue}
+          removeMessageFromQueue={removeMessageFromQueue}
         />
       )}
 

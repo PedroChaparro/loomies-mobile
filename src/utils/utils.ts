@@ -20,7 +20,6 @@ export const colors: {
 export const images: {
   [key: string]: ImageSourcePropType;
 } = {
-
   // Loomies
 
   '001': require('@assets/images/loomies/001.png'),

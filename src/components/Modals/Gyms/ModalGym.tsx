@@ -72,7 +72,7 @@ export const ModalGym = () => {
     const params: iCombatViewParams = {
       gym: gymInfo,
       combatToken: combatToken
-    }
+    };
 
     navigate('Combat', params);
   };

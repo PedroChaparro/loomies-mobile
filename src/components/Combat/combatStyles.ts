@@ -12,8 +12,8 @@ const colors = {
 };
 
 const HEADER_HEIGHT = -160 + 220 + 7;
-const TOP_HEIGHT = 0
-const BOTTOM_HEIGHT = 0
+const TOP_HEIGHT = 0;
+const BOTTOM_HEIGHT = 0;
 
 export const styles = StyleSheet.create({
   container: {
@@ -85,7 +85,6 @@ export const styles = StyleSheet.create({
     top: HEADER_HEIGHT,
     position: 'absolute'
   },
-  
 
   // bottom
 
@@ -245,7 +244,12 @@ export const styles = StyleSheet.create({
 
   inputDodge: {
     width: '20%',
-    backgroundColor: 'blue',
-  }
+    backgroundColor: 'blue'
+  },
 
+  gameMessagesContainer: {
+    width: '100%',
+
+    alignItems: 'center'
+  }
 });
