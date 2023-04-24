@@ -26,6 +26,7 @@ interface iPropsCombatUI {
   loomieGym: iLoomie;
   inputAttack: () => void;
   inputDodge: (_direction: boolean) => void;
+  inputEscape: () => void;
 
   queueUpdated: number;
   getMessageQueue: () => iDisplayMessage[];
@@ -41,6 +42,7 @@ export const CombatUI = ({
   loomieGym,
   inputAttack,
   inputDodge,
+  inputEscape,
 
   queueUpdated,
   getMessageQueue,
@@ -62,7 +64,7 @@ export const CombatUI = ({
 
     setGizmoOrigin({
       x: origin.x - GIZMO_SIZE / 2,
-      y: origin.y - GIZMO_SIZE
+      y: origin.y - (GIZMO_SIZE * 3) / 4
     });
     setGizmoIcon(icon);
 
@@ -106,7 +108,7 @@ export const CombatUI = ({
 
       const el =
         dispMsgs.current[distMsgIndex.current % MAX_DISPLAY_MESSAGES.length];
-      if (el) el.updateMessage(msg.message);
+      if (el) el.updateMessage(msg.message, msg.direction);
       distMsgIndex.current += 1;
 
       // gather ids
@@ -133,14 +135,24 @@ export const CombatUI = ({
           style={{ ...styles.inputDodge, height: '100%' }}
           onPress={(evt) => touchDodge(evt, false)}
         ></Pressable>
-        <Pressable
-          style={{ flexGrow: 1, backgroundColor: 'red' }}
-          onPress={touchAttack}
-        ></Pressable>
+        <Pressable style={{ flexGrow: 1 }} onPress={touchAttack}></Pressable>
         <Pressable
           style={{ ...styles.inputDodge, height: '100%' }}
           onPress={(evt) => touchDodge(evt, true)}
         ></Pressable>
+      </View>
+
+      {/* game messages */}
+
+      <View style={styles.gameMessagesContainer} pointerEvents='none'>
+        {MAX_DISPLAY_MESSAGES.map((i) => (
+          <CombatFloatingMessage
+            key={i}
+            ref={(ref) => {
+              dispMsgs.current.push(ref);
+            }}
+          />
+        ))}
       </View>
 
       {/* input gizmo */}
@@ -205,20 +217,6 @@ export const CombatUI = ({
       </View>
 
       <View style={styles.bottom}>
-        {/* game messages */}
-
-        <View style={styles.gameMessagesContainer}>
-          {MAX_DISPLAY_MESSAGES.map((i) => (
-            <CombatFloatingMessage
-              message='soso'
-              key={i}
-              ref={(ref) => {
-                dispMsgs.current.push(ref);
-              }}
-            />
-          ))}
-        </View>
-
         {/* user loomie info */}
 
         <View style={{ ...styles.stack, height: 72 }}>
@@ -228,13 +226,14 @@ export const CombatUI = ({
         </View>
 
         <View style={{ ...styles.stack, height: 90 }}>
-          {/* scape bubble */}
+          {/* escape bubble */}
 
           <View style={{ ...styles.centerVertically, width: 70 }}>
             <Pressable
               style={styles.bubbleEscape}
               onPress={() => {
                 console.log('ESCAPE');
+                inputEscape();
               }}
             >
               <MaterialCommunityIcons

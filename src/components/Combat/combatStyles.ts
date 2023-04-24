@@ -233,23 +233,27 @@ export const styles = StyleSheet.create({
   // middle (inputs)
 
   middle: {
+    //backgroundColor: 'green',
     position: 'absolute',
     top: HEADER_HEIGHT + 140,
     bottom: HEADER_HEIGHT + 100,
     flexGrow: 1,
     width: '100%',
-    backgroundColor: 'green',
     flexDirection: 'row'
   },
 
   inputDodge: {
-    width: '20%',
-    backgroundColor: 'blue'
+    //backgroundColor: 'blue'
+    width: '20%'
   },
 
   gameMessagesContainer: {
+    //backgroundColor: 'purple',
+    position: 'absolute',
+    top: HEADER_HEIGHT + 115,
+    bottom: HEADER_HEIGHT + 100,
+    flexGrow: 1,
     width: '100%',
-
-    alignItems: 'center'
+    flexDirection: 'row'
   }
 });

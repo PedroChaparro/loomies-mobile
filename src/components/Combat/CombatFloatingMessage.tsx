@@ -7,62 +7,100 @@ import React, {
 import { View, Text, Animated } from 'react-native';
 
 export interface iPropsCombatFloatingMessage {
-  message: string;
+  message?: string;
 }
 
 export interface iRefCombatFloatingMessage {
-  updateMessage: (_message: string) => void;
+  updateMessage: (_message: string, _direction: boolean) => void;
 }
 
-const MAX_OFFSET_BOTTOM = 100;
+const MAX_VOFFSET = 80;
 const ANIMATION_DURATION = 1000;
 
 export const CombatFloatingMessage = forwardRef<
   iRefCombatFloatingMessage,
   iPropsCombatFloatingMessage
->((props, ref) => {
+>((_props, ref) => {
   const [message, setMessage] = useState<string>('');
+  const [direction, setDirection] = useState<boolean>(false);
 
   // animation
   const offsetBottom = useRef(new Animated.Value(0));
+  const offsetTop = useRef(new Animated.Value(0));
   const opacity = useRef(new Animated.Value(0));
 
   useImperativeHandle(ref, () => ({
-    updateMessage: (message: string) => {
+    updateMessage: (message: string, direction: boolean) => {
       console.log(message);
       setMessage(message);
+      setDirection(direction);
 
       // set
-      offsetBottom.current.setValue(0);
-      opacity.current.setValue(1);
+      opacity.current.setValue(2);
 
-      // start
-      Animated.parallel([
-        Animated.timing(offsetBottom.current, {
-          toValue: MAX_OFFSET_BOTTOM,
-          duration: ANIMATION_DURATION,
-          useNativeDriver: false
-        }),
-        Animated.timing(opacity.current, {
-          toValue: 0,
-          duration: ANIMATION_DURATION,
-          useNativeDriver: true
-        })
-      ]).start();
+      // up to down
+      if (direction) {
+        offsetTop.current.setValue(0);
+        offsetBottom.current.setValue(0);
+
+        Animated.parallel([
+          Animated.timing(offsetTop.current, {
+            toValue: MAX_VOFFSET,
+            duration: ANIMATION_DURATION,
+            useNativeDriver: false
+          }),
+          Animated.timing(opacity.current, {
+            toValue: 0,
+            duration: ANIMATION_DURATION,
+            useNativeDriver: true
+          })
+        ]).start();
+      }
+
+      // down to up
+      else {
+        offsetTop.current.setValue(0);
+        offsetBottom.current.setValue(0);
+
+        Animated.parallel([
+          Animated.timing(offsetBottom.current, {
+            toValue: MAX_VOFFSET,
+            duration: ANIMATION_DURATION,
+            useNativeDriver: false
+          }),
+          Animated.timing(opacity.current, {
+            toValue: 0,
+            duration: ANIMATION_DURATION,
+            useNativeDriver: true
+          })
+        ]).start();
+      }
     }
   }));
 
-  //useEffect(() => {
-  //console.log(message);
-  //}, [message]);
-
   return (
-    <View style={{ position: 'absolute', bottom: 0 }}>
-      <Animated.View style={{ opacity: opacity.current }}>
-        <Text style={{ color: 'black' }}>{props.message}</Text>
-        <Text>{message}</Text>
+    <View
+      style={{
+        position: 'absolute',
+        top: direction ? 0 : undefined,
+        bottom: direction ? undefined : 0,
+        width: '100%',
+        alignItems: 'center'
+      }}
+    >
+      <Animated.View style={{ top: offsetTop.current }} pointerEvents='none'>
+        <Animated.View
+          style={{ bottom: offsetBottom.current }}
+          pointerEvents='none'
+        >
+          <Animated.View
+            style={{ opacity: opacity.current }}
+            pointerEvents='none'
+          >
+            <Text>{message}</Text>
+          </Animated.View>
+        </Animated.View>
       </Animated.View>
-      <Animated.View style={{ height: offsetBottom.current }}></Animated.View>
     </View>
   );
 });

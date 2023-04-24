@@ -26,6 +26,7 @@ interface iPayload {
 export interface iDisplayMessage {
   id: number;
   message: string;
+  direction: boolean;
 }
 
 export interface iCombatViewParams {
@@ -81,7 +82,7 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
     console.log(data.type);
     console.log(data.payload);
 
-    queueMessage(data.type);
+    queueMessage(data.type, false);
 
     const messageType = data.type as keyof typeof TYPE;
     switch (TYPE[messageType]) {
@@ -175,6 +176,7 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
 
     console.log(message);
 
+    queueMessage('-33', true);
     sendMessage(message, false);
   };
 
@@ -188,9 +190,13 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
     sendMessage(message, false);
   };
 
+  const userEscape = () => {
+    navigate('Map', null);
+  };
+
   // display message queue
 
-  const queueMessage = (message: string) => {
+  const queueMessage = (message: string, direction: boolean) => {
     let currentId = 0;
 
     // increase ids
@@ -200,7 +206,11 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
     });
 
     // push
-    displayMessageQueue.current.push({ id: currentId, message: message });
+    displayMessageQueue.current.push({
+      id: currentId,
+      message: message,
+      direction: direction
+    });
   };
 
   const getMessageQueue = (): iDisplayMessage[] => displayMessageQueue.current;
@@ -217,12 +227,6 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
         })
       );
     });
-
-    // trigger update
-
-    //setQueueUpdated((count) => {
-    //return count + 1;
-    //});
   };
 
   return (
@@ -247,6 +251,7 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           loomieGym={loomieGym}
           inputAttack={userAttack}
           inputDodge={userDodge}
+          inputEscape={userEscape}
           queueUpdated={queueUpdated}
           getMessageQueue={getMessageQueue}
           removeMessageFromQueue={removeMessageFromQueue}
@@ -256,5 +261,4 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
       <Text>{route.params.gym.name}</Text>
     </>
   );
-  //return <Text >Hel</Text>;
 };
