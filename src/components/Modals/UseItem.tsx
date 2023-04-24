@@ -17,7 +17,7 @@ interface IProps {
   closeModalItem: () => void;
 }
 
-export const UseItemOutCombatModal = ({
+export const UseItemModal = ({
   selectedItem,
   isVisible,
   toggleVisibilityCallback,
@@ -82,7 +82,7 @@ export const UseItemOutCombatModal = ({
   };
 
   //Call the funtion useItemOutCombat
-  const callUseItemOutCombat = async () => {
+  const callUseItem = async () => {
     if (targetLoomie !== '') {
       const [response, error] = await useItemOutCombat(
         selectedItem._id,
@@ -135,7 +135,7 @@ export const UseItemOutCombatModal = ({
           <CustomButton
             title='Use Item'
             type='primary'
-            callback={callUseItemOutCombat}
+            callback={callUseItem}
           />
         </View>
       )}

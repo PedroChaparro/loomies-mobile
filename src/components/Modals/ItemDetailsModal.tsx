@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { CustomButton } from '../CustomButton';
-import { UseItemOutCombatModal } from './UseItemOutCombat';
+import { UseItemModal } from './UseItem';
 
 interface IProps {
   isVisible: boolean;
@@ -20,19 +20,18 @@ export const ItemDetailsModal = ({
   refresh
 }: IProps) => {
   const itemSerial = item.serial.toString().padStart(3, '0');
-  const [showUseItemOutCombatModal, setShowUseItemOutCombatModal] =
-    useState(false);
+  const [showUseItemModal, setShowUseItemModal] = useState(false);
 
   const toggleLoomiesSelection = () => {
-    setShowUseItemOutCombatModal(!showUseItemOutCombatModal);
+    setShowUseItemModal(!showUseItemModal);
     refresh();
   };
 
   return (
     <Modal isVisible={isVisible} onBackdropPress={toggleVisibility}>
-      {showUseItemOutCombatModal && (
-        <UseItemOutCombatModal
-          isVisible={showUseItemOutCombatModal}
+      {showUseItemModal && (
+        <UseItemModal
+          isVisible={showUseItemModal}
           selectedItem={item}
           toggleVisibilityCallback={toggleLoomiesSelection}
           closeModalItem={toggleVisibility}
