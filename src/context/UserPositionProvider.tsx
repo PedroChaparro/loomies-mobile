@@ -5,6 +5,7 @@
 
 import React, { createContext, useEffect, useState, ReactNode } from 'react';
 import { iPosition, getPosition } from '@src/services/geolocation.services';
+import { delay } from '@src/utils/delay';
 import { CONFIG } from '@src/services/config.services';
 const { MAP_DEBUG } = CONFIG;
 
@@ -68,8 +69,3 @@ export const UserPositionProvider = (props: { children: ReactNode }) => {
     </UserPositionContext.Provider>
   );
 };
-
-const delay = (ms: number): Promise<void> =>
-  new Promise((resolve): void => {
-    setTimeout(resolve, ms);
-  });
