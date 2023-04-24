@@ -20,7 +20,7 @@ import {
   iRefCombatFloatingMessage
 } from './CombatFloatingMessage';
 import { GymsModalContext } from '@src/context/GymsModalContext';
-import { CombatEscapeModal } from '../Modals/Combat/CombatEscapeModal';
+import { GenericModal } from '../Modals/GenericModal';
 
 interface iPropsCombatUI {
   gym: TGymInfo;
@@ -334,10 +334,14 @@ export const CombatUI = ({
           </View>
         </View>
       </View>
-      <CombatEscapeModal
+      <GenericModal
         isVisible={modalEscapeVisible}
         toggleVisibility={modalEscapeToggle}
-        escapeCombat={inputEscape}
+        title='Exit combat'
+        description='Are you sure you want to leave?'
+        labelOk='Yes'
+        callbackOk={inputEscape}
+        callbackCancel={modalEscapeToggle}
       />
     </>
   );

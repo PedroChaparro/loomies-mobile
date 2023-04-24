@@ -6,30 +6,52 @@ import { CustomButton } from '@src/components/CustomButton';
 interface IProps {
   isVisible: boolean;
   toggleVisibility: () => void;
-  escapeCombat: () => void;
+
+  title: string;
+  description: string;
+
+  labelOk?: string;
+  labelCancel?: string;
+
+  callbackOk: () => void;
+  callbackCancel?: () => void;
 }
 
-export const CombatEscapeModal = ({
+export const GenericModal = ({
   isVisible,
   toggleVisibility,
-  escapeCombat
+
+  title,
+  description,
+
+  labelOk,
+  labelCancel,
+
+  callbackOk,
+  callbackCancel
 }: IProps) => {
   return (
     <Modal isVisible={isVisible} onBackdropPress={toggleVisibility}>
       <View style={Styles.container}>
         <View style={Styles.background}>
           <Text style={{ ...Styles.modalText, ...Styles.textTitle }}>
-            Exit combat
+            {title}
           </Text>
           <Text style={{ ...Styles.modalText, ...Styles.textDescription }}>
-            Are you sure you want lo leave?
+            {description}
           </Text>
-          <CustomButton title='Yes' type='primary' callback={escapeCombat} />
           <CustomButton
-            title='Cancel'
-            type='bordered'
-            callback={toggleVisibility}
+            title={labelOk ? labelOk : 'Ok'}
+            type='primary'
+            callback={callbackOk}
           />
+          {callbackCancel && (
+            <CustomButton
+              title={labelCancel ? labelCancel : 'Cancel'}
+              type='bordered'
+              callback={callbackCancel}
+            />
+          )}
         </View>
       </View>
     </Modal>
