@@ -5,7 +5,7 @@ import { CustomButton } from '@src/components/CustomButton';
 
 interface IProps {
   isVisible: boolean;
-  toggleVisibility: () => void;
+  toggleVisibility?: () => void;
 
   title: string;
   description: string;
@@ -31,7 +31,10 @@ export const GenericModal = ({
   callbackCancel
 }: IProps) => {
   return (
-    <Modal isVisible={isVisible} onBackdropPress={toggleVisibility}>
+    <Modal
+      isVisible={isVisible}
+      onBackdropPress={toggleVisibility ? toggleVisibility : undefined}
+    >
       <View style={Styles.container}>
         <View style={Styles.background}>
           <Text style={{ ...Styles.modalText, ...Styles.textTitle }}>

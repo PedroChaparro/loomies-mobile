@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -19,20 +19,26 @@ import {
   CombatFloatingMessage,
   iRefCombatFloatingMessage
 } from './CombatFloatingMessage';
-import { GymsModalContext } from '@src/context/GymsModalContext';
 import { GenericModal } from '../Modals/GenericModal';
 
 interface iPropsCombatUI {
+  // state
   gym: TGymInfo;
   loomiePlayer: iLoomie;
   loomieGym: iLoomie;
   gymLoomiesLeft: number;
   userLoomiesLeft: number;
 
+  // signals
   inputAttack: () => void;
   inputDodge: (_direction: boolean) => void;
   inputEscape: () => void;
 
+  // lose modal
+  modalLooseVisible: boolean;
+  modalLooseCallback: () => void;
+
+  // display message
   queueUpdated: number;
   getMessageQueue: () => iDisplayMessage[];
   removeMessageFromQueue: (_ids: number[]) => void;
@@ -42,21 +48,7 @@ const GIZMO_SIZE = 30;
 const MAX_DISPLAY_MESSAGES = [0, 1, 2, 3];
 const MAX_LOOMIES = [0, 1, 2, 3, 4, 5];
 
-export const CombatUI = ({
-  gym,
-  loomiePlayer,
-  loomieGym,
-  gymLoomiesLeft,
-  userLoomiesLeft,
-
-  inputAttack,
-  inputDodge,
-  inputEscape,
-
-  queueUpdated,
-  getMessageQueue,
-  removeMessageFromQueue
-}: iPropsCombatUI) => {
+export const CombatUI = (props: iPropsCombatUI) => {
   // gizmo
 
   const [gizmoOrigin, setGizmoOrigin] = useState<iGridPosition>({ x: 0, y: 0 });
@@ -68,7 +60,7 @@ export const CombatUI = ({
   const dispMsgs = useRef<(iRefCombatFloatingMessage | null)[]>([]);
   const distMsgIndex = useRef<number>(0);
 
-  // escape modal
+  // modals
 
   const [modalEscapeVisible, setModalEscapeVisible] = useState<boolean>(false);
 
@@ -99,7 +91,7 @@ export const CombatUI = ({
       { x: event.nativeEvent.pageX, y: event.nativeEvent.pageY },
       'sword-cross'
     );
-    inputAttack();
+    props.inputAttack();
   };
 
   const touchDodge = (event: GestureResponderEvent, direction: boolean) => {
@@ -107,7 +99,7 @@ export const CombatUI = ({
       { x: event.nativeEvent.pageX, y: event.nativeEvent.pageY },
       'shield-half-full'
     );
-    inputDodge(direction);
+    props.inputDodge(direction);
   };
 
   // loomies left
@@ -143,7 +135,7 @@ export const CombatUI = ({
     );
   };
 
-  // escape modal
+  // modals
 
   const modalEscapeToggle = () => {
     setModalEscapeVisible((value) => !value);
@@ -155,7 +147,7 @@ export const CombatUI = ({
     // consume all messages
 
     const consumedIds: number[] = [];
-    const msgs = getMessageQueue();
+    const msgs = props.getMessageQueue();
 
     msgs.forEach((msg) => {
       // display message
@@ -171,8 +163,8 @@ export const CombatUI = ({
     });
 
     // delete message
-    if (consumedIds.length) removeMessageFromQueue(consumedIds);
-  }, [queueUpdated]);
+    if (consumedIds.length) props.removeMessageFromQueue(consumedIds);
+  }, [props.queueUpdated]);
 
   return (
     <>
@@ -180,9 +172,9 @@ export const CombatUI = ({
         {/* header */}
 
         <View style={styles.circle}></View>
-        <Text style={styles.title}>{gym.name}</Text>
+        <Text style={styles.title}>{props.gym.name}</Text>
         <Text style={styles.subtitle}>
-          {gym.owner ? gym.owner : 'Unclaimed'}
+          {props.gym.owner ? props.gym.owner : 'Unclaimed'}
         </Text>
 
         {/* inputs */}
@@ -238,7 +230,7 @@ export const CombatUI = ({
 
           <View style={{ ...styles.stack, height: 72 }}>
             <View style={{ ...styles.alignLeft, width: '70%' }}>
-              {loomieGym && <CombatLoomieInfo loomie={loomieGym} />}
+              {props.loomieGym && <CombatLoomieInfo loomie={props.loomieGym} />}
             </View>
           </View>
 
@@ -246,7 +238,7 @@ export const CombatUI = ({
 
           <View style={styles.loomiesLeftContainer}>
             <View style={styles.loomiesLeftContainer2}>
-              {showLoomiesLeft(gymLoomiesLeft)}
+              {showLoomiesLeft(props.gymLoomiesLeft)}
             </View>
           </View>
         </View>
@@ -256,7 +248,9 @@ export const CombatUI = ({
 
           <View style={{ ...styles.stack, height: 72 }}>
             <View style={{ ...styles.alignRight, width: '70%' }}>
-              {loomiePlayer && <CombatLoomieInfo loomie={loomiePlayer} />}
+              {props.loomiePlayer && (
+                <CombatLoomieInfo loomie={props.loomiePlayer} />
+              )}
             </View>
           </View>
 
@@ -271,7 +265,7 @@ export const CombatUI = ({
               }}
             >
               <View style={{ ...styles.loomiesLeftContainer2 }}>
-                {showLoomiesLeft(userLoomiesLeft)}
+                {showLoomiesLeft(props.userLoomiesLeft)}
               </View>
             </View>
           </View>
@@ -334,14 +328,27 @@ export const CombatUI = ({
           </View>
         </View>
       </View>
+
+      {/* escape modal */}
+
       <GenericModal
         isVisible={modalEscapeVisible}
         toggleVisibility={modalEscapeToggle}
         title='Exit combat'
         description='Are you sure you want to leave?'
         labelOk='Yes'
-        callbackOk={inputEscape}
+        callbackOk={props.inputEscape}
         callbackCancel={modalEscapeToggle}
+      />
+
+      {/* you loose modal */}
+
+      <GenericModal
+        isVisible={props.modalLooseVisible}
+        title='You have no Loomies left'
+        description='Good luck next time'
+        labelOk='Return to map'
+        callbackOk={props.modalLooseCallback}
       />
     </>
   );

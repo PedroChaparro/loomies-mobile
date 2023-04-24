@@ -18,13 +18,8 @@ import {
   iPayload_USER_LOOMIE_WEAKENED
 } from '@src/types/combatInterfaces';
 import { useToastAlert } from '@src/hooks/useToastAlert';
+import { delay } from '@src/utils/delay';
 const { WS_URL } = CONFIG;
-
-interface iPayload {
-  type: string;
-  message: string;
-  payload: any;
-}
 
 export interface iDisplayMessage {
   id: number;
@@ -45,21 +40,32 @@ interface iCombatViewProps {
 
 export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
   // toast
+
   const { showInfoToast } = useToastAlert();
 
   // web socket
+
   const url = `${WS_URL}/combat?token=${route.params.combatToken}`;
   const { sendMessage, lastMessage, readyState } = useWebSocket(url);
 
   // state
+
   const [loomiePlayer, setLoomiePlayer] = useState<iLoomie>();
   const [loomieGym, setLoomieGym] = useState<iLoomie>();
   const [gymLoomiesLeft, setGymLoomiesLeft] = useState<number>(0);
   const [userLoomiesLeft, setUserLoomiesLeft] = useState<number>(0);
 
   // display message queue
+
   const displayMessageQueue = useRef<iDisplayMessage[]>([]);
   const [queueUpdated, setQueueUpdated] = useState<number>(0);
+
+  // modals
+
+  const [modalLooseVisible, setModalLooseVisible] = useState<boolean>(false);
+  const modalLooseToggle = () => {
+    setModalLooseVisible((value) => !value);
+  };
 
   useEffect(() => {
     // make sure we have workable parameters
@@ -258,14 +264,10 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           setLoomiePlayer((loomie) => {
             if (loomie) return { ...loomie, hp: 0 };
           });
+
+          modalLooseToggle();
           queueMessage('You have lost', false);
         }
-        break;
-
-      // leave
-
-      case TYPE.ESCAPE_COMBAT:
-        exitCombat();
         break;
 
       default:
@@ -296,9 +298,17 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
     });
 
     // send multiple
+
     sendMessage(message, true);
     sendMessage(message, true);
     sendMessage(message, true);
+
+    // await before exiting
+
+    (async () => {
+      await delay(1000);
+      exitCombat();
+    })();
   };
 
   const exitCombat = () => {
@@ -358,14 +368,20 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
 
       {loomiePlayer && loomieGym && (
         <CombatUI
+          // state
           gym={route.params.gym}
           loomiePlayer={loomiePlayer}
           loomieGym={loomieGym}
           gymLoomiesLeft={gymLoomiesLeft}
           userLoomiesLeft={userLoomiesLeft}
+          // signals
           inputAttack={userAttack}
           inputDodge={userDodge}
           inputEscape={userEscape}
+          // loose modal
+          modalLooseVisible={modalLooseVisible}
+          modalLooseCallback={exitCombat}
+          // display message
           queueUpdated={queueUpdated}
           getMessageQueue={getMessageQueue}
           removeMessageFromQueue={removeMessageFromQueue}
