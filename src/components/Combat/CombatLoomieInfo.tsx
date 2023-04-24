@@ -8,7 +8,9 @@ interface iPropsCombatLoomieInfo {
 }
 
 export const CombatLoomieInfo = ({ loomie }: iPropsCombatLoomieInfo) => {
-  const healthPercentage = loomie ? `${Math.min(100, Math.max(0, loomie.hp / loomie.boosted_hp * 100))}%` : '100%';
+  const healthPercentage = loomie
+    ? `${Math.min(100, Math.max(0, (loomie.hp / loomie.boosted_hp) * 100))}%`
+    : '100%';
   console.log(healthPercentage);
 
   return (
