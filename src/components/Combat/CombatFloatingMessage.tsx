@@ -5,6 +5,7 @@ import React, {
   useState
 } from 'react';
 import { View, Text, Animated } from 'react-native';
+import { styles } from './combatStyles';
 
 export interface iPropsCombatFloatingMessage {
   message?: string;
@@ -97,7 +98,7 @@ export const CombatFloatingMessage = forwardRef<
             style={{ opacity: opacity.current }}
             pointerEvents='none'
           >
-            <Text>{message}</Text>
+            <Text style={styles.floatingMessage}>{message}</Text>
           </Animated.View>
         </Animated.View>
       </Animated.View>

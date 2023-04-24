@@ -82,7 +82,7 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
     console.log(data.type);
     console.log(data.payload);
 
-    queueMessage(data.type, false);
+    //queueMessage(data.type, false);
 
     const messageType = data.type as keyof typeof TYPE;
     switch (TYPE[messageType]) {
@@ -109,10 +109,39 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
             return;
           const payload = data.payload as iPayload_UPDATE_USER_LOOMIE_HP;
 
-          console.log(payload.hp);
-
           setLoomiePlayer((loomie) => {
             if (loomie) {
+              // queue display message
+
+              const hpDiff = payload.hp - loomie.hp;
+              if (hpDiff < 0) queueMessage(hpDiff.toString(), false);
+
+              // update hp
+
+              loomie.hp = payload.hp;
+              return { ...loomie, hp: payload.hp };
+            }
+          });
+        }
+        break;
+
+      // update gym hp
+
+      case TYPE.UPDATE_GYM_LOOMIE_HP:
+        {
+          if ((data.payload as iPayload_UPDATE_USER_LOOMIE_HP) === undefined)
+            return;
+          const payload = data.payload as iPayload_UPDATE_USER_LOOMIE_HP;
+
+          setLoomieGym((loomie) => {
+            if (loomie) {
+              // queue display message
+
+              const hpDiff = payload.hp - loomie.hp;
+              if (hpDiff < 0) queueMessage(hpDiff.toString(), true);
+
+              // update hp
+
               loomie.hp = payload.hp;
               return { ...loomie, hp: payload.hp };
             }
@@ -132,23 +161,6 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
         }
         break;
 
-      // update gym hp
-
-      case TYPE.UPDATE_GYM_LOOMIE_HP:
-        {
-          if ((data.payload as iPayload_UPDATE_USER_LOOMIE_HP) === undefined)
-            return;
-          const payload = data.payload as iPayload_UPDATE_USER_LOOMIE_HP;
-
-          setLoomieGym((loomie) => {
-            if (loomie) {
-              loomie.hp = payload.hp;
-              return { ...loomie, hp: payload.hp };
-            }
-          });
-        }
-        break;
-
       // update gym loomie
 
       case TYPE.UPDATE_GYM_LOOMIE:
@@ -158,6 +170,34 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           const payload = data.payload as iPayload_UPDATE_PLAYER_LOOMIE;
 
           setLoomieGym({ ...payload.loomie, hp: payload.loomie.boosted_hp });
+        }
+        break;
+
+      // loomie weakened
+
+      case TYPE.GYM_LOOMIE_WEAKENED:
+        {
+          queueMessage('Enemy Loomie has weakened', true);
+        }
+        break;
+
+      case TYPE.USER_LOOMIE_WEAKENED:
+        {
+          queueMessage('Your Loomie has weakened', false);
+        }
+        break;
+
+      // attack dodged
+
+      case TYPE.GYM_ATTACK_DODGED:
+        {
+          queueMessage('Dodged', false);
+        }
+        break;
+
+      case TYPE.USER_ATTACK_DODGED:
+        {
+          queueMessage('Dodged', true);
         }
         break;
 
@@ -173,20 +213,13 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
     const message = JSON.stringify({
       type: TYPE[TYPE.USER_ATTACK] as string
     });
-
-    console.log(message);
-
-    queueMessage('-33', true);
     sendMessage(message, false);
   };
 
-  const userDodge = (direction: boolean) => {
+  const userDodge = (_direction: boolean) => {
     const message = JSON.stringify({
       type: TYPE[TYPE.USER_DODGE] as string
     });
-
-    console.log(message, direction);
-
     sendMessage(message, false);
   };
 

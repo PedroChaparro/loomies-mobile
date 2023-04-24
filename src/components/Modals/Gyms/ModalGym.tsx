@@ -74,6 +74,9 @@ export const ModalGym = () => {
       combatToken: combatToken
     };
 
+    // close modal before going to combat view
+
+    toggleGymModalVisibility();
     navigate('Combat', params);
   };
 

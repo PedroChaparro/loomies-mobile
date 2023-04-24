@@ -255,5 +255,11 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
     width: '100%',
     flexDirection: 'row'
+  },
+
+  floatingMessage: {
+    color: 'white',
+    fontWeight: '500',
+    fontSize: 16
   }
 });
