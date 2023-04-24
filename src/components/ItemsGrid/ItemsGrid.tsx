@@ -7,9 +7,10 @@ import { ItemDetailsModal } from '../Modals/ItemDetailsModal';
 interface IProps {
   items: Array<TItem>;
   inventory: Array<TInventoryItem>;
+  refresh: () => void;
 }
 
-export const ItemGrid = ({ inventory, items }: IProps) => {
+export const ItemGrid = ({ inventory, items, refresh }: IProps) => {
   const [itemModalVisible, setItemModalVisible] = useState(true);
   const [selectedItem, setSelectedItem] = useState<TItem | null>(null);
 
@@ -34,9 +35,11 @@ export const ItemGrid = ({ inventory, items }: IProps) => {
           isVisible={itemModalVisible}
           toggleVisibility={toggleItemModalVisibility}
           item={selectedItem}
+          refresh={refresh}
         />
       )}
       <FlatList
+        extraData={inventory}
         data={inventory}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
