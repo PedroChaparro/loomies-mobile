@@ -20,6 +20,7 @@ import {
   iRefCombatFloatingMessage
 } from './CombatFloatingMessage';
 import { GymsModalContext } from '@src/context/GymsModalContext';
+import { CombatEscapeModal } from '../Modals/Combat/CombatEscapeModal';
 
 interface iPropsCombatUI {
   gym: TGymInfo;
@@ -57,13 +58,19 @@ export const CombatUI = ({
   removeMessageFromQueue
 }: iPropsCombatUI) => {
   // gizmo
+
   const [gizmoOrigin, setGizmoOrigin] = useState<iGridPosition>({ x: 0, y: 0 });
   const [gizmoIcon, setGizmoIcon] = useState<string>('sword-cross');
   const gizmoOpacity = useRef(new Animated.Value(0));
 
   // display messages
+
   const dispMsgs = useRef<(iRefCombatFloatingMessage | null)[]>([]);
   const distMsgIndex = useRef<number>(0);
+
+  // escape modal
+
+  const [modalEscapeVisible, setModalEscapeVisible] = useState<boolean>(false);
 
   const showGizmo = (origin: iGridPosition, icon: string) => {
     // reset
@@ -136,6 +143,12 @@ export const CombatUI = ({
     );
   };
 
+  // escape modal
+
+  const modalEscapeToggle = () => {
+    setModalEscapeVisible((value) => !value);
+  };
+
   // display message
 
   useEffect(() => {
@@ -162,161 +175,170 @@ export const CombatUI = ({
   }, [queueUpdated]);
 
   return (
-    <View style={styles.container}>
-      {/* header */}
+    <>
+      <View style={styles.container}>
+        {/* header */}
 
-      <View style={styles.circle}></View>
-      <Text style={styles.title}>{gym.name}</Text>
-      <Text style={styles.subtitle}>{gym.owner ? gym.owner : 'Unclaimed'}</Text>
+        <View style={styles.circle}></View>
+        <Text style={styles.title}>{gym.name}</Text>
+        <Text style={styles.subtitle}>
+          {gym.owner ? gym.owner : 'Unclaimed'}
+        </Text>
 
-      {/* inputs */}
+        {/* inputs */}
 
-      <View style={styles.middle}>
-        <Pressable
-          style={{ ...styles.inputDodge, height: '100%' }}
-          onPress={(evt) => touchDodge(evt, false)}
-        ></Pressable>
-        <Pressable style={{ flexGrow: 1 }} onPress={touchAttack}></Pressable>
-        <Pressable
-          style={{ ...styles.inputDodge, height: '100%' }}
-          onPress={(evt) => touchDodge(evt, true)}
-        ></Pressable>
-      </View>
+        <View style={styles.middle}>
+          <Pressable
+            style={{ ...styles.inputDodge, height: '100%' }}
+            onPress={(evt) => touchDodge(evt, false)}
+          ></Pressable>
+          <Pressable style={{ flexGrow: 1 }} onPress={touchAttack}></Pressable>
+          <Pressable
+            style={{ ...styles.inputDodge, height: '100%' }}
+            onPress={(evt) => touchDodge(evt, true)}
+          ></Pressable>
+        </View>
 
-      {/* game messages */}
+        {/* game messages */}
 
-      <View style={styles.gameMessagesContainer} pointerEvents='none'>
-        {MAX_DISPLAY_MESSAGES.map((i) => (
-          <CombatFloatingMessage
-            key={i}
-            ref={(ref) => {
-              dispMsgs.current.push(ref);
-            }}
-          />
-        ))}
-      </View>
+        <View style={styles.gameMessagesContainer} pointerEvents='none'>
+          {MAX_DISPLAY_MESSAGES.map((i) => (
+            <CombatFloatingMessage
+              key={i}
+              ref={(ref) => {
+                dispMsgs.current.push(ref);
+              }}
+            />
+          ))}
+        </View>
 
-      {/* input gizmo */}
+        {/* input gizmo */}
 
-      <View
-        style={{
-          position: 'absolute',
-          left: gizmoOrigin.x,
-          top: gizmoOrigin.y
-        }}
-      >
-        <Animated.View
-          style={{ opacity: gizmoOpacity.current }}
-          pointerEvents='none'
+        <View
+          style={{
+            position: 'absolute',
+            left: gizmoOrigin.x,
+            top: gizmoOrigin.y
+          }}
         >
-          <MaterialCommunityIcons
-            size={GIZMO_SIZE}
-            name={gizmoIcon}
-            color={'white'}
-          />
-        </Animated.View>
-      </View>
-
-      <View style={styles.top}>
-        {/* enemy loomie info */}
-
-        <View style={{ ...styles.stack, height: 72 }}>
-          <View style={{ ...styles.alignLeft, width: '70%' }}>
-            {loomieGym && <CombatLoomieInfo loomie={loomieGym} />}
-          </View>
-        </View>
-
-        {/* Enemy Loomies left */}
-
-        <View style={styles.loomiesLeftContainer}>
-          <View style={styles.loomiesLeftContainer2}>
-            {showLoomiesLeft(gymLoomiesLeft)}
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.bottom}>
-        {/* user loomie info */}
-
-        <View style={{ ...styles.stack, height: 72 }}>
-          <View style={{ ...styles.alignRight, width: '70%' }}>
-            {loomiePlayer && <CombatLoomieInfo loomie={loomiePlayer} />}
-          </View>
-        </View>
-
-        {/* user Loomies left */}
-
-        <View style={{ width: '100%', height: 20 }}>
-          <View
-            style={{
-              ...styles.loomiesLeftContainer,
-              position: 'absolute',
-              right: 0
-            }}
+          <Animated.View
+            style={{ opacity: gizmoOpacity.current }}
+            pointerEvents='none'
           >
-            <View style={{ ...styles.loomiesLeftContainer2 }}>
-              {showLoomiesLeft(userLoomiesLeft)}
+            <MaterialCommunityIcons
+              size={GIZMO_SIZE}
+              name={gizmoIcon}
+              color={'white'}
+            />
+          </Animated.View>
+        </View>
+
+        <View style={styles.top}>
+          {/* enemy loomie info */}
+
+          <View style={{ ...styles.stack, height: 72 }}>
+            <View style={{ ...styles.alignLeft, width: '70%' }}>
+              {loomieGym && <CombatLoomieInfo loomie={loomieGym} />}
+            </View>
+          </View>
+
+          {/* Enemy Loomies left */}
+
+          <View style={styles.loomiesLeftContainer}>
+            <View style={styles.loomiesLeftContainer2}>
+              {showLoomiesLeft(gymLoomiesLeft)}
             </View>
           </View>
         </View>
 
-        <View style={{ ...styles.stack, height: 90 }}>
-          {/* escape bubble */}
+        <View style={styles.bottom}>
+          {/* user loomie info */}
 
-          <View style={{ ...styles.centerVertically, width: 70 }}>
-            <Pressable
-              style={styles.bubbleEscape}
-              onPress={() => {
-                console.log('ESCAPE');
-                inputEscape();
+          <View style={{ ...styles.stack, height: 72 }}>
+            <View style={{ ...styles.alignRight, width: '70%' }}>
+              {loomiePlayer && <CombatLoomieInfo loomie={loomiePlayer} />}
+            </View>
+          </View>
+
+          {/* user Loomies left */}
+
+          <View style={{ width: '100%', height: 20 }}>
+            <View
+              style={{
+                ...styles.loomiesLeftContainer,
+                position: 'absolute',
+                right: 0
               }}
             >
-              <MaterialCommunityIcons
-                size={30}
-                name={'run'}
-                color={'white'}
-                style={{ transform: [{ scaleX: -1 }] }}
-              />
-            </Pressable>
-          </View>
-
-          <View style={styles.alignRight}>
-            {/* team bubble */}
-
-            <View style={{ width: 80 }}>
-              <View style={{ ...styles.centerVertically }}>
-                <Pressable
-                  style={{ ...styles.bubbleBig }}
-                  onPress={() => {
-                    console.log('Pressed loomball bubble');
-                  }}
-                >
-                  <FeatherIcon size={30} name={'github'} color={'white'} />
-                  <View style={{ height: 4 }}></View>
-                  <Text style={styles.bubbleText}>Team</Text>
-                </Pressable>
+              <View style={{ ...styles.loomiesLeftContainer2 }}>
+                {showLoomiesLeft(userLoomiesLeft)}
               </View>
             </View>
+          </View>
 
-            {/* item bubble */}
+          <View style={{ ...styles.stack, height: 90 }}>
+            {/* escape bubble */}
 
-            <View style={{ width: 80 }}>
-              <View style={{ ...styles.centerVertically }}>
-                <Pressable
-                  style={{ ...styles.bubbleBig }}
-                  onPress={() => {
-                    console.log('Pressed loomball bubble');
-                  }}
-                >
-                  <FeatherIcon size={30} name={'box'} color={'white'} />
-                  <View style={{ height: 4 }}></View>
-                  <Text style={styles.bubbleText}>Items</Text>
-                </Pressable>
+            <View style={{ ...styles.centerVertically, width: 70 }}>
+              <Pressable
+                style={styles.bubbleEscape}
+                onPress={() => {
+                  console.log('ESCAPE');
+                  modalEscapeToggle();
+                }}
+              >
+                <MaterialCommunityIcons
+                  size={30}
+                  name={'run'}
+                  color={'white'}
+                  style={{ transform: [{ scaleX: -1 }] }}
+                />
+              </Pressable>
+            </View>
+
+            <View style={styles.alignRight}>
+              {/* team bubble */}
+
+              <View style={{ width: 80 }}>
+                <View style={{ ...styles.centerVertically }}>
+                  <Pressable
+                    style={{ ...styles.bubbleBig }}
+                    onPress={() => {
+                      console.log('Pressed loomball bubble');
+                    }}
+                  >
+                    <FeatherIcon size={30} name={'github'} color={'white'} />
+                    <View style={{ height: 4 }}></View>
+                    <Text style={styles.bubbleText}>Team</Text>
+                  </Pressable>
+                </View>
+              </View>
+
+              {/* item bubble */}
+
+              <View style={{ width: 80 }}>
+                <View style={{ ...styles.centerVertically }}>
+                  <Pressable
+                    style={{ ...styles.bubbleBig }}
+                    onPress={() => {
+                      console.log('Pressed loomball bubble');
+                    }}
+                  >
+                    <FeatherIcon size={30} name={'box'} color={'white'} />
+                    <View style={{ height: 4 }}></View>
+                    <Text style={styles.bubbleText}>Items</Text>
+                  </Pressable>
+                </View>
               </View>
             </View>
           </View>
         </View>
       </View>
-    </View>
+      <CombatEscapeModal
+        isVisible={modalEscapeVisible}
+        toggleVisibility={modalEscapeToggle}
+        escapeCombat={inputEscape}
+      />
+    </>
   );
 };

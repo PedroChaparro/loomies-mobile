@@ -16,13 +16,15 @@ export enum TYPE {
   USER_ATTACK_DODGED,
   GYM_LOOMIE_WEAKENED,
   USER_HAS_WON,
+  ESCAPE_COMBAT,
 
   // client -> server
 
   USER_USE_ITEM,
   USER_CHANGE_LOOMIE,
   USER_DODGE,
-  USER_ATTACK
+  USER_ATTACK,
+  USER_ESCAPE_COMBAT
 }
 
 export interface iCombatMessage {

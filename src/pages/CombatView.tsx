@@ -17,6 +17,7 @@ import {
   iPayload_GYM_LOOMIE_WEAKENED,
   iPayload_USER_LOOMIE_WEAKENED
 } from '@src/types/combatInterfaces';
+import { useToastAlert } from '@src/hooks/useToastAlert';
 const { WS_URL } = CONFIG;
 
 interface iPayload {
@@ -43,6 +44,9 @@ interface iCombatViewProps {
 }
 
 export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
+  // toast
+  const { showInfoToast } = useToastAlert();
+
   // web socket
   const url = `${WS_URL}/combat?token=${route.params.combatToken}`;
   const { sendMessage, lastMessage, readyState } = useWebSocket(url);
@@ -258,6 +262,12 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
         }
         break;
 
+      // leave
+
+      case TYPE.ESCAPE_COMBAT:
+        exitCombat();
+        break;
+
       default:
         console.log(`Warn: Message not recognized ${data.type}`);
         break;
@@ -281,6 +291,18 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
   };
 
   const userEscape = () => {
+    const message = JSON.stringify({
+      type: TYPE[TYPE.USER_ESCAPE_COMBAT] as string
+    });
+
+    // send multiple
+    sendMessage(message, true);
+    sendMessage(message, true);
+    sendMessage(message, true);
+  };
+
+  const exitCombat = () => {
+    showInfoToast('Combat has ended');
     navigate('Map', null);
   };
 
