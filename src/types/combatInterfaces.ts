@@ -85,7 +85,6 @@ export interface iPayload_GYM_LOOMIE_WEAKENED {
 export interface iPayload_USER_ITEM_USED {
   item_id: string;
   item_serial: number;
-  item_name: string;
 }
 
 export interface iPayload_ERROR_USING_ITEM {

@@ -345,7 +345,7 @@ export const CombatUI = (props: iPropsCombatUI) => {
         isVisible={modalEscapeVisible}
         toggleVisibility={modalEscapeToggle}
         title='Exit combat'
-        description='Are you sure you want to leave?'
+        description="Are you sure you want to leave? You'll have to wait to fight this gym again"
         labelOk='Yes'
         callbackOk={props.inputEscape}
         callbackCancel={modalEscapeToggle}

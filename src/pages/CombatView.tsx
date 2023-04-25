@@ -40,7 +40,7 @@ interface iCombatViewProps {
   route: RouteProp<{ params: iCombatViewParams }, 'params'>;
 }
 
-export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
+export const CombatView = ({ route }: iCombatViewProps) => {
   // toast
 
   const { showInfoToast, showErrorToast } = useToastAlert();

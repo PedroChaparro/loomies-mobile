@@ -1,4 +1,4 @@
-import { getItemsService } from '@src/services/user.services';
+import { getItemsService } from '@src/services/items.services';
 import { TItem } from '@src/types/types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
