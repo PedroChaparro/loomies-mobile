@@ -134,6 +134,9 @@ export const ModalGym = () => {
             <Text style={Styles.modalSubtitle}>
               Owner: {gymInfo.owner == null ? 'Unclaimed' : gymInfo.owner}
             </Text>
+            {gymInfo.user_owns_it && (
+              <Text style={Styles.modalSubtitle}>(You own this gym)</Text>
+            )}
             <View style={Styles.protectorsContainer}>
               <View style={Styles.containerButton}>
                 <Text style={Styles.flastListTitle}>Protectors:</Text>
@@ -153,14 +156,16 @@ export const ModalGym = () => {
                   callback={fetchClaimRewards}
                 />
               )}
-              <CustomButton
-                title='Challenge'
-                type='primary'
-                callback={() => {
-                  console.log('Challenge');
-                  goToCombat();
-                }}
-              />
+              {!gymInfo.user_owns_it && (
+                <CustomButton
+                  title='Challenge'
+                  type='primary'
+                  callback={() => {
+                    console.log('Challenge');
+                    goToCombat();
+                  }}
+                />
+              )}
             </View>
           </View>
         </View>
