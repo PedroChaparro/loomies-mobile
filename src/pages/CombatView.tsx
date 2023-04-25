@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavigationProp, RouteProp } from '@react-navigation/core';
 import { View, Text, SafeAreaView } from 'react-native';
-import useWebSocket from 'react-use-websocket';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 import { CombatUI } from '@src/components/Combat/CombatUI';
 import { navigate } from '@src/navigation/RootNavigation';
@@ -41,7 +41,7 @@ interface iCombatViewProps {
 export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
   // toast
 
-  const { showInfoToast } = useToastAlert();
+  const { showInfoToast, showErrorToast } = useToastAlert();
 
   // web socket
 
@@ -70,8 +70,21 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
   useEffect(() => {
     // make sure we have workable parameters
     if (!route.params.gym || !route.params.combatToken) navigate('Map', null);
-    console.log(url);
   }, []);
+
+  useEffect(() => {
+    // connection closed
+
+    console.log('readyState', readyState);
+    if (readyState == ReadyState.CLOSED) {
+      // it's a disconnection and not a normal ending
+
+      if (!modalLooseVisible) {
+        showErrorToast('Connection lost');
+        exitCombat();
+      }
+    }
+  }, [readyState]);
 
   // receive message
 
@@ -307,12 +320,12 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
 
     (async () => {
       await delay(1000);
+      showInfoToast('Combat has ended');
       exitCombat();
     })();
   };
 
   const exitCombat = () => {
-    showInfoToast('Combat has ended');
     navigate('Map', null);
   };
 
@@ -380,7 +393,10 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           inputEscape={userEscape}
           // loose modal
           modalLooseVisible={modalLooseVisible}
-          modalLooseCallback={exitCombat}
+          modalLooseCallback={() => {
+            showInfoToast('Combat has ended');
+            exitCombat();
+          }}
           // display message
           queueUpdated={queueUpdated}
           getMessageQueue={getMessageQueue}
