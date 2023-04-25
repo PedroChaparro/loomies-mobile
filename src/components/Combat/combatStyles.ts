@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'teal'
+    backgroundColor: 'transparent'
   },
 
   scene: {
