@@ -24,10 +24,6 @@ export const SelectItemModal = (props: iPropsSelectItemModal) => {
     if (!data) return;
 
     // only items usable in combat
-
-    const items = data.items.filter((item) => item.is_combat_item);
-    console.log(items.length);
-
     setItems(data.items);
   };
 

@@ -198,17 +198,17 @@ export const Map3DEngine = () => {
           sceneMap
         );
 
-        console.log('A2');
+        console.log('A1');
         if (playerModel && playerNode.current) {
           playerModel.setParent(playerNode.current);
         }
-        console.log('A3');
+        console.log('A1');
 
         if (circleIndicatorModel && playerNode.current) {
           circleIndicatorModel.position.y = CIRCLE_INDICATOR_HEIGHT;
           circleIndicatorModel.setParent(playerNode.current);
         }
-        console.log('A4');
+        console.log('A1');
       } catch (error) {
         console.log("ERROR: Couldn't load model.");
       }

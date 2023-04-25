@@ -164,7 +164,6 @@ export const ModalGym = () => {
                   title='Challenge'
                   type='primary'
                   callback={() => {
-                    console.log('Challenge');
                     goToCombat();
                   }}
                 />
