@@ -79,6 +79,8 @@ export const CaptureLoomie3D = ({
       }
     },
     stateMachine.current?.stt.state
+      ? stateMachine.current.stt.state.toString()
+      : undefined
   );
 
   // pointer events
