@@ -20,6 +20,7 @@ import {
   iRefCombatFloatingMessage
 } from './CombatFloatingMessage';
 import { GenericModal } from '../Modals/GenericModal';
+import { SelectItemModal } from '../Modals/Combat/SelectItemModal';
 
 interface iPropsCombatUI {
   // state
@@ -41,6 +42,11 @@ interface iPropsCombatUI {
   // win modal
   modalWinVisible: boolean;
   modalWinCallback: () => void;
+
+  // use item modal
+  modalItemVisible: boolean;
+  modalItemToggle: () => void;
+  modalItemCallback: (_itemId: string) => void;
 
   // display message
   queueUpdated: number;
@@ -319,7 +325,7 @@ export const CombatUI = (props: iPropsCombatUI) => {
                   <Pressable
                     style={{ ...styles.bubbleBig }}
                     onPress={() => {
-                      console.log('Pressed loomball bubble');
+                      props.modalItemToggle();
                     }}
                   >
                     <FeatherIcon size={30} name={'box'} color={'white'} />
@@ -343,6 +349,14 @@ export const CombatUI = (props: iPropsCombatUI) => {
         labelOk='Yes'
         callbackOk={props.inputEscape}
         callbackCancel={modalEscapeToggle}
+      />
+
+      {/* use item modal */}
+
+      <SelectItemModal
+        isVisible={props.modalItemVisible}
+        toggleVisibilityCallback={props.modalItemToggle}
+        submitCallback={props.modalItemCallback}
       />
 
       {/* you loose modal */}

@@ -64,11 +64,25 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
 
   const [modalLooseVisible, setModalLooseVisible] = useState<boolean>(false);
   const [modalWinVisible, setModalWinVisible] = useState<boolean>(false);
-  const modalLooseToggle = () => {
-    setModalLooseVisible((value) => !value);
+  const [modalItemVisible, setModalItemVisible] = useState<boolean>(false);
+  const modalLooseToggle = (open?: boolean) => {
+    if (open != undefined) setModalLooseVisible(open);
+    else setModalLooseVisible((value) => !value);
   };
-  const modalWinToggle = () => {
-    setModalWinVisible((value) => !value);
+  const modalWinToggle = (open?: boolean) => {
+    if (open != undefined) setModalWinVisible(open);
+    else setModalWinVisible((value) => !value);
+  };
+  const modalItemToggle = (open?: boolean) => {
+    if (open != undefined) {
+      setModalItemVisible(open);
+    } else setModalItemVisible((value) => !value);
+  };
+
+  const modalCloseAll = () => {
+    modalLooseToggle(false);
+    modalWinToggle(false);
+    modalItemToggle(false);
   };
 
   useEffect(() => {
@@ -272,7 +286,8 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
             if (loomie) return { ...loomie, hp: 0 };
           });
 
-          modalWinToggle();
+          modalCloseAll();
+          modalWinToggle(true);
           queueMessage('You win', false);
         }
         break;
@@ -284,7 +299,8 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
             if (loomie) return { ...loomie, hp: 0 };
           });
 
-          modalLooseToggle();
+          modalCloseAll();
+          modalLooseToggle(true);
           queueMessage('You have lost', false);
         }
         break;
@@ -406,6 +422,14 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           // win modal
           modalWinVisible={modalWinVisible}
           modalWinCallback={() => {
+            showInfoToast('Combat has ended');
+            exitCombat();
+          }}
+          // use item modal
+          modalItemVisible={modalItemVisible}
+          modalItemToggle={() => modalItemToggle()}
+          modalItemCallback={(item: string) => {
+            console.log(`Info: selected ${item}`);
             showInfoToast('Combat has ended');
             exitCombat();
           }}

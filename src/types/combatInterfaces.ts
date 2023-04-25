@@ -1,3 +1,14 @@
+// state
+
+export enum COMBAT_STATE {
+  NONE,
+  PLAYING,
+  LOST,
+  WON
+}
+
+// messages
+
 export enum TYPE {
   // server -> client
 
