@@ -85,14 +85,15 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
     modalItemToggle(false);
   };
 
+  // make sure we have workable parameters
+
   useEffect(() => {
-    // make sure we have workable parameters
     if (!route.params.gym || !route.params.combatToken) navigate('Map', null);
   }, []);
 
-  useEffect(() => {
-    // connection closed
+  // connection closed
 
+  useEffect(() => {
     console.log('readyState', readyState);
     if (readyState == ReadyState.CLOSED) {
       // it's a disconnection and not a normal ending
@@ -139,14 +140,8 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
 
           // update loomies
 
-          setLoomieGym({
-            ...payload.gym_loomie,
-            hp: payload.gym_loomie.boosted_hp
-          });
-          setLoomiePlayer({
-            ...payload.player_loomie,
-            hp: payload.player_loomie.boosted_hp
-          });
+          setLoomieGym(payload.gym_loomie);
+          setLoomiePlayer(payload.player_loomie);
 
           // update loomies left
 
@@ -167,19 +162,18 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
             if (loomie) {
               // queue display message
 
-              const hpDiff = payload.hp - loomie.hp;
-              if (hpDiff < 0)
+              if (payload.damage > 0)
                 queueMessage(
                   payload.was_critical
-                    ? `Effective attack! ${hpDiff}`
-                    : `${hpDiff}`,
+                    ? `Effective attack! -${payload.damage}`
+                    : `-${payload.damage}`,
                   false
                 );
 
               // update hp
 
               loomie.hp = payload.hp;
-              return { ...loomie, hp: payload.hp };
+              return { ...loomie, boosted_hp: payload.hp };
             }
           });
         }
@@ -197,33 +191,32 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
             if (loomie) {
               // queue display message
 
-              const hpDiff = payload.hp - loomie.hp;
-              if (hpDiff < 0)
+              if (payload.damage > 0)
                 queueMessage(
                   payload.was_critical
-                    ? `Effective attack! ${hpDiff}`
-                    : `${hpDiff}`,
+                    ? `Effective attack! -${payload.damage}`
+                    : `-${payload.damage}`,
                   true
                 );
 
               // update hp
 
               loomie.hp = payload.hp;
-              return { ...loomie, hp: payload.hp };
+              return { ...loomie, boosted_hp: payload.hp };
             }
           });
         }
         break;
 
-      // update user loomie
+      // update user/gym loomies
 
-      case TYPE.UPDATE_PLAYER_LOOMIE:
+      case TYPE.UPDATE_USER_LOOMIE:
         {
           if ((data.payload as iPayload_UPDATE_PLAYER_LOOMIE) === undefined)
             return;
           const payload = data.payload as iPayload_UPDATE_PLAYER_LOOMIE;
 
-          setLoomiePlayer({ ...payload.loomie, hp: payload.loomie.boosted_hp });
+          setLoomiePlayer(payload.loomie);
         }
         break;
 
@@ -235,7 +228,7 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
             return;
           const payload = data.payload as iPayload_UPDATE_PLAYER_LOOMIE;
 
-          setLoomieGym({ ...payload.loomie, hp: payload.loomie.boosted_hp });
+          setLoomieGym(payload.loomie);
         }
         break;
 
@@ -283,7 +276,7 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
         {
           setGymLoomiesLeft(0);
           setLoomieGym((loomie) => {
-            if (loomie) return { ...loomie, hp: 0 };
+            if (loomie) return { ...loomie, boosted_hp: 0 };
           });
 
           modalCloseAll();
@@ -296,7 +289,7 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
         {
           setUserLoomiesLeft(0);
           setLoomiePlayer((loomie) => {
-            if (loomie) return { ...loomie, hp: 0 };
+            if (loomie) return { ...loomie, boosted_hp: 0 };
           });
 
           modalCloseAll();
@@ -386,6 +379,19 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
     });
   };
 
+  // use item
+
+  const applyItem = (itemid: string) => {
+    const message = JSON.stringify({
+      type: TYPE[TYPE.USER_USE_ITEM] as string,
+      payload: {
+        item_id: itemid
+      }
+    });
+
+    sendMessage(message, true);
+  };
+
   return (
     <>
       {/* 3D scene */}
@@ -428,11 +434,7 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           // use item modal
           modalItemVisible={modalItemVisible}
           modalItemToggle={() => modalItemToggle()}
-          modalItemCallback={(item: string) => {
-            console.log(`Info: selected ${item}`);
-            showInfoToast('Combat has ended');
-            exitCombat();
-          }}
+          modalItemCallback={applyItem}
           // display message
           queueUpdated={queueUpdated}
           getMessageQueue={getMessageQueue}

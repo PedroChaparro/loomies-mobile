@@ -13,7 +13,7 @@ export enum TYPE {
   // server -> client
 
   start,
-  UPDATE_PLAYER_LOOMIE,
+  UPDATE_USER_LOOMIE,
   UPDATE_USER_LOOMIE_HP,
   UPDATE_GYM_LOOMIE,
   UPDATE_GYM_LOOMIE_HP,
