@@ -53,7 +53,7 @@ export const CombatFloatingMessage = forwardRef<
           Animated.timing(opacity.current, {
             toValue: 0,
             duration: ANIMATION_DURATION,
-            useNativeDriver: true
+            useNativeDriver: false
           })
         ]).start();
       }
@@ -72,7 +72,7 @@ export const CombatFloatingMessage = forwardRef<
           Animated.timing(opacity.current, {
             toValue: 0,
             duration: ANIMATION_DURATION,
-            useNativeDriver: true
+            useNativeDriver: false
           })
         ]).start();
       }

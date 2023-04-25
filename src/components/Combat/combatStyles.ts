@@ -12,8 +12,6 @@ const colors = {
 };
 
 const HEADER_HEIGHT = -160 + 220 + 7;
-const TOP_HEIGHT = 0;
-const BOTTOM_HEIGHT = 0;
 
 export const styles = StyleSheet.create({
   container: {
@@ -248,10 +246,10 @@ export const styles = StyleSheet.create({
   },
 
   gameMessagesContainer: {
-    //backgroundColor: 'purple',
+    //backgroundColor: 'purple', // uncomment to make adjusts
     position: 'absolute',
-    top: HEADER_HEIGHT + 115,
-    bottom: HEADER_HEIGHT + 100,
+    top: HEADER_HEIGHT + 100,
+    bottom: HEADER_HEIGHT + 120,
     flexGrow: 1,
     width: '100%',
     flexDirection: 'row'

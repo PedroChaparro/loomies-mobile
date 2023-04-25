@@ -91,7 +91,7 @@ export const CombatUI = (props: iPropsCombatUI) => {
       Animated.timing(gizmoOpacity.current, {
         toValue: 0,
         duration: 500,
-        useNativeDriver: true
+        useNativeDriver: false
       })
     ]).start();
   };

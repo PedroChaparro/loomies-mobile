@@ -491,8 +491,6 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           removeMessageFromQueue={removeMessageFromQueue}
         />
       )}
-
-      <Text>{route.params.gym.name}</Text>
     </>
   );
 };
