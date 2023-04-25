@@ -195,7 +195,7 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
     sceneCapture.createDefaultCamera(true, true, true);
     if (sceneCapture.activeCamera) setCameraCapture(sceneCapture.activeCamera);
 
-    sceneCapture.createDefaultCamera(true, true, true);
+    sceneCombat.createDefaultCamera(true, true, true);
     if (sceneCombat.activeCamera) setCameraCombat(sceneCombat.activeCamera);
 
     // lights (only those that need it)
@@ -247,7 +247,7 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
         if (sceneCapture) sceneCapture.render();
         break;
       case APP_SCENE.COMBAT:
-        if (sceneCapture) sceneCapture.render();
+        if (sceneCombat) sceneCombat.render();
         break;
     }
   });
