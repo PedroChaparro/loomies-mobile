@@ -24,8 +24,8 @@ export const UserInventory = ({ navigation }: IProps) => {
   };
 
   const getInventory = async () => {
-    const [response, error] = await getItemsService();
-    if (error) return;
+    const response = await getItemsService();
+    if (!response) return;
     setItems(response.items);
     setLoomballs(response.loomballs);
     setLoading(false);
