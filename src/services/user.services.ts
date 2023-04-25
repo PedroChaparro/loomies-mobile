@@ -179,19 +179,9 @@ export const getItemsService = async (
 
 export const getLoomballsService = async (): Promise<TLoomball[]> => {
   try {
-    const [items, err] = await getItemsService();
-    if (err) throw err;
-
-    // cast check
-    const rawData: object = items['loomballs'];
-    if ((rawData as TLoomball[]) === undefined) {
-      throw 'Error: getLoomballsService cast error';
-    }
-
-    // return loomballs available to player
-    const loomballs: TLoomball[] = rawData as TLoomball[];
-
-    return loomballs;
+    const data = await getItemsService();
+    if (!data) throw 'Error: getLoomballsService when getting items';
+    return data.loomballs;
   } catch (e) {
     console.error(e);
   }
