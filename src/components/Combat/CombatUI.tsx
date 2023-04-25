@@ -38,6 +38,10 @@ interface iPropsCombatUI {
   modalLooseVisible: boolean;
   modalLooseCallback: () => void;
 
+  // win modal
+  modalWinVisible: boolean;
+  modalWinCallback: () => void;
+
   // display message
   queueUpdated: number;
   getMessageQueue: () => iDisplayMessage[];
@@ -345,10 +349,20 @@ export const CombatUI = (props: iPropsCombatUI) => {
 
       <GenericModal
         isVisible={props.modalLooseVisible}
-        title='You have no Loomies left'
-        description='Good luck next time'
+        title='Defeat'
+        description='You have no Loomies left in your team. Good luck next time.'
         labelOk='Return to map'
         callbackOk={props.modalLooseCallback}
+      />
+
+      {/* you win modal */}
+
+      <GenericModal
+        isVisible={props.modalWinVisible}
+        title='Victory'
+        description="You own this gym now. You can get better rewards from this gym as long as it's yours."
+        labelOk='Return to map'
+        callbackOk={props.modalWinCallback}
       />
     </>
   );

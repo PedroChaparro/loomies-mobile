@@ -63,8 +63,12 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
   // modals
 
   const [modalLooseVisible, setModalLooseVisible] = useState<boolean>(false);
+  const [modalWinVisible, setModalWinVisible] = useState<boolean>(false);
   const modalLooseToggle = () => {
     setModalLooseVisible((value) => !value);
+  };
+  const modalWinToggle = () => {
+    setModalWinVisible((value) => !value);
   };
 
   useEffect(() => {
@@ -79,7 +83,7 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
     if (readyState == ReadyState.CLOSED) {
       // it's a disconnection and not a normal ending
 
-      if (!modalLooseVisible) {
+      if (!(modalLooseVisible || modalWinVisible)) {
         showErrorToast('Connection lost');
         exitCombat();
       }
@@ -106,10 +110,9 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
 
     if ((rawData as iCombatMessage) === undefined) return;
     const data = rawData as iCombatMessage;
+
     console.log(data.type);
     console.log(data.payload);
-
-    //queueMessage(data.type, false);
 
     const messageType = data.type as keyof typeof TYPE;
     switch (TYPE[messageType]) {
@@ -120,8 +123,7 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           if ((data.payload as iPayload_START) === undefined) return;
           const payload = data.payload as iPayload_START;
 
-          console.log('start start start');
-          console.log(payload.gym_loomie);
+          // update loomies
 
           setLoomieGym({
             ...payload.gym_loomie,
@@ -131,6 +133,8 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
             ...payload.player_loomie,
             hp: payload.player_loomie.boosted_hp
           });
+
+          // update loomies left
 
           setGymLoomiesLeft(payload.alive_gym_loomies);
           setUserLoomiesLeft(payload.alive_user_loomies);
@@ -267,6 +271,8 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           setLoomieGym((loomie) => {
             if (loomie) return { ...loomie, hp: 0 };
           });
+
+          modalWinToggle();
           queueMessage('You win', false);
         }
         break;
@@ -394,6 +400,12 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           // loose modal
           modalLooseVisible={modalLooseVisible}
           modalLooseCallback={() => {
+            showInfoToast('Combat has ended');
+            exitCombat();
+          }}
+          // win modal
+          modalWinVisible={modalWinVisible}
+          modalWinCallback={() => {
             showInfoToast('Combat has ended');
             exitCombat();
           }}
