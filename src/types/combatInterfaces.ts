@@ -22,12 +22,15 @@ export enum TYPE {
   COMBAT_TIMEOUT,
   GYM_ATTACK_CANDIDATE,
   GYM_ATTACK_DODGED,
-  USER_LOOMIE_WEAKENED,
-  USER_HAS_LOST,
   USER_ATTACK_DODGED,
+  USER_LOOMIE_WEAKENED,
   GYM_LOOMIE_WEAKENED,
+  USER_HAS_LOST,
   USER_HAS_WON,
   ESCAPE_COMBAT,
+
+  ERROR_USING_ITEM,
+  USER_ITEM_USED,
 
   // client -> server
 
@@ -46,7 +49,8 @@ export interface iCombatMessage {
     | iPayload_UPDATE_USER_LOOMIE_HP
     | iPayload_UPDATE_PLAYER_LOOMIE
     | iPayload_GYM_LOOMIE_WEAKENED
-    | iPayload_USER_LOOMIE_WEAKENED;
+    | iPayload_USER_LOOMIE_WEAKENED
+    | iPayload_USER_ITEM_USED;
 }
 
 export interface iPayload_START {
@@ -75,6 +79,12 @@ export interface iPayload_USER_LOOMIE_WEAKENED {
 export interface iPayload_GYM_LOOMIE_WEAKENED {
   alive_gym_loomies: number;
   loomie_id: string;
+}
+
+export interface iPayload_USER_ITEM_USED {
+  item_id: string;
+  item_serial: number;
+  item_name: string;
 }
 
 export interface iLoomie {

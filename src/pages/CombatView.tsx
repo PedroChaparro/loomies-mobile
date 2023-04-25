@@ -15,7 +15,8 @@ import {
   TYPE,
   iPayload_UPDATE_PLAYER_LOOMIE,
   iPayload_GYM_LOOMIE_WEAKENED,
-  iPayload_USER_LOOMIE_WEAKENED
+  iPayload_USER_LOOMIE_WEAKENED,
+  iPayload_USER_ITEM_USED
 } from '@src/types/combatInterfaces';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import { delay } from '@src/utils/delay';
@@ -295,6 +296,38 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           modalCloseAll();
           modalLooseToggle(true);
           queueMessage('You have lost', false);
+        }
+        break;
+
+      // use item
+
+      case TYPE.USER_ITEM_USED:
+        {
+          if ((data.payload as iPayload_USER_ITEM_USED) === undefined) return;
+          const payload = data.payload as iPayload_USER_ITEM_USED;
+          let message = '';
+
+          switch (payload.item_serial) {
+            case 1:
+            case 2:
+            case 3: // health items
+              message = `Loomie healed`;
+              break;
+            case 4: // defibrillator
+              message = 'Loomie revived!';
+              break;
+            case 5: // steroids
+              message = `Attack boosted`;
+              break;
+            case 6: // vitamins
+              message = `Max health boosted`;
+              break;
+            case 7: // uknown beverage
+              message = `Level up`;
+              break;
+          }
+
+          queueMessage(message, false);
         }
         break;
 
