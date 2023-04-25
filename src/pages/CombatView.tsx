@@ -16,7 +16,8 @@ import {
   iPayload_UPDATE_PLAYER_LOOMIE,
   iPayload_GYM_LOOMIE_WEAKENED,
   iPayload_USER_LOOMIE_WEAKENED,
-  iPayload_USER_ITEM_USED
+  iPayload_USER_ITEM_USED,
+  iPayload_ERROR_USING_ITEM
 } from '@src/types/combatInterfaces';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import { delay } from '@src/utils/delay';
@@ -299,7 +300,7 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
         }
         break;
 
-      // use item
+      // items
 
       case TYPE.USER_ITEM_USED:
         {
@@ -328,6 +329,22 @@ export const CombatView = ({ _navigation, route }: iCombatViewProps) => {
           }
 
           queueMessage(message, false);
+        }
+        break;
+
+      case TYPE.ERROR_USING_ITEM:
+        {
+          if ((data.payload as iPayload_ERROR_USING_ITEM) === undefined) return;
+          const payload = data.payload as iPayload_ERROR_USING_ITEM;
+
+          switch (payload.error_reason) {
+            case 'USER_ALREADY_HEALED':
+              queueMessage('Loomie already healed', false);
+              break;
+            case 'USER_NOT_WEAKENED':
+              queueMessage('Selected Loomie is not weakened', false);
+              break;
+          }
         }
         break;
 

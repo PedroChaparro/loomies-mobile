@@ -50,7 +50,8 @@ export interface iCombatMessage {
     | iPayload_UPDATE_PLAYER_LOOMIE
     | iPayload_GYM_LOOMIE_WEAKENED
     | iPayload_USER_LOOMIE_WEAKENED
-    | iPayload_USER_ITEM_USED;
+    | iPayload_USER_ITEM_USED
+    | iPayload_ERROR_USING_ITEM;
 }
 
 export interface iPayload_START {
@@ -85,6 +86,12 @@ export interface iPayload_USER_ITEM_USED {
   item_id: string;
   item_serial: number;
   item_name: string;
+}
+
+export interface iPayload_ERROR_USING_ITEM {
+  error_reason: string;
+  item_id: string;
+  item_serial: number;
 }
 
 export interface iLoomie {
