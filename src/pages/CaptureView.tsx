@@ -7,8 +7,8 @@ import {
 import { View, Text, Pressable, Image, StyleSheet } from 'react-native';
 import { TWildLoomies } from '@src/types/types';
 import { MapContext } from '@src/context/MapProvider';
-import { getLoomballsService } from '@src/services/user.services';
 import { TLoomball } from '@src/types/types';
+import { getLoomballsService } from '@src/services/items.services';
 import {
   CaptureLoomie3D,
   LOOMBALL_STATE
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 32,
     fontSize: 14,
-    fontWeight: 'middle',
+    fontWeight: '500',
     color: 'white',
     userSelect: 'none'
   },

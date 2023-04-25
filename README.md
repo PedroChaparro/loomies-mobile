@@ -14,6 +14,16 @@ The project was tested to work with the following specs:
 | System Image (Virtual Device) | Android 11.0 (R) API 30    |
 | Yarn                          | 1.22.19                    |
 
+## Scripts
+
+| Command                       | Description                                          |
+| ----------------------------- | ---------------------------------------------------- |
+| `yarn start`                  | Starts the react-native server.                      |
+| `yarn start:cache`            | Starts the react-native server clearing the cache.   |
+| `yarn android`                | Runs the app on an Android device.                   |
+| `yarn link:assets`            | Links the assets to the project.                     |
+| `python versioning.py vx.x.x` | Updates the version of the app to prepare a release. |
+
 ### Notes
 
 - It's recommended to use _Yarn_ instead of _NPM_ or _PNPM_ to install the node

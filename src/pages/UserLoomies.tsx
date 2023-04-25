@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
+
 import {
   getLoomieTeamService,
   getLoomiesRequest
-} from '@src/services/user.services';
+} from '@src/services/loomies.services';
 import { TCaughtLoomies, TCaughtLoomieToRender } from '@src/types/types';
 import { LoomiesGrid } from '@src/components/CaughtLoomiesGrid/LoomiesGrid';
 import { Container } from '@src/components/Container';
