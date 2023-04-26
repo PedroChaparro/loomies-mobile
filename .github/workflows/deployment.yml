@@ -121,9 +121,9 @@ jobs:
           asset_name: Loomies.apk
           asset_content_type: application/vnd.android.package-archive
 
-      - name: Push files changes
-        run: |
-          git config user.name [BOT]
-          git add ./package.json ./android/app/build.gradle
-          git commit -m "[ci skip] chore(release): ${GITHUB_REF#refs/*/}"
-          git push
+      # - name: Push files changes
+      # run: |
+      # git config user.name [BOT]
+      # git add ./package.json ./android/app/build.gradle
+      # git commit -m "[ci skip] chore(release): ${GITHUB_REF#refs/*/}"
+      # git push
