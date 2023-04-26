@@ -12,7 +12,6 @@ import { iBabylonProvider } from '@src/context/BabylonProvider';
 import { iMapProvider } from '@src/context/MapProvider';
 import { iModelProvider } from '@src/context/ModelProvider';
 import {
-  instantiatedEntriesScale,
   instantiatedEntriesTranslate,
   instantiatedEntriesRotate
 } from '@src/components/Map3D/utilsVertex';
@@ -159,13 +158,11 @@ export class CombatSM {
 
     // update models
     if (this.stt.loomieUser.loomie.serial !== loomieUser.serial) {
-      console.log('=================> UPDATING LOOMIE USER');
       this.stt.loomieUser.loomie = loomieUser;
       this.updateLoomieModel(this.stt.loomieUser, true);
     }
 
     if (this.stt.loomieGym.loomie.serial !== loomieGym.serial) {
-      console.log('=================> UPDATING LOOMIE GYM');
       this.stt.loomieGym.loomie = loomieGym;
       this.updateLoomieModel(this.stt.loomieGym, false);
     }
@@ -176,7 +173,6 @@ export class CombatSM {
   }
 
   setup() {
-    console.log('Setiing up scene A1 ===========================');
     this.setupScene();
   }
 
@@ -188,42 +184,17 @@ export class CombatSM {
     const camera = cameraCombat as Babylon.ArcRotateCamera;
 
     // no panning
-    //camera.panningSensibility = 0;
-
-    // limit camera zoom
-    //camera.lowerRadiusLimit = 70;
-    //camera.upperRadiusLimit = camera.lowerRadiusLimit;
-
-    //// limit camera angle
-    //camera.lowerBetaLimit = Math.PI * (0.5 - 0.3);
-    //camera.upperBetaLimit = Math.PI * (0.5 - 0.1);
-
-    //camera.lowerAlphaLimit = Math.PI * (0.5 - 0.2);
-    //camera.upperAlphaLimit = Math.PI * (0.5 + 0.2);
-
-    //camera.angularSensibilityX = 12000;
-    //camera.angularSensibilityY = camera.angularSensibilityX;
+    camera.panningSensibility = 0;
 
     // make camera target the middle
-    //camera.setTarget(new Vector3(0, 0, 0));
+    camera.setTarget(new Vector3(0, 0, 0));
 
-    //camera.position = new Vector3(0, 10, 10);
-    //camera.setPosition(new Vector3(0, 10, 10))
+    // camera transform
     camera.alpha = CAMERA_TRANSFORM.x;
     camera.beta = CAMERA_TRANSFORM.y;
     camera.radius = CAMERA_TRANSFORM.z;
 
-    console.log(camera.alpha);
-    console.log(camera.beta);
-    console.log(camera.radius);
-
-    //cameraCombat.position = new Vector3(0, 1, 1);
-    //camera.setPosition( new Vector3(0, 1, 1));
-    //console.log(cameraCombat.position);
-
     // setup scene
-
-    console.log('Setiing up scene ===========================');
 
     (async () => {
       try {
@@ -244,18 +215,6 @@ export class CombatSM {
 
         await this.updateLoomieModel(this.stt.loomieUser, true);
         await this.updateLoomieModel(this.stt.loomieGym, false);
-
-        console.log('Finished with scene');
-
-        // set state
-
-        //this.stt.loomieModel = modelLoomie;
-        //this.stt.ballModel = modelBall;
-        //this.stt.hitbox = hitbox;
-        //this.stt.scratchPad = scratchPad;
-        //this.stt.ballInitialOrigin = initialOriginBall;
-        //this.stt.cameraDummy = cameraDummy;
-        //this.stt.ballDummy = ballDummy;
       } catch (error) {
         console.error(error);
       }

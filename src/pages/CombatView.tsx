@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavigationProp, RouteProp } from '@react-navigation/core';
-import { View, Text, SafeAreaView } from 'react-native';
+import { View, SafeAreaView } from 'react-native';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 import { CombatUI } from '@src/components/Combat/CombatUI';
@@ -97,7 +97,6 @@ export const CombatView = ({ route }: iCombatViewProps) => {
   // connection closed
 
   useEffect(() => {
-    console.log('readyState', readyState);
     if (readyState == ReadyState.CLOSED) {
       // it's a disconnection and not a normal ending
 
@@ -128,9 +127,6 @@ export const CombatView = ({ route }: iCombatViewProps) => {
 
     if ((rawData as iCombatMessage) === undefined) return;
     const data = rawData as iCombatMessage;
-
-    console.log(data.type);
-    console.log(data.payload);
 
     const messageType = data.type as keyof typeof TYPE;
     switch (TYPE[messageType]) {
@@ -417,8 +413,6 @@ export const CombatView = ({ route }: iCombatViewProps) => {
   const getMessageQueue = (): iDisplayMessage[] => displayMessageQueue.current;
   const removeMessageFromQueue = (deletedIds: number[]) => {
     // filter deleted ids
-
-    console.log(deletedIds);
 
     displayMessageQueue.current = displayMessageQueue.current.filter((msg) => {
       return (

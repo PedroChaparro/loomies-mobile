@@ -70,15 +70,6 @@ export const Combat3D = forwardRef<iRefCombat3D, iPropsCombat3D>(
       sceneCombat,
       () => {
         if (!stateMachine.current) return;
-
-        //const state = stateMachine.current.stt.state;
-        //const controller = stateMachine.current.controllers.get(state);
-
-        //if (controller?.frame) {
-        //const callback = controller.frame;
-
-        //callback(stateMachine.current.stt);
-        //}
       },
       stateMachine.current?.stt.loomieUser.state &&
         stateMachine.current?.stt.loomieGym.state
@@ -94,12 +85,6 @@ export const Combat3D = forwardRef<iRefCombat3D, iPropsCombat3D>(
       if (!cameraCombat) return;
       if (getCurrentScene() !== APP_SCENE.COMBAT) return;
 
-      console.log('AAAAAAAAAAAA1');
-      console.log('AAAAAAAAAAAA1');
-      console.log('AAAAAAAAAAAA1');
-      console.log('AAAAAAAAAAAA1');
-      console.log(props.loomieUser.serial, ' ::: ', props.loomieGym.serial);
-
       // create scene
       if (!stateMachine.current) {
         stateMachine.current = new CombatSM(
@@ -112,8 +97,6 @@ export const Combat3D = forwardRef<iRefCombat3D, iPropsCombat3D>(
           props.loomieUser,
           props.loomieGym
         );
-
-        console.log('AAAAAAAAAAAA2');
 
         stateMachine.current.setup();
       }
@@ -147,15 +130,6 @@ export const Combat3D = forwardRef<iRefCombat3D, iPropsCombat3D>(
       props.loomieUser.serial,
       props.loomieGym.serial
     ]);
-
-    // none state create scene
-    useEffect(() => {
-      // create scene
-
-      return () => {
-        // destroy everything
-      };
-    }, []);
 
     // toggle scene
 
