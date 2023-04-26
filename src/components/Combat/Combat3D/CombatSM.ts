@@ -155,6 +155,15 @@ export class CombatSM {
     this.stt.modelContext = modelContext;
     this.stt.mapContext = mapContext;
 
+    // update models
+    if (this.stt.loomieUser.loomie.serial !== loomieUser.serial){
+      this.updateLoomieModel(this.stt.loomieUser);
+    }
+
+    if (this.stt.loomieGym.loomie.serial !== loomieGym.serial){
+      this.updateLoomieModel(this.stt.loomieGym);
+    }
+
     // set
     this.stt.loomieUser.loomie = loomieUser;
     this.stt.loomieGym.loomie = loomieGym;
@@ -194,7 +203,7 @@ export class CombatSM {
 
     //camera.position = new Vector3(0, 10, 10);
     //camera.setPosition(new Vector3(0, 10, 10))
-    const CAMERA_TRANSFORM = new Vector3(2.1443, 0.8957, 10);
+    const CAMERA_TRANSFORM = new Vector3(2.1443, 0.9221, 10);
     camera.alpha = CAMERA_TRANSFORM.x;
     camera.beta = CAMERA_TRANSFORM.y;
     camera.radius = CAMERA_TRANSFORM.z;
@@ -228,6 +237,11 @@ export class CombatSM {
 
         instantiatedEntriesTranslate(modelEnv, Vector3.Zero())
 
+        // loomie models
+
+        await this.updateLoomieModel(this.stt.loomieUser);
+        await this.updateLoomieModel(this.stt.loomieGym);
+
         console.log('Finished with scene');
 
         // set state
@@ -243,6 +257,31 @@ export class CombatSM {
         console.error(error);
       }
     })();
+  }
+
+  // update loomie model
+
+  async updateLoomieModel (loomieStt: iCombatLoomieState) {
+
+    try{
+
+      // free previous model
+
+      loomieStt.model?.dispose();
+
+      // load current model
+
+      const model = await this.stt.modelContext.instantiateModel(
+        loomieStt.loomie.serial.toString(),
+        this.stt.sceneCombat
+      );
+
+      if (!model) throw "Error: updateLoomieModel: Couldn't instantiate loomie model";
+      loomieStt.model = model;
+    }
+    catch(e){
+      console.log(e);
+    }
   }
 
   // events
