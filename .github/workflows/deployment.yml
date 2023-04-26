@@ -77,7 +77,7 @@ jobs:
         run: cd android && chmod +x ./gradlew
 
       - name: Update version
-        run: python versioning.py ${{ github.ref }}
+        run: python versioning.py ${GITHUB_REF#refs/*/}
 
       # -- Build and sign the Android app
       - name: Build Android
@@ -125,5 +125,5 @@ jobs:
         run: |
           git config user.name [BOT]_CD
           git add ./package.json ./android/app/build.gradle
-          git commit -m "[ci skip] chore(release): ${{ github.ref }}"
+          git commit -m "[ci skip] chore(release): ${GITHUB_REF#refs/*/}"
           git push origin main
