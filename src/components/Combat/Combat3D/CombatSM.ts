@@ -155,13 +155,13 @@ export class CombatSM {
     this.stt.modelContext = modelContext;
     this.stt.mapContext = mapContext;
 
+    // set
     this.stt.loomieUser.loomie = loomieUser;
     this.stt.loomieGym.loomie = loomieGym;
   }
 
   setup() {
-    if (!this.stt.sceneCombat) return;
-
+    console.log('Setiing up scene A1 ===========================');
     this.setupScene();
   }
 
@@ -173,10 +173,10 @@ export class CombatSM {
     const camera = cameraCombat as Babylon.ArcRotateCamera;
 
     // no panning
-    camera.panningSensibility = 0;
+    //camera.panningSensibility = 0;
 
     // limit camera zoom
-    //camera.lowerRadiusLimit = 7;
+    //camera.lowerRadiusLimit = 70;
     //camera.upperRadiusLimit = camera.lowerRadiusLimit;
 
     //// limit camera angle
@@ -190,9 +190,27 @@ export class CombatSM {
     //camera.angularSensibilityY = camera.angularSensibilityX;
 
     // make camera target the middle
-    camera.setTarget(new Vector3(0, 1, 0));
+    //camera.setTarget(new Vector3(0, 0, 0));
+
+    //camera.position = new Vector3(0, 10, 10);
+    //camera.setPosition(new Vector3(0, 10, 10))
+    const CAMERA_TRANSFORM = new Vector3(2.1443, 0.8957, 10);
+    camera.alpha = CAMERA_TRANSFORM.x;
+    camera.beta = CAMERA_TRANSFORM.y;
+    camera.radius = CAMERA_TRANSFORM.z;
+
+    console.log(camera.alpha);
+    console.log(camera.beta);
+    console.log(camera.radius);
+
+
+    //cameraCombat.position = new Vector3(0, 1, 1);
+    //camera.setPosition( new Vector3(0, 1, 1));
+    //console.log(cameraCombat.position);
 
     // setup scene
+
+    console.log('Setiing up scene ===========================');
 
     (async () => {
       try {
@@ -203,9 +221,14 @@ export class CombatSM {
           sceneCombat
         );
 
+
         // check
 
         if (!modelEnv) throw "Error: Couldn't instantiate env modelEnv";
+
+        instantiatedEntriesTranslate(modelEnv, Vector3.Zero())
+
+        console.log('Finished with scene');
 
         // set state
 
