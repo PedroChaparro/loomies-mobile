@@ -32,7 +32,6 @@ export const CombatFloatingMessage = forwardRef<
 
   useImperativeHandle(ref, () => ({
     updateMessage: (message: string, direction: boolean) => {
-      console.log(message);
       setMessage(message);
       setDirection(direction);
 

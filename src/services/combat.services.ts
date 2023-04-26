@@ -7,15 +7,17 @@ import { CONFIG } from './config.services';
 const { API_URL } = CONFIG;
 
 // Register a combat
+// If successfull returns the payload
+// Otherwise return null and an error code
 
 export const requestCombatRegister = async (
   userPos: iPosition,
   gymId: string,
   failed = false
-): Promise<iRequestCombatRegister | null> => {
+): Promise<[iRequestCombatRegister | null, string]> => {
   try {
     const [accessToken, error] = await getStorageData('accessToken');
-    if (error || !accessToken) return null;
+    if (error || !accessToken) return [null, ''];
 
     const response = await Axios.post(
       `${API_URL}/combat/register`,
@@ -34,23 +36,26 @@ export const requestCombatRegister = async (
     // cast check
     const rawData: object = response.data;
     if ((rawData as iRequestCombatRegister) === undefined) {
-      return null;
+      return [null, ''];
     }
 
     const data: iRequestCombatRegister = rawData as iRequestCombatRegister;
-    return data;
+    return [data, ''];
   } catch (err) {
-    console.error(err);
-
     if (Axios.isAxiosError(err) && err.response?.status === 401 && !failed) {
       await refreshRequest();
       return await requestCombatRegister(userPos, gymId, true);
     }
 
     if (Axios.isAxiosError(err)) {
-      return null;
+      return [
+        null,
+        err.response?.data.message
+          ? err.response.data.message
+          : 'Please try again later'
+      ];
     }
 
-    return null;
+    return [null, ''];
   }
 };

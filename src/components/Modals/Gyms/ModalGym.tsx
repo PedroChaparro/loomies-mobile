@@ -67,7 +67,10 @@ export const ModalGym = () => {
     // get token
 
     const combatToken = await getCombatToken(userPosition, gymInfo._id);
-    if (!combatToken) return;
+    if (!combatToken) {
+      toggleGymModalVisibility();
+      return;
+    }
 
     const params: iCombatViewParams = {
       gym: gymInfo,
@@ -161,7 +164,6 @@ export const ModalGym = () => {
                   title='Challenge'
                   type='primary'
                   callback={() => {
-                    console.log('Challenge');
                     goToCombat();
                   }}
                 />

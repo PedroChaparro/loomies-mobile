@@ -287,7 +287,6 @@ export const CombatUI = (props: iPropsCombatUI) => {
               <Pressable
                 style={styles.bubbleEscape}
                 onPress={() => {
-                  console.log('ESCAPE');
                   modalEscapeToggle();
                 }}
               >
@@ -308,7 +307,7 @@ export const CombatUI = (props: iPropsCombatUI) => {
                   <Pressable
                     style={{ ...styles.bubbleBig }}
                     onPress={() => {
-                      console.log('Pressed loomball bubble');
+                      console.log('Pressed Loomie team bubble');
                     }}
                   >
                     <FeatherIcon size={30} name={'github'} color={'white'} />
