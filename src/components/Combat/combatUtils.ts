@@ -10,11 +10,11 @@ export const getCombatToken = async (
   const [data, error] = await requestCombatRegister(userPos, gymId);
 
   // code 400
-  if (error == 400) {
+  if (error.length) {
     const { showInfoToast } = useToastAlert();
 
     // show toast
-    showInfoToast('No Loomies in your team');
+    showInfoToast(error);
 
     return null;
   }
