@@ -69,6 +69,10 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
   const [cameraCombat, setCameraCombat] = useState<Babylon.Camera>();
 
   const showScene = (scene: APP_SCENE) => {
+    clearScene(sceneDetails);
+    clearScene(sceneCapture);
+    clearScene(sceneCombat);
+
     switch (scene) {
       case APP_SCENE.NONE:
         showSceneNone();
@@ -89,9 +93,6 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
   };
 
   const showSceneNone = async () => {
-    clearScene(sceneDetails);
-    clearScene(sceneCapture);
-    clearScene(sceneCombat);
     stopCameras();
     setCurrentScene(APP_SCENE.NONE);
   };
@@ -150,15 +151,17 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
 
     // stop movement
 
-    [cameraMap, cameraDetails, cameraCapture, cameraCombat].forEach((cameraOri) => {
-      const camera = cameraOri as ArcRotateCamera;
-      camera.cameraRotation = new Babylon.Vector2(0, 0);
-      camera.inertialAlphaOffset = 0;
-      camera.inertialBetaOffset = 0;
-      camera.inertialPanningX = 0;
-      camera.inertialPanningY = 0;
-      camera.inertialRadiusOffset = 0;
-    });
+    [cameraMap, cameraDetails, cameraCapture, cameraCombat].forEach(
+      (cameraOri) => {
+        const camera = cameraOri as ArcRotateCamera;
+        camera.cameraRotation = new Babylon.Vector2(0, 0);
+        camera.inertialAlphaOffset = 0;
+        camera.inertialBetaOffset = 0;
+        camera.inertialPanningX = 0;
+        camera.inertialPanningY = 0;
+        camera.inertialRadiusOffset = 0;
+      }
+    );
   };
 
   const getCurrentScene = () => {
