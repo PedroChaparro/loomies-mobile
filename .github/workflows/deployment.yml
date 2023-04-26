@@ -123,7 +123,7 @@ jobs:
 
       - name: Push files changes
         run: |
-          git config user.name [BOT]_CD
+          git config user.name [BOT]
           git add ./package.json ./android/app/build.gradle
           git commit -m "[ci skip] chore(release): ${GITHUB_REF#refs/*/}"
-          git push origin main
+          git push origin main --force
