@@ -44,6 +44,8 @@ jobs:
       - name: Create .env file
         run: |
           echo "API_URL=${{ secrets.DEPLOYMENT_API_URL }}" > .env
+          echo "PORT=${{ secrets.DEPLOYMENT_PORT }}" >> .env
+          echo "TLS=${{ secrets.DEPLOYMENT_TLS }}" >> .env
           echo "MAP_DEBUG=false" >> .env
           echo "GAME_MIN_REQUIRED_EXPERIENCE=100" >> .env
           echo "GAME_EXPERIENCE_FACTOR=1000" >> .env
