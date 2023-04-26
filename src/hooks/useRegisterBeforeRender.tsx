@@ -5,12 +5,11 @@
 
 import { useRef, useEffect } from 'react';
 import * as Babylon from '@babylonjs/core';
-import { LOOMBALL_STATE } from '@src/components/CaptureLoomie3D/CaptureLoomie3D';
 
 export const useRegisterBeforeRender = (
   scene: Babylon.Scene | undefined,
   callback: () => void,
-  stt: LOOMBALL_STATE | undefined
+  stt: string | undefined
 ) => {
   const savedCallback = useRef<() => void>(() => {
     return;

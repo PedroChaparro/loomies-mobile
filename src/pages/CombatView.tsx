@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavigationProp, RouteProp } from '@react-navigation/core';
-import { View, Text, SafeAreaView } from 'react-native';
+import { View, SafeAreaView } from 'react-native';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 import { CombatUI } from '@src/components/Combat/CombatUI';
@@ -21,6 +21,7 @@ import {
 } from '@src/types/combatInterfaces';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import { delay } from '@src/utils/delay';
+import { Combat3D } from '@src/components/Combat/Combat3D/Combat3D';
 const { WS_URL } = CONFIG;
 
 export interface iDisplayMessage {
@@ -41,7 +42,7 @@ interface iCombatViewProps {
 }
 
 export const CombatView = ({ route }: iCombatViewProps) => {
-  // toast
+  // util
 
   const { showInfoToast, showErrorToast } = useToastAlert();
 
@@ -442,10 +443,9 @@ export const CombatView = ({ route }: iCombatViewProps) => {
 
       <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
         <View style={{ flex: 1 }}>
-          <Text>3D SCENE HERE</Text>
-          {/*getCurrentScene() == APP_SCENE.CAPTURE && (
-            <EngineView camera={cameraCapture} displayFrameRate={MAP_DEBUG} />
-          )*/}
+          {loomiePlayer && loomieGym && (
+            <Combat3D loomieUser={loomiePlayer} loomieGym={loomieGym} />
+          )}
         </View>
       </SafeAreaView>
 
