@@ -35,15 +35,6 @@ export interface iStateController {
   frame?: (_state: iAniState) => void;
 }
 
-// control constants
-
-export const LOOMIE_INITIAL_STATE = COMBAT_LOOMIE_STATE.NONE;
-
-// animation constants
-
-export const USER_LOOMIE_INITIAL_POS = new Vector3(0, 0, 1);
-export const GYM_LOOMIE_INITIAL_POS = new Vector3(0, 0, -1);
-
 //export const ANI_RETURNING_DURATION = 500; // milliseconds
 
 //export const ANI_THROW_DURATION = 500; // milliseconds

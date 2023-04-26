@@ -12,8 +12,7 @@ import React, {
   useImperativeHandle,
   useRef
 } from 'react';
-import { SafeAreaView, Text, View } from 'react-native';
-import * as Babylon from '@babylonjs/core';
+import { SafeAreaView, View } from 'react-native';
 import { EngineView } from '@babylonjs/react-native';
 
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
@@ -24,7 +23,6 @@ import { CONFIG } from '@src/services/config.services';
 import { MapContext } from '@src/context/MapProvider';
 import { CombatSM } from './CombatSM';
 import { iLoomie } from '@src/types/combatInterfaces';
-import { AnaglyphPostProcess } from '@babylonjs/core';
 const { MAP_DEBUG } = CONFIG;
 
 interface iPropsCombat3D {
@@ -164,9 +162,9 @@ export const Combat3D = forwardRef<iRefCombat3D, iPropsCombat3D>(
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
         <View style={{ flex: 1 }}>
-          {getCurrentScene() == APP_SCENE.COMBAT && (<>
-            <Text style={{ color: 'white' }}>Hete</Text>
-            <EngineView camera={cameraCombat} displayFrameRate={MAP_DEBUG} />
+          {getCurrentScene() == APP_SCENE.COMBAT && (
+            <>
+              <EngineView camera={cameraCombat} displayFrameRate={MAP_DEBUG} />
             </>
           )}
         </View>

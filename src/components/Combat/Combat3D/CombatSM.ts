@@ -21,20 +21,21 @@ import {
   controllerNone,
   //controllerReturning,
   //controllerThrow,
-  iStateController,
-  LOOMIE_INITIAL_STATE,
-  USER_LOOMIE_INITIAL_POS,
-  GYM_LOOMIE_INITIAL_POS
+  iStateController
 } from './animations';
 
 import { COMBAT_LOOMIE_STATE } from './Combat3D';
 import { iLoomie } from '@src/types/combatInterfaces';
 
-// control constants
+// constants
 
-const LOOMBALL_CAMERA_DISTANCE = 2.1;
-const LOOMBALL_SCALE = 0.4;
-const LOOMBALL_INITIAL_POS = new Vector3(0, -0.5, LOOMBALL_CAMERA_DISTANCE);
+export const LOOMIE_INITIAL_STATE = COMBAT_LOOMIE_STATE.NONE;
+
+// position constants
+
+const CAMERA_TRANSFORM = new Vector3(2.1443, 0.9221, 10);
+const USER_LOOMIE_INITIAL_POS = new Vector3(0, 0, -2);
+const GYM_LOOMIE_INITIAL_POS = new Vector3(0, 0, 2);
 
 export interface iCombatLoomieState {
   state: COMBAT_LOOMIE_STATE;
@@ -43,6 +44,7 @@ export interface iCombatLoomieState {
   posInitial: Vector3;
   posCurrent: Vector3;
 
+  // TODO: Have a reference to the root node
   // object
   model?: Babylon.InstantiatedEntries;
 
@@ -156,12 +158,12 @@ export class CombatSM {
     this.stt.mapContext = mapContext;
 
     // update models
-    if (this.stt.loomieUser.loomie.serial !== loomieUser.serial){
-      this.updateLoomieModel(this.stt.loomieUser);
+    if (this.stt.loomieUser.loomie.serial !== loomieUser.serial) {
+      this.updateLoomieModel(this.stt.loomieUser, true);
     }
 
-    if (this.stt.loomieGym.loomie.serial !== loomieGym.serial){
-      this.updateLoomieModel(this.stt.loomieGym);
+    if (this.stt.loomieGym.loomie.serial !== loomieGym.serial) {
+      this.updateLoomieModel(this.stt.loomieGym, false);
     }
 
     // set
@@ -203,7 +205,6 @@ export class CombatSM {
 
     //camera.position = new Vector3(0, 10, 10);
     //camera.setPosition(new Vector3(0, 10, 10))
-    const CAMERA_TRANSFORM = new Vector3(2.1443, 0.9221, 10);
     camera.alpha = CAMERA_TRANSFORM.x;
     camera.beta = CAMERA_TRANSFORM.y;
     camera.radius = CAMERA_TRANSFORM.z;
@@ -211,7 +212,6 @@ export class CombatSM {
     console.log(camera.alpha);
     console.log(camera.beta);
     console.log(camera.radius);
-
 
     //cameraCombat.position = new Vector3(0, 1, 1);
     //camera.setPosition( new Vector3(0, 1, 1));
@@ -230,17 +230,16 @@ export class CombatSM {
           sceneCombat
         );
 
-
         // check
 
         if (!modelEnv) throw "Error: Couldn't instantiate env modelEnv";
 
-        instantiatedEntriesTranslate(modelEnv, Vector3.Zero())
+        instantiatedEntriesTranslate(modelEnv, Vector3.Zero());
 
         // loomie models
 
-        await this.updateLoomieModel(this.stt.loomieUser);
-        await this.updateLoomieModel(this.stt.loomieGym);
+        await this.updateLoomieModel(this.stt.loomieUser, true);
+        await this.updateLoomieModel(this.stt.loomieGym, false);
 
         console.log('Finished with scene');
 
@@ -261,10 +260,8 @@ export class CombatSM {
 
   // update loomie model
 
-  async updateLoomieModel (loomieStt: iCombatLoomieState) {
-
-    try{
-
+  async updateLoomieModel(loomieStt: iCombatLoomieState, user: boolean) {
+    try {
       // free previous model
 
       loomieStt.model?.dispose();
@@ -276,10 +273,20 @@ export class CombatSM {
         this.stt.sceneCombat
       );
 
-      if (!model) throw "Error: updateLoomieModel: Couldn't instantiate loomie model";
+      if (!model)
+        throw "Error: updateLoomieModel: Couldn't instantiate loomie model";
+
+      // transform
+
+      if (user) {
+        instantiatedEntriesTranslate(model, USER_LOOMIE_INITIAL_POS);
+      } else {
+        instantiatedEntriesTranslate(model, GYM_LOOMIE_INITIAL_POS);
+        instantiatedEntriesRotate(model, Math.PI);
+      }
+
       loomieStt.model = model;
-    }
-    catch(e){
+    } catch (e) {
       console.log(e);
     }
   }
