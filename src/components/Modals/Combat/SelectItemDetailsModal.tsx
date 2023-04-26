@@ -1,67 +1,49 @@
 import { TItem } from '@src/types/types';
 import { images } from '@src/utils/utils';
-import React, { useState } from 'react';
+import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
-import { CustomButton } from '../CustomButton';
-import { UseItemModal } from './UseItem';
+import { CustomButton } from '@src/components/CustomButton';
 
-interface IProps {
+interface iPropsSelectItemDetailsModal {
   isVisible: boolean;
   toggleVisibility: () => void;
+
   item: TItem;
-  refresh: () => void;
+  submitItem: (_itemId: string) => void;
 }
 
-export const ItemDetailsModal = ({
-  isVisible,
-  toggleVisibility,
-  item,
-  refresh
-}: IProps) => {
-  const itemSerial = item.serial.toString().padStart(3, '0');
-  const [showUseItemModal, setShowUseItemModal] = useState(false);
-
-  const toggleLoomiesSelection = () => {
-    setShowUseItemModal(!showUseItemModal);
-    refresh();
-  };
+export const SelectItemDetailsModal = (props: iPropsSelectItemDetailsModal) => {
+  const itemSerial = props.item.serial.toString().padStart(3, '0');
 
   return (
-    <Modal isVisible={isVisible} onBackdropPress={toggleVisibility}>
-      {showUseItemModal && (
-        <UseItemModal
-          isVisible={showUseItemModal}
-          selectedItem={item}
-          toggleVisibilityCallback={toggleLoomiesSelection}
-          closeModalItem={toggleVisibility}
-        />
-      )}
+    <Modal isVisible={props.isVisible} onBackdropPress={props.toggleVisibility}>
       <View style={Styles.container}>
         <View style={Styles.background}>
           <View style={Styles.cardImageBg} />
           <Image source={images[`O-${itemSerial}`]} style={Styles.itemImage} />
           <Text style={{ ...Styles.modalText, ...Styles.itemQuantity }}>
-            x{item.quantity}
+            x{props.item.quantity}
           </Text>
           <Text style={{ ...Styles.modalText, ...Styles.itemName }}>
-            {item.name}
+            {props.item.name}
           </Text>
           <Text style={{ ...Styles.modalText, ...Styles.itemDescription }}>
-            {item.description}
+            {props.item.description}
           </Text>
+          <CustomButton
+            title='Use now'
+            type='primary'
+            // send item id
+            callback={() => {
+              props.submitItem(props.item._id);
+            }}
+          />
           <CustomButton
             title='Close'
             type='bordered'
-            callback={toggleVisibility}
+            callback={props.toggleVisibility}
           />
-          {!item.is_combat_item && (
-            <CustomButton
-              title='Use now'
-              type='primary'
-              callback={toggleLoomiesSelection}
-            />
-          )}
         </View>
       </View>
     </Modal>

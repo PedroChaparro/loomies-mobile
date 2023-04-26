@@ -1,4 +1,10 @@
-import { TWildLoomies, TGymInfo, TReward } from '@src/types/types';
+import {
+  TWildLoomies,
+  TGymInfo,
+  TReward,
+  TItem,
+  TLoomball
+} from '@src/types/types';
 
 export interface iRequestGym {
   _id: string;
@@ -39,6 +45,19 @@ export interface iRequestWildLoomieExists {
 
 export interface iRequestCaptureLoomieAttempt {
   error: boolean;
-  capture: boolean;
   message: string;
+  capture: boolean;
+}
+
+export interface iRequestCombatRegister {
+  error: boolean;
+  message: string;
+  combat_token: string;
+}
+
+export interface iRequestUserItems {
+  error: boolean;
+  message: string;
+  items: TItem[];
+  loomballs: TLoomball[];
 }

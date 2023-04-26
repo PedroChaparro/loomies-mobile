@@ -14,6 +14,13 @@ jobs:
       # -- Setup the environment
       - name: Checkout and Authenticate
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
       - name: Setup JDK
         uses: actions/setup-java@v2
@@ -37,6 +44,8 @@ jobs:
       - name: Create .env file
         run: |
           echo "API_URL=${{ secrets.DEPLOYMENT_API_URL }}" > .env
+          echo "PORT=${{ secrets.DEPLOYMENT_PORT }}" >> .env
+          echo "TLS=${{ secrets.DEPLOYMENT_TLS }}" >> .env
           echo "MAP_DEBUG=false" >> .env
           echo "GAME_MIN_REQUIRED_EXPERIENCE=100" >> .env
           echo "GAME_EXPERIENCE_FACTOR=1000" >> .env
@@ -66,6 +75,9 @@ jobs:
 
       - name: Make Gradle executable
         run: cd android && chmod +x ./gradlew
+
+      - name: Update version
+        run: python versioning.py ${{ github.ref }}
 
       # -- Build and sign the Android app
       - name: Build Android
@@ -108,3 +120,10 @@ jobs:
           asset_path: ${{ steps.sign_app.outputs.signedReleaseFile }}
           asset_name: Loomies.apk
           asset_content_type: application/vnd.android.package-archive
+
+      - name: Push files changes
+        run: |
+          git config user.name [BOT]_CD
+          git add ./package.json ./android/app/build.gradle
+          git commit -m "[ci skip] chore(release): ${{ github.ref }}"
+          git push origin main

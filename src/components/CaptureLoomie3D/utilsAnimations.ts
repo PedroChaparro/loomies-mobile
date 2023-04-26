@@ -154,7 +154,6 @@ export const attemptToCatch = async (stt: iAniState) => {
     case CAPTURE_RESULT.CAPTURED:
       {
         // print loomie info
-        console.log('CAPTURE_RESULT.CAPTURED');
         console.log(loomie);
 
         // remove captured loomie
@@ -174,8 +173,6 @@ export const attemptToCatch = async (stt: iAniState) => {
       {
         showInfoToast('Loomie escaped');
 
-        console.log('CAPTURE_RESULT.ESCAPED');
-
         // reset state
         stt.setBallState(LOOMBALL_STATE.ANI_ESCAPED);
       }
@@ -184,8 +181,6 @@ export const attemptToCatch = async (stt: iAniState) => {
       {
         // loomie disappeared
         showInfoToast('Loomie escaped');
-
-        console.log('CAPTURE_RESULT.NOTFOUND');
 
         // or user lost connection
         navigate('Map', null);

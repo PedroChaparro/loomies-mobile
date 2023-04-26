@@ -2,53 +2,49 @@ import { TInventoryItem, TItem } from '@src/types/types';
 import React, { useState } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
 import { ItemCard } from './ItemCard';
-import { ItemDetailsModal } from '../Modals/ItemDetailsModal';
+import { SelectItemDetailsModal } from '../Modals/Combat/SelectItemDetailsModal';
 
-interface IProps {
+interface iPropsSelectItemGrid {
   items: Array<TItem>;
-  inventory: Array<TInventoryItem>;
-  refresh: () => void;
+  submitItem: (_itemId: string) => void;
 }
 
-export const ItemGrid = ({ inventory, items, refresh }: IProps) => {
+export const SelectItemGrid = (props: iPropsSelectItemGrid) => {
   const [itemModalVisible, setItemModalVisible] = useState(true);
   const [selectedItem, setSelectedItem] = useState<TItem | null>(null);
 
-  const toggleItemModalVisibility = () => {
-    setItemModalVisible(!itemModalVisible);
+  const toggleItemModalVisibility = (visible?: boolean) => {
+    if (visible != undefined) setItemModalVisible(visible);
+    else setItemModalVisible(!itemModalVisible);
   };
 
   const handleItemPress = (item: TInventoryItem) => {
     // Find the item by the id and show the information
-    const clickedItem = items.find((i) => i._id === item._id);
+    const clickedItem = props.items.find((i) => i._id === item._id);
 
     if (clickedItem) {
       setSelectedItem(clickedItem);
-      toggleItemModalVisibility();
+      toggleItemModalVisibility(true);
     }
   };
 
   return (
     <>
       {selectedItem && (
-        <ItemDetailsModal
+        <SelectItemDetailsModal
           isVisible={itemModalVisible}
-          toggleVisibility={toggleItemModalVisibility}
+          toggleVisibility={() => toggleItemModalVisibility()}
+          submitItem={props.submitItem}
           item={selectedItem}
-          refresh={refresh}
         />
       )}
       <FlatList
-        extraData={inventory}
-        data={inventory}
+        data={props.items}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <ItemCard
-            item={item}
-            // If the item is not a loomball, pass the callback to open the item modal
-            handleClickCallback={
-              item.type === 'item' ? handleItemPress : undefined
-            }
+            item={{ ...item, type: 'item' } as TInventoryItem}
+            handleClickCallback={handleItemPress}
           />
         )}
         numColumns={2}

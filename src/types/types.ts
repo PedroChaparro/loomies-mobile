@@ -67,6 +67,7 @@ export interface TGymInfo {
   owner: string;
   protectors: TGymLoomieProtector[];
   was_reward_claimed: boolean;
+  user_owns_it: boolean;
 }
 
 // Shared interface between the items and the loomballs

@@ -1,6 +1,6 @@
 {
   "name": "Loomies",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -38,6 +38,7 @@
     "react-native-svg": "^13.8.0",
     "react-native-toast-message": "^2.1.5",
     "react-native-vector-icons": "^9.2.0",
+    "react-use-websocket": "3",
     "yup": "^1.0.0"
   },
   "devDependencies": {
