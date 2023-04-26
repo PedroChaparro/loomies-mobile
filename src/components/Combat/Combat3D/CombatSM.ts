@@ -159,10 +159,14 @@ export class CombatSM {
 
     // update models
     if (this.stt.loomieUser.loomie.serial !== loomieUser.serial) {
+      console.log('=================> UPDATING LOOMIE USER');
+      this.stt.loomieUser.loomie = loomieUser;
       this.updateLoomieModel(this.stt.loomieUser, true);
     }
 
     if (this.stt.loomieGym.loomie.serial !== loomieGym.serial) {
+      console.log('=================> UPDATING LOOMIE GYM');
+      this.stt.loomieGym.loomie = loomieGym;
       this.updateLoomieModel(this.stt.loomieGym, false);
     }
 

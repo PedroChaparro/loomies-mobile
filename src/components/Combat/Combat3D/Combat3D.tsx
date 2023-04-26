@@ -95,6 +95,10 @@ export const Combat3D = forwardRef<iRefCombat3D, iPropsCombat3D>(
       if (getCurrentScene() !== APP_SCENE.COMBAT) return;
 
       console.log('AAAAAAAAAAAA1');
+      console.log('AAAAAAAAAAAA1');
+      console.log('AAAAAAAAAAAA1');
+      console.log('AAAAAAAAAAAA1');
+      console.log(props.loomieUser.serial, ' ::: ', props.loomieGym.serial);
 
       // create scene
       if (!stateMachine.current) {
@@ -140,8 +144,8 @@ export const Combat3D = forwardRef<iRefCombat3D, iPropsCombat3D>(
       mapContext,
 
       // state
-      props.loomieUser,
-      props.loomieGym
+      props.loomieUser.serial,
+      props.loomieGym.serial
     ]);
 
     // none state create scene
