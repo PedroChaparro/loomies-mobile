@@ -33,8 +33,8 @@ export const LOOMIE_INITIAL_STATE = COMBAT_LOOMIE_STATE.NONE;
 // position constants
 
 const CAMERA_TRANSFORM = new Vector3(2.1443, 0.9221, 10);
-const USER_LOOMIE_INITIAL_POS = new Vector3(0, 0, -2);
-const GYM_LOOMIE_INITIAL_POS = new Vector3(0, 0, 2);
+const USER_LOOMIE_INITIAL_POS = new Vector3(0, 0, 2.2);
+const GYM_LOOMIE_INITIAL_POS = new Vector3(0, 0, -2.2);
 
 export interface iCombatLoomieState {
   state: COMBAT_LOOMIE_STATE;
@@ -187,7 +187,7 @@ export class CombatSM {
     camera.panningSensibility = 0;
 
     // make camera target the middle
-    camera.setTarget(new Vector3(0, 0, 0));
+    camera.setTarget(new Vector3(0, 0.8, 0));
 
     // camera transform
     camera.alpha = CAMERA_TRANSFORM.x;
@@ -243,9 +243,9 @@ export class CombatSM {
 
       if (user) {
         instantiatedEntriesTranslate(model, USER_LOOMIE_INITIAL_POS);
+        instantiatedEntriesRotate(model, Math.PI);
       } else {
         instantiatedEntriesTranslate(model, GYM_LOOMIE_INITIAL_POS);
-        instantiatedEntriesRotate(model, Math.PI);
       }
 
       loomieStt.model = model;
