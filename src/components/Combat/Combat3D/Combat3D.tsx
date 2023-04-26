@@ -12,7 +12,7 @@ import React, {
   useImperativeHandle,
   useRef
 } from 'react';
-import { SafeAreaView, View } from 'react-native';
+import { SafeAreaView, Text, View } from 'react-native';
 import * as Babylon from '@babylonjs/core';
 import { EngineView } from '@babylonjs/react-native';
 
@@ -24,6 +24,7 @@ import { CONFIG } from '@src/services/config.services';
 import { MapContext } from '@src/context/MapProvider';
 import { CombatSM } from './CombatSM';
 import { iLoomie } from '@src/types/combatInterfaces';
+import { AnaglyphPostProcess } from '@babylonjs/core';
 const { MAP_DEBUG } = CONFIG;
 
 interface iPropsCombat3D {
@@ -45,9 +46,8 @@ export const enum COMBAT_LOOMIE_STATE {
 
 export const Combat3D = forwardRef<iRefCombat3D, iPropsCombat3D>(
   (props, ref) => {
-    const { sceneCombat, cameraCombat, getCurrentScene } =
+    const { sceneCombat, cameraCombat, getCurrentScene, showScene } =
       useContext(BabylonContext);
-    const { showScene } = useContext(BabylonContext);
 
     const babylonContext = useContext(BabylonContext);
     const modelContext = useContext(ModelContext);
@@ -94,6 +94,9 @@ export const Combat3D = forwardRef<iRefCombat3D, iPropsCombat3D>(
     useEffect(() => {
       if (!sceneCombat) return;
       if (!cameraCombat) return;
+      if (getCurrentScene() !== APP_SCENE.COMBAT) return;
+
+      console.log('AAAAAAAAAAAA1');
 
       // create scene
       if (!stateMachine.current) {
@@ -107,6 +110,8 @@ export const Combat3D = forwardRef<iRefCombat3D, iPropsCombat3D>(
           props.loomieUser,
           props.loomieGym
         );
+
+        console.log('AAAAAAAAAAAA2');
 
         stateMachine.current.setup();
       }
@@ -153,14 +158,16 @@ export const Combat3D = forwardRef<iRefCombat3D, iPropsCombat3D>(
     // toggle scene
 
     useEffect(() => {
-      showScene(APP_SCENE.CAPTURE);
+      showScene(APP_SCENE.COMBAT);
     }, []);
 
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
         <View style={{ flex: 1 }}>
-          {getCurrentScene() == APP_SCENE.CAPTURE && (
+          {getCurrentScene() == APP_SCENE.COMBAT && (<>
+            <Text style={{ color: 'white' }}>Hete</Text>
             <EngineView camera={cameraCombat} displayFrameRate={MAP_DEBUG} />
+            </>
           )}
         </View>
       </SafeAreaView>

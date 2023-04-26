@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NavigationProp, RouteProp } from '@react-navigation/core';
 import { View, Text, SafeAreaView } from 'react-native';
-import { EngineView } from '@babylonjs/react-native';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 import { CombatUI } from '@src/components/Combat/CombatUI';
@@ -22,8 +21,8 @@ import {
 } from '@src/types/combatInterfaces';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import { delay } from '@src/utils/delay';
-import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
-const { MAP_DEBUG, WS_URL } = CONFIG;
+import { Combat3D } from '@src/components/Combat/Combat3D/Combat3D';
+const { WS_URL } = CONFIG;
 
 export interface iDisplayMessage {
   id: number;
@@ -46,8 +45,6 @@ export const CombatView = ({ route }: iCombatViewProps) => {
   // util
 
   const { showInfoToast, showErrorToast } = useToastAlert();
-  const { showScene, getCurrentScene, cameraCombat } =
-    useContext(BabylonContext);
 
   // web socket
 
@@ -95,9 +92,6 @@ export const CombatView = ({ route }: iCombatViewProps) => {
 
   useEffect(() => {
     if (!route.params.gym || !route.params.combatToken) navigate('Map', null);
-
-    // toggle scene
-    showScene(APP_SCENE.CAPTURE);
   }, []);
 
   // connection closed
@@ -455,8 +449,8 @@ export const CombatView = ({ route }: iCombatViewProps) => {
 
       <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
         <View style={{ flex: 1 }}>
-          {getCurrentScene() == APP_SCENE.CAPTURE && (
-            <EngineView camera={cameraCombat} displayFrameRate={MAP_DEBUG} />
+          {loomiePlayer && loomieGym && (
+            <Combat3D loomieUser={loomiePlayer} loomieGym={loomieGym} />
           )}
         </View>
       </SafeAreaView>
