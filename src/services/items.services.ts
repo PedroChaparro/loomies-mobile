@@ -1,4 +1,5 @@
 import Axios from 'axios';
+import { iRequestUserItems } from '@src/types/requestInterfaces';
 import { getStorageData } from './storage.services';
 import { CONFIG } from './config.services';
 import { refreshRequest } from './session.services';
@@ -49,10 +50,10 @@ export const useItemOutCombat = async (
 
 export const getItemsService = async (
   callNumber = 1
-): Promise<[any, boolean]> => {
+): Promise<iRequestUserItems | null> => {
   try {
     const [accessToken, error] = await getStorageData('accessToken');
-    if (error || !accessToken) return [null, true];
+    if (error || !accessToken) return null;
 
     const response = await Axios.get(`${API_URL}/user/items`, {
       headers: {
@@ -60,7 +61,15 @@ export const getItemsService = async (
       }
     });
 
-    return [response.data, false];
+    // cast check
+    const rawData: object = response.data;
+    if ((rawData as iRequestUserItems) === undefined) {
+      throw 'Error: getItemsService cast error';
+    }
+
+    // return items
+    const items: iRequestUserItems = rawData as iRequestUserItems;
+    return items;
   } catch (err) {
     if (
       Axios.isAxiosError(err) &&
@@ -72,28 +81,18 @@ export const getItemsService = async (
     }
 
     if (Axios.isAxiosError(err)) {
-      return [err.response?.data, true];
+      return null;
     }
 
-    return [null, true];
+    return null;
   }
 };
 
 export const getLoomballsService = async (): Promise<TLoomball[]> => {
   try {
-    const [items, err] = await getItemsService();
-    if (err) throw err;
-
-    // cast check
-    const rawData: object = items['loomballs'];
-    if ((rawData as TLoomball[]) === undefined) {
-      throw 'Error: getLoomballsService cast error';
-    }
-
-    // return loomballs available to player
-    const loomballs: TLoomball[] = rawData as TLoomball[];
-
-    return loomballs;
+    const data = await getItemsService();
+    if (!data) throw 'Error: getLoomballsService when getting items';
+    return data.loomballs;
   } catch (e) {
     console.error(e);
   }

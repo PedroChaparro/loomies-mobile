@@ -2,7 +2,7 @@ import { TInventoryItem } from '@src/types/types';
 import { images } from '@src/utils/utils';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { Pressable } from 'react-native';
 
 interface IProps {
   item: TInventoryItem;
@@ -14,7 +14,7 @@ export const ItemCard = ({ item, handleClickCallback }: IProps) => {
 
   return (
     <View style={Styles.card}>
-      <TouchableWithoutFeedback
+      <Pressable
         onPress={() => {
           // Call the callback if it exists and pass the item
           handleClickCallback && handleClickCallback(item);
@@ -41,7 +41,7 @@ export const ItemCard = ({ item, handleClickCallback }: IProps) => {
             </View>
           </View>
         </View>
-      </TouchableWithoutFeedback>
+      </Pressable>
     </View>
   );
 };

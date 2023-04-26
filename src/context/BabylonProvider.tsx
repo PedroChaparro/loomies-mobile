@@ -8,6 +8,7 @@ import * as Babylon from '@babylonjs/core';
 import { useEngineRenderLoop } from '@src/hooks/useEngineRenderLoop';
 import { useEngine } from '@babylonjs/react-native';
 import { ArcRotateCamera } from '@babylonjs/core';
+import { delay } from '@src/utils/delay';
 
 export const enum APP_SCENE {
   NONE,
@@ -238,8 +239,3 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
     </BabylonContext.Provider>
   );
 };
-
-const delay = (ms: number): Promise<void> =>
-  new Promise((resolve): void => {
-    setTimeout(resolve, ms);
-  });
