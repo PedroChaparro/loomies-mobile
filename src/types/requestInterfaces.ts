@@ -46,7 +46,7 @@ export interface iRequestWildLoomieExists {
 export interface iRequestCaptureLoomieAttempt {
   error: boolean;
   message: string;
-  capture: boolean;
+  was_captured: boolean;
 }
 
 export interface iRequestCombatRegister {
