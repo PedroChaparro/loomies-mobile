@@ -16,6 +16,7 @@ export const SelectLoomBallModal = ({
   toggleVisibilityCallback
 }: iPropsSelectLoomBallModal) => {
   const [loomBall, setLoomBall] = useState<TLoomball[]>([]);
+  const [selectLoomball, setSelectLoomball] = useState<string>();
 
   const getUserLoomBalls = async () => {
     const response = await getItemsService();
@@ -23,14 +24,26 @@ export const SelectLoomBallModal = ({
 
     const responseLoomballs: TLoomball[] = response.loomballs;
 
-    console.log(loomBall);
+    const loomballsWithSelectProperty = responseLoomballs.map((loomballs) => {
+      const isSelectedLoomie = selectLoomball === loomballs._id ? true : false;
 
-    setLoomBall(responseLoomballs);
+      return {
+        ...loomballs,
+        is_selected: isSelectedLoomie
+      };
+    });
+
+    setLoomBall(loomballsWithSelectProperty);
+  };
+
+  const handleItemPress = (SelectLommBall: TLoomball) => {
+    console.log(SelectLommBall._id);
+    setSelectLoomball(SelectLommBall._id);
   };
 
   useEffect(() => {
     getUserLoomBalls();
-  }, []);
+  }, [selectLoomball]);
 
   return (
     <Modal
@@ -41,7 +54,11 @@ export const SelectLoomBallModal = ({
     >
       <Text style={Styles.modalTitle}>Loomballs</Text>
 
-      <SelectLoomball loomBall={loomBall} />
+      <SelectLoomball
+        loomBall={loomBall}
+        markIfSelected={true}
+        elementsCallback={handleItemPress}
+      />
 
       <View style={Styles.containerButton}>
         <CustomButton

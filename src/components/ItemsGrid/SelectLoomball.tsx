@@ -1,32 +1,31 @@
-import { TInventoryItem, TLoomball } from '@src/types/types';
-import React, { useState } from 'react';
+import { TLoomball } from '@src/types/types';
+import React from 'react';
 import { FlatList } from 'react-native-gesture-handler';
-import { ItemCard } from './ItemCard';
+import { LoomBallCard } from './LoomBallCard';
 
 interface iPropsSelectLoomball {
   loomBall: Array<TLoomball>;
+  markIfSelected: boolean;
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
+  elementsCallback: (a?: any) => void;
   //submitItem: (_itemId: string) => void;
 }
 
 export const SelectLoomball = ({
-  loomBall /*,submitItem*/
+  loomBall,
+  markIfSelected,
+  elementsCallback /*,submitItem*/
 }: iPropsSelectLoomball) => {
-  const [selectedItem, setSelectedItem] = useState<TLoomball | null>(null);
-
-  const handleItemPress = (SelectLommBall: TLoomball) => {
-    setSelectedItem(SelectLommBall);
-    console.log(selectedItem);
-  };
-
   return (
     <>
       <FlatList
         data={loomBall}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
-          <ItemCard
-            item={{ ...item, type: 'loomball' } as TInventoryItem}
-            handleClickCallback={handleItemPress}
+          <LoomBallCard
+            loomBall={item}
+            markIfSelected={markIfSelected}
+            cardCallback={elementsCallback}
           />
         )}
         numColumns={2}
