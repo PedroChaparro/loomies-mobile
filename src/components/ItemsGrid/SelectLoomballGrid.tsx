@@ -16,17 +16,17 @@ export const SelectLoomballGrid = ({
   elementsCallback
 }: iPropsSelectLoomball) => {
   return (
-      <FlatList
-        data={loomBall}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
-          <LoomBallCard
-            loomBall={item}
-            markIfSelected={markIfSelected}
-            cardCallback={elementsCallback}
-          />
-        )}
-        numColumns={2}
-      />
+    <FlatList
+      data={loomBall}
+      keyExtractor={(item) => item._id}
+      renderItem={({ item }) => (
+        <LoomBallCard
+          loomBall={item}
+          markIfSelected={markIfSelected}
+          cardCallback={elementsCallback}
+        />
+      )}
+      numColumns={2}
+    />
   );
 };
