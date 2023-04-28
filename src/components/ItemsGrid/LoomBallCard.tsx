@@ -84,7 +84,8 @@ const Styles = StyleSheet.create({
     padding: 16,
     shadowColor: '#7c7c7c',
     borderWidth: 3,
-    elevation: 6
+    elevation: 6,
+    backgroundColor: '#eaeaea'
   },
   cardImageBg: {
     alignSelf: 'center',
