@@ -8,13 +8,12 @@ interface iPropsSelectLoomball {
   markIfSelected: boolean;
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
   elementsCallback: (a?: any) => void;
-  //submitItem: (_itemId: string) => void;
 }
 
 export const SelectLoomball = ({
   loomBall,
   markIfSelected,
-  elementsCallback /*,submitItem*/
+  elementsCallback
 }: iPropsSelectLoomball) => {
   return (
     <>

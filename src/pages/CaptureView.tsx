@@ -38,14 +38,13 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
   const [ballSelected, setBallSelected] = useState<TLoomball | null>(null);
   const ballState = useRef<LOOMBALL_STATE>(LOOMBALL_INITIAL_STATE);
   const [showLoomBallModal, setShowLoomBallModal] = useState(false);
-  const [firstOpen, setFirstOpen] = useState(true);
+  const [loombalImage, setLoombalImage] = useState<string>();
 
   // set state
 
   const setBallState = (state: LOOMBALL_STATE) => {
     ballState.current = state;
     console.log(`Info: Capture animation state: ${state}`);
-    console.log(ballSelected);
 
     switch (ballState.current) {
       // decrease loomball quantity
@@ -103,14 +102,18 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
       }
 
       // select the first one in the array
-      if (!available && loomballs.length && firstOpen) {
+      if (!available && loomballs.length) {
         setBallSelected(loomballs[0]);
       }
+
+      //Set image of loomBall
+      setLoombalImage(ballSelected?.serial.toString().padStart(3, '0'));
     })();
   };
 
+  //update ballSelected
+
   const updateSelectLoomBall = (loomBall: TLoomball) => {
-    setFirstOpen(false)
     setBallSelected(loomBall);
   };
 
@@ -148,6 +151,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
     }, [])
   );
 
+  //Visibility from LoomBall modal
   const toggleItemModalVisibility = () => {
     setShowLoomBallModal(!showLoomBallModal);
   };
@@ -183,7 +187,10 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
           toggleItemModalVisibility();
         }}
       >
-        <Image style={{ width: 65, height: 65 }} source={images['LOOMBALL']} />
+        <Image
+          style={{ width: 65, height: 65 }}
+          source={images[`O-${loombalImage}`]}
+        />
       </Pressable>
 
       <Pressable

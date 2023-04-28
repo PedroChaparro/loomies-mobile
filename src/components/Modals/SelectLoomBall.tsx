@@ -20,14 +20,17 @@ export const SelectLoomBallModal = ({
   const [loomBall, setLoomBall] = useState<TLoomball[]>([]);
   const [selectLoomball, setSelectLoomball] = useState<TLoomball>();
 
+  //Get loomBall from user
   const getUserLoomBalls = async () => {
     const response = await getItemsService();
     if (!response) return;
 
     const responseLoomballs: TLoomball[] = response.loomballs;
 
+    //Assign property is_selected
     const loomballsWithSelectProperty = responseLoomballs.map((loomballs) => {
-      const isSelectedLoomie = selectLoomball?._id === loomballs._id ? true : false;
+      const isSelectedLoomie =
+        selectLoomball?._id === loomballs._id ? true : false;
 
       return {
         ...loomballs,
@@ -38,6 +41,7 @@ export const SelectLoomBallModal = ({
     setLoomBall(loomballsWithSelectProperty);
   };
 
+  //update SelectLommBall
   const handleItemPress = (SelectLommBall: TLoomball) => {
     setSelectLoomball(SelectLommBall);
   };
@@ -46,8 +50,9 @@ export const SelectLoomBallModal = ({
     getUserLoomBalls();
   }, [selectLoomball]);
 
+  //Change the loomball and close the modal
   const changeLoomBall = () => {
-    if (selectLoomball !== null && selectLoomball!== undefined) {
+    if (selectLoomball !== null && selectLoomball !== undefined) {
       submitCallback(selectLoomball);
       toggleVisibilityCallback();
     }
@@ -69,11 +74,7 @@ export const SelectLoomBallModal = ({
       />
 
       <View style={Styles.containerButton}>
-        <CustomButton
-          title='Select'
-          type='primary'
-          callback={changeLoomBall}
-        />
+        <CustomButton title='Select' type='primary' callback={changeLoomBall} />
       </View>
       <View style={Styles.containerButton}>
         <CustomButton

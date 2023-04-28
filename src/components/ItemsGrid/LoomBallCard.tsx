@@ -18,6 +18,7 @@ export const LoomBallCard = ({
 }: IProps) => {
   const itemSerial = loomBall.serial.toString().padStart(3, '0');
 
+  // Function to render a border if the loomball is selected
   const renderBorder = () => {
     if (markIfSelected && loomBall.is_selected) {
       return {
