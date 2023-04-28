@@ -9,14 +9,16 @@ import { SelectLoomball } from '../ItemsGrid/SelectLoomball';
 export interface iPropsSelectLoomBallModal {
   isVisible: boolean;
   toggleVisibilityCallback: () => void;
+  submitCallback: (loomBall: TLoomball) => void;
 }
 
 export const SelectLoomBallModal = ({
   isVisible,
-  toggleVisibilityCallback
+  toggleVisibilityCallback,
+  submitCallback
 }: iPropsSelectLoomBallModal) => {
   const [loomBall, setLoomBall] = useState<TLoomball[]>([]);
-  const [selectLoomball, setSelectLoomball] = useState<string>();
+  const [selectLoomball, setSelectLoomball] = useState<TLoomball>();
 
   const getUserLoomBalls = async () => {
     const response = await getItemsService();
@@ -25,7 +27,7 @@ export const SelectLoomBallModal = ({
     const responseLoomballs: TLoomball[] = response.loomballs;
 
     const loomballsWithSelectProperty = responseLoomballs.map((loomballs) => {
-      const isSelectedLoomie = selectLoomball === loomballs._id ? true : false;
+      const isSelectedLoomie = selectLoomball?._id === loomballs._id ? true : false;
 
       return {
         ...loomballs,
@@ -37,13 +39,19 @@ export const SelectLoomBallModal = ({
   };
 
   const handleItemPress = (SelectLommBall: TLoomball) => {
-    console.log(SelectLommBall._id);
-    setSelectLoomball(SelectLommBall._id);
+    setSelectLoomball(SelectLommBall);
   };
 
   useEffect(() => {
     getUserLoomBalls();
   }, [selectLoomball]);
+
+  const changeLoomBall = () => {
+    if (selectLoomball !== null && selectLoomball!== undefined) {
+      submitCallback(selectLoomball);
+      toggleVisibilityCallback();
+    }
+  };
 
   return (
     <Modal
@@ -64,7 +72,7 @@ export const SelectLoomBallModal = ({
         <CustomButton
           title='Select'
           type='primary'
-          callback={toggleVisibilityCallback}
+          callback={changeLoomBall}
         />
       </View>
       <View style={Styles.containerButton}>

@@ -38,12 +38,14 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
   const [ballSelected, setBallSelected] = useState<TLoomball | null>(null);
   const ballState = useRef<LOOMBALL_STATE>(LOOMBALL_INITIAL_STATE);
   const [showLoomBallModal, setShowLoomBallModal] = useState(false);
+  const [firstOpen, setFirstOpen] = useState(true);
 
   // set state
 
   const setBallState = (state: LOOMBALL_STATE) => {
     ballState.current = state;
     console.log(`Info: Capture animation state: ${state}`);
+    console.log(ballSelected);
 
     switch (ballState.current) {
       // decrease loomball quantity
@@ -101,14 +103,15 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
       }
 
       // select the first one in the array
-      if (!available && loomballs.length) {
+      if (!available && loomballs.length && firstOpen) {
         setBallSelected(loomballs[0]);
       }
-
-      // TODO: Delete me once you implement switching loomballs
-      console.log(loomballs);
-      console.log(balls);
     })();
+  };
+
+  const updateSelectLoomBall = (loomBall: TLoomball) => {
+    setFirstOpen(false)
+    setBallSelected(loomBall);
   };
 
   const escape = () => {
@@ -131,12 +134,11 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
     }
 
     setLoomie(foundLoomie);
-    console.log('INFO: Loomie exists', foundLoomie);
-
-    // get user loomballs
 
     fetchLoomballs();
-  }, []);
+
+    console.log('INFO: Loomie exists', foundLoomie);
+  }, [ballSelected]);
 
   // toggle render loop on focus events
   useFocusEffect(
@@ -156,6 +158,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
         <SelectLoomBallModal
           isVisible={showLoomBallModal}
           toggleVisibilityCallback={toggleItemModalVisibility}
+          submitCallback={updateSelectLoomBall}
         />
       )}
       <View style={styles.scene}>
