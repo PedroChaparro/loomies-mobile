@@ -17,8 +17,8 @@ export const SelectLoomBallModal = ({
   toggleVisibilityCallback,
   submitCallback
 }: iPropsSelectLoomBallModal) => {
-  const [loomBall, setLoomBall] = useState<TLoomball[]>([]);
-  const [selectLoomball, setSelectLoomball] = useState<TLoomball>();
+  const [loomballs, setLoomballs] = useState<TLoomball[]>([]);
+  const [selectedLoomball, setSelectedLoomball] = useState<TLoomball>();
 
   //Get loomBall from user
   const getUserLoomBalls = async () => {
@@ -26,7 +26,7 @@ export const SelectLoomBallModal = ({
     if (!response) return;
 
     const responseLoomballs: TLoomball[] = response.loomballs;
-    updateSelectedLoomball(responseLoomballs, selectLoomball?._id);
+    updateSelectedLoomball(responseLoomballs, selectedLoomball?._id);
   };
 
   const updateSelectedLoomball = (loomballs: TLoomball[], id?: string) => {
@@ -39,7 +39,7 @@ export const SelectLoomBallModal = ({
       };
     });
 
-    setLoomBall(loomballsWithSelectProperty);
+    setLoomballs(loomballsWithSelectProperty);
   };
 
   useEffect(() => {
@@ -48,18 +48,18 @@ export const SelectLoomBallModal = ({
 
   // Update the selected loomball when the state changes
   useEffect(() => {
-    updateSelectedLoomball(loomBall, selectLoomball?._id);
-  }, [selectLoomball]);
+    updateSelectedLoomball(loomballs, selectedLoomball?._id);
+  }, [selectedLoomball]);
 
   //update SelectLommBall
   const handleItemPress = (SelectLommBall: TLoomball) => {
-    setSelectLoomball(SelectLommBall);
+    setSelectedLoomball(SelectLommBall);
   };
 
   //Change the loomball and close the modal
   const changeLoomBall = () => {
-    if (selectLoomball !== null && selectLoomball !== undefined) {
-      submitCallback(selectLoomball);
+    if (selectedLoomball !== null && selectedLoomball !== undefined) {
+      submitCallback(selectedLoomball);
       toggleVisibilityCallback();
     }
   };
@@ -74,7 +74,7 @@ export const SelectLoomBallModal = ({
       <Text style={Styles.modalTitle}>Loomballs</Text>
 
       <SelectLoomballGrid
-        loomBall={loomBall}
+        loomBall={loomballs}
         markIfSelected={true}
         elementsCallback={handleItemPress}
       />
