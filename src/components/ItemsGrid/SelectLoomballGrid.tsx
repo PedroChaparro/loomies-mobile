@@ -10,7 +10,7 @@ interface iPropsSelectLoomball {
   elementsCallback: (a?: any) => void;
 }
 
-export const SelectLoomball = ({
+export const SelectLoomballGrid = ({
   loomBall,
   markIfSelected,
   elementsCallback

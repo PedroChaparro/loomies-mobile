@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { CustomButton } from '@src/components/CustomButton';
 import { TLoomball } from '@src/types/types';
-import { SelectLoomball } from '../ItemsGrid/SelectLoomball';
+import { SelectLoomballGrid } from '../ItemsGrid/SelectLoomballGrid';
 
 export interface iPropsSelectLoomBallModal {
   isVisible: boolean;
@@ -67,7 +67,7 @@ export const SelectLoomBallModal = ({
     >
       <Text style={Styles.modalTitle}>Loomballs</Text>
 
-      <SelectLoomball
+      <SelectLoomballGrid
         loomBall={loomBall}
         markIfSelected={true}
         elementsCallback={handleItemPress}
