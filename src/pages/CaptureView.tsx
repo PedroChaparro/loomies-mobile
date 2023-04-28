@@ -18,7 +18,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import { LOOMBALL_INITIAL_STATE } from '@src/components/CaptureLoomie3D/animations';
-import { SelectLoomBallModal } from '@src/components/Modals/SelectLoomBal';
+import { SelectLoomBallModal } from '@src/components/Modals/SelectLoomBall';
 
 interface CaptureViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
