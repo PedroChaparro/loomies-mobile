@@ -91,6 +91,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
 
       // set loomballs available to player
       setBalls(loomballs);
+      console.log(balls);
 
       // still has balls of this kind available?
       let available = false;
