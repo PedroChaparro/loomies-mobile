@@ -16,7 +16,6 @@ export const SelectLoomballGrid = ({
   elementsCallback
 }: iPropsSelectLoomball) => {
   return (
-    <>
       <FlatList
         data={loomBall}
         keyExtractor={(item) => item._id}
@@ -29,6 +28,5 @@ export const SelectLoomballGrid = ({
         )}
         numColumns={2}
       />
-    </>
   );
 };
