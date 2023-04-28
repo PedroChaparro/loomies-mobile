@@ -26,14 +26,15 @@ export const SelectLoomBallModal = ({
     if (!response) return;
 
     const responseLoomballs: TLoomball[] = response.loomballs;
+    updateSelectedLoomball(responseLoomballs, selectLoomball?._id);
+  };
 
+  const updateSelectedLoomball = (loomballs: TLoomball[], id?: string) => {
     //Assign property is_selected
-    const loomballsWithSelectProperty = responseLoomballs.map((loomballs) => {
-      const isSelectedLoomie =
-        selectLoomball?._id === loomballs._id ? true : false;
-
+    const loomballsWithSelectProperty = loomballs.map((loomball) => {
+      const isSelectedLoomie = id === loomball._id ? true : false;
       return {
-        ...loomballs,
+        ...loomball,
         is_selected: isSelectedLoomie
       };
     });
@@ -41,14 +42,19 @@ export const SelectLoomBallModal = ({
     setLoomBall(loomballsWithSelectProperty);
   };
 
+  useEffect(() => {
+    getUserLoomBalls();
+  }, []);
+
+  // Update the selected loomball when the state changes
+  useEffect(() => {
+    updateSelectedLoomball(loomBall, selectLoomball?._id);
+  }, [selectLoomball]);
+
   //update SelectLommBall
   const handleItemPress = (SelectLommBall: TLoomball) => {
     setSelectLoomball(SelectLommBall);
   };
-
-  useEffect(() => {
-    getUserLoomBalls();
-  }, [selectLoomball]);
 
   //Change the loomball and close the modal
   const changeLoomBall = () => {
