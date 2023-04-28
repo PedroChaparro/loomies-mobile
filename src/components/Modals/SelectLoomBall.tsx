@@ -32,10 +32,10 @@ export const SelectLoomBallModal = ({
   const updateSelectedLoomball = (loomballs: TLoomball[], id?: string) => {
     //Assign property is_selected
     const loomballsWithSelectProperty = loomballs.map((loomball) => {
-      const isSelectedLoomie = id === loomball._id ? true : false;
+      const isSelected = id === loomball._id ? true : false;
       return {
         ...loomball,
-        is_selected: isSelectedLoomie
+        is_selected: isSelected
       };
     });
 
@@ -74,7 +74,7 @@ export const SelectLoomBallModal = ({
       <Text style={Styles.modalTitle}>Loomballs</Text>
 
       <SelectLoomballGrid
-        loomBall={loomballs}
+        loomBalls={loomballs}
         markIfSelected={true}
         elementsCallback={handleItemPress}
       />

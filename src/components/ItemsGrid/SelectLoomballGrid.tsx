@@ -4,20 +4,20 @@ import { FlatList } from 'react-native-gesture-handler';
 import { LoomBallCard } from './LoomBallCard';
 
 interface iPropsSelectLoomball {
-  loomBall: Array<TLoomball>;
+  loomBalls: Array<TLoomball>;
   markIfSelected: boolean;
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
   elementsCallback: (a?: any) => void;
 }
 
 export const SelectLoomballGrid = ({
-  loomBall,
+  loomBalls,
   markIfSelected,
   elementsCallback
 }: iPropsSelectLoomball) => {
   return (
     <FlatList
-      data={loomBall}
+      data={loomBalls}
       keyExtractor={(item) => item._id}
       renderItem={({ item }) => (
         <LoomBallCard
