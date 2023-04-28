@@ -18,6 +18,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import { LOOMBALL_INITIAL_STATE } from '@src/components/CaptureLoomie3D/animations';
+import { SelectLoomBallModal } from '@src/components/Modals/SelectLoomBal';
 
 interface CaptureViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,6 +37,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
   const [balls, setBalls] = useState<TLoomball[]>([]);
   const [ballSelected, setBallSelected] = useState<TLoomball | null>(null);
   const ballState = useRef<LOOMBALL_STATE>(LOOMBALL_INITIAL_STATE);
+  const [showLoomBallModal, setShowLoomBallModal] = useState(false);
 
   // set state
 
@@ -144,8 +146,18 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
     }, [])
   );
 
+  const toggleItemModalVisibility = () => {
+    setShowLoomBallModal(!showLoomBallModal);
+  };
+
   return (
     <View style={styles.container}>
+      {showLoomBallModal && (
+        <SelectLoomBallModal
+          isVisible={showLoomBallModal}
+          toggleVisibilityCallback={toggleItemModalVisibility}
+        />
+      )}
       <View style={styles.scene}>
         {loomie && ballSelected && (
           <CaptureLoomie3D
@@ -165,7 +177,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
       <Pressable
         style={styles.bubbleLoomball}
         onPress={() => {
-          console.log('Pressed loomball bubble');
+          toggleItemModalVisibility();
         }}
       >
         <Image style={{ width: 65, height: 65 }} source={images['LOOMBALL']} />
@@ -174,7 +186,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
       <Pressable
         style={styles.bubbleLoomballAmount}
         onPress={() => {
-          console.log('Pressed loomball bubble');
+          toggleItemModalVisibility();
         }}
       >
         <Text style={{ color: 'black' }}>
