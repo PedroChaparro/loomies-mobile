@@ -8,7 +8,7 @@ import React, { createContext, useEffect, useState } from 'react';
 // can access the data and functions without
 // passing them as props.
 // --------------------------------------------
-export const GymsModalContext = createContext({
+export const MapModalsContext = createContext({
   currentModalGymId: '',
   currentModalCapturedInfo: null as TWildLoomies | null,
   isGymModalOpen: false,
@@ -27,7 +27,7 @@ interface IProps {
   children: React.ReactNode;
 }
 
-export const GymsModalProvider = ({ children }: IProps) => {
+export const MapModalsProvider = ({ children }: IProps) => {
   const [currentModalGymId, setCurrentModalGymId] = useState('');
   const [currentModalCapturedInfo, setCurrentModalCapturedInfo] =
     useState<TWildLoomies | null>(null);
@@ -71,7 +71,7 @@ export const GymsModalProvider = ({ children }: IProps) => {
   }, [currentModalCapturedInfo]);
 
   return (
-    <GymsModalContext.Provider
+    <MapModalsContext.Provider
       value={{
         currentModalGymId,
         currentModalCapturedInfo,
@@ -84,6 +84,6 @@ export const GymsModalProvider = ({ children }: IProps) => {
       }}
     >
       {children}
-    </GymsModalContext.Provider>
+    </MapModalsContext.Provider>
   );
 };

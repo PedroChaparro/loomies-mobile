@@ -4,7 +4,7 @@ import Modal from 'react-native-modal';
 import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
 import { CustomButton } from '../../CustomButton';
 import { ModalRewards } from './ModalRewards';
-import { GymsModalContext } from '@src/context/GymsModalContext';
+import { MapModalsContext } from '@src/context/MapModalsProvider';
 import { requestGymInfoById } from '@src/services/map.services';
 import { TGymInfo, TGymLoomieProtector, TReward } from '../../../types/types';
 import { getPosition } from '@src/services/geolocation.services';
@@ -17,7 +17,7 @@ import { iCombatViewParams } from '@src/pages/CombatView';
 
 export const ModalGym = () => {
   const { isGymModalOpen, currentModalGymId, toggleGymModalVisibility } =
-    useContext(GymsModalContext);
+    useContext(MapModalsContext);
   const { userPosition } = useContext(UserPositionContext);
 
   const { showErrorToast } = useToastAlert();

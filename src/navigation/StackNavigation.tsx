@@ -16,7 +16,7 @@ import { MapProvider } from '@src/context/MapProvider';
 import { ModelProvider } from '@src/context/ModelProvider';
 import { BabylonProvider } from '@src/context/BabylonProvider';
 import { UserPositionProvider } from '@src/context/UserPositionProvider';
-import { GymsModalProvider } from '@src/context/GymsModalContext';
+import { MapModalsProvider } from '@src/context/MapModalsProvider';
 
 const Stack = createStackNavigator();
 export const StackNavigation = () => {
@@ -29,7 +29,7 @@ export const StackNavigation = () => {
       <BabylonProvider>
         <MapProvider>
           <ModelProvider>
-            <GymsModalProvider>
+            <MapModalsProvider>
               <Stack.Navigator
                 initialRouteName='Login'
                 screenOptions={{ headerShown: false }}
@@ -61,7 +61,7 @@ export const StackNavigation = () => {
                   component={UpdateLoomieTeamView}
                 />
               </Stack.Navigator>
-            </GymsModalProvider>
+            </MapModalsProvider>
           </ModelProvider>
         </MapProvider>
       </BabylonProvider>

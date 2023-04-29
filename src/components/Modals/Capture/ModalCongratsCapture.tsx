@@ -3,47 +3,52 @@ import React, { useContext } from 'react';
 import Modal from 'react-native-modal';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { CustomButton } from '@src/components/CustomButton';
-import { GymsModalContext } from '../../../context/GymsModalContext';
+import { MapModalsContext } from '@src/context/MapModalsProvider';
+import { CustomTag } from '../../CustomTag';
 
 export const ModalCongratsCapture = () => {
   const {
     isCongratsModalOpen,
     toggleCongratsModalVisibility,
     currentModalCapturedInfo
-  } = useContext(GymsModalContext);
+  } = useContext(MapModalsContext);
 
   const loomieCaptured = currentModalCapturedInfo;
 
-  return (
-    <Modal
-      isVisible={isCongratsModalOpen}
-      onBackdropPress={toggleCongratsModalVisibility}
-    >
-      <View style={Styles.container}>
-        <View style={Styles.modal}>
-          <Text style={Styles.modalTitle}>CONGRATULATIONS!</Text>
-          <Image
-            source={
-              images[`${loomieCaptured?.serial}`.toString().padStart(3, '0')]
-            }
-            style={Styles.cardImage}
-          />
-          <View style={Styles.modalText}>
-            <Text style={Styles.boldText}>You have captured:</Text>
-            <Text>{loomieCaptured?.name}</Text>
-            <Text>Level: {loomieCaptured?.level}</Text>
-          </View>
-          <View style={Styles.containerButton}>
-            <CustomButton
-              title='Accept'
-              type='primary'
-              callback={toggleCongratsModalVisibility}
+  if (loomieCaptured)
+    return (
+      <Modal
+        isVisible={isCongratsModalOpen}
+        onBackdropPress={toggleCongratsModalVisibility}
+      >
+        <View style={Styles.container}>
+          <View style={Styles.modal}>
+            <Text style={Styles.modalTitle}>CONGRATULATIONS!</Text>
+            <Image
+              source={
+                images[`${loomieCaptured?.serial}`.toString().padStart(3, '0')]
+              }
+              style={Styles.cardImage}
             />
+            <View style={Styles.modalText}>
+              <Text style={Styles.boldText}>You have captured:</Text>
+              <Text>{loomieCaptured?.name}</Text>
+              <Text>Level: {loomieCaptured?.level}</Text>
+              {/* TODO CHANGE THIS */}
+              <CustomTag rarity={'Normal'} />
+            </View>
+            <View style={Styles.containerButton}>
+              <CustomButton
+                title='Accept'
+                type='primary'
+                callback={toggleCongratsModalVisibility}
+              />
+            </View>
           </View>
         </View>
-      </View>
-    </Modal>
-  );
+      </Modal>
+    );
+  return <></>;
 };
 
 const Styles = StyleSheet.create({
