@@ -60,7 +60,6 @@ export const FuseLoomiesModal = ({
   }, []);
 
   useEffect(() => {
-    console.log('Updating...');
     updateSelectedLoomie();
   }, [fuseLoomie]);
 
