@@ -12,10 +12,6 @@ import { useToastAlert } from '../hooks/useToastAlert';
 import { Map3D } from '@src/components/Map3D/Map3D';
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 import { ModalGym } from '@src/components/Modals/Gyms/ModalGym';
-import {
-  GymsModalContext,
-  GymsModalProvider
-} from '@src/context/GymsModalContext';
 import { ModalCongratsCapture } from '@src/components/Modals/Capture/ModalCongratsCapture';
 
 interface MapViewProps {
@@ -28,15 +24,6 @@ export const MapView = ({ navigation }: MapViewProps) => {
   const { isLoading, isAuthenticated } = useAuth();
   const { showInfoToast } = useToastAlert();
   const { showScene } = useContext(BabylonContext);
-
-  const { currentModalCapturedInfo, toggleCongratsModalVisibility } =
-    useContext(GymsModalContext);
-
-  useEffect(() => {
-    if (currentModalCapturedInfo) {
-      toggleCongratsModalVisibility();
-    }
-  }, [currentModalCapturedInfo]);
 
   // Redirects to the login view if the user is not authenticated
   useEffect(() => {
@@ -58,33 +45,31 @@ export const MapView = ({ navigation }: MapViewProps) => {
   );
 
   return (
-    <GymsModalProvider>
-      <View style={Styles.container}>
-        <Map3D />
-        <ModalGym />
-        <ModalCongratsCapture />
-        <Pressable
-          style={{
-            borderWidth: 1,
-            borderColor: 'transparent',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 70,
-            position: 'absolute',
-            bottom: 20,
-            right: 20,
-            height: 70,
-            backgroundColor: '#00000044',
-            borderRadius: 200
-          }}
-          onPress={() => {
-            navigation.navigate('Application', { screen: 'Loomies' });
-          }}
-        >
-          <FeatherIcon name={'briefcase'} size={28} color={'white'} />
-        </Pressable>
-      </View>
-    </GymsModalProvider>
+    <View style={Styles.container}>
+      <Map3D />
+      <ModalGym />
+      <ModalCongratsCapture />
+      <Pressable
+        style={{
+          borderWidth: 1,
+          borderColor: 'transparent',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 70,
+          position: 'absolute',
+          bottom: 20,
+          right: 20,
+          height: 70,
+          backgroundColor: '#00000044',
+          borderRadius: 200
+        }}
+        onPress={() => {
+          navigation.navigate('Application', { screen: 'Loomies' });
+        }}
+      >
+        <FeatherIcon name={'briefcase'} size={28} color={'white'} />
+      </Pressable>
+    </View>
   );
 };
 
