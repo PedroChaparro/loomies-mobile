@@ -28,20 +28,10 @@ export const FuseLoomiesModal = ({
   const fetchLoomies = async () => {
     const [response, err] = await getLoomiesRequest();
     if (err) return;
-
     const loomies: TCaughtLoomies[] = response.loomies;
 
-    const loomiesWithTeamProperty = loomies.map((loomie) => {
-      const isSelectedLoomie = fuseLoomie === loomie._id ? true : false;
-
-      return {
-        ...loomie,
-        is_selected: isSelectedLoomie
-      };
-    });
-
     // Filter loomies to show only the ones that can be merged
-    const fuseCandidates = loomiesWithTeamProperty.filter((loomie) => {
+    const fuseCandidates = loomies.filter((loomie) => {
       return (
         loomie._id !== selectedLoomie._id &&
         loomie.serial === selectedLoomie.serial &&
@@ -52,8 +42,26 @@ export const FuseLoomiesModal = ({
     setLoomies(fuseCandidates);
   };
 
+  // Update the selected loomie when the user clicks a card
+  const updateSelectedLoomie = () => {
+    const loomiesWithTeamProperty = loomies?.map((loomie) => {
+      const isSelectedLoomie = fuseLoomie === loomie._id ? true : false;
+      return {
+        ...loomie,
+        is_selected: isSelectedLoomie
+      };
+    });
+
+    setLoomies(loomiesWithTeamProperty);
+  };
+
   useEffect(() => {
     fetchLoomies();
+  }, []);
+
+  useEffect(() => {
+    console.log('Updating...');
+    updateSelectedLoomie();
   }, [fuseLoomie]);
 
   const handleLoomiePress = useCallback((loomieId: string) => {
@@ -62,7 +70,6 @@ export const FuseLoomiesModal = ({
     if (loomie?.is_busy) return;
 
     setFuseLoomie(loomieId);
-    console.log('Loomie pressed: ', loomieId);
   }, []);
 
   const callfuseLoomies = async () => {
