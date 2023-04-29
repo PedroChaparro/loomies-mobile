@@ -172,7 +172,10 @@ export class CaptureSM {
     babylonContext: iBabylonProvider,
     modelContext: iModelProvider,
     userPositionContext: iUserPositionContext,
-    mapContext: iMapProvider
+    mapContext: iMapProvider,
+
+    attemptToCatch: () => Promise<[CAPTURE_RESULT, TWildLoomies | null]>,
+    setBallState: (_state: LOOMBALL_STATE) => void
   ) {
     this.stt.sceneCapture = sceneCapture;
     this.stt.cameraCapture = cameraCapture;
@@ -180,6 +183,12 @@ export class CaptureSM {
     this.stt.modelContext = modelContext;
     this.stt.userPositionContext = userPositionContext;
     this.stt.mapContext = mapContext;
+
+    this.stt.attemptToCatch = attemptToCatch;
+    this.stt.setBallState = (state: LOOMBALL_STATE) => {
+      this.stt.state = state;
+      setBallState(state);
+    };
   }
 
   setup(loomieSerial: number, loomball: TLoomball) {

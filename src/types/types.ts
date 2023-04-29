@@ -94,6 +94,8 @@ export type TLoomball = {
   serial: number;
   name: string;
   quantity: number;
+  // Property to render a red border around the loomball card
+  is_selected?: boolean;
 };
 
 export type TReward = {

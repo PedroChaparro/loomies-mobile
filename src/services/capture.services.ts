@@ -52,7 +52,7 @@ export const requestCaptureLoomieAttempt = async (
 
     const data: iRequestCaptureLoomieAttempt =
       rawData as iRequestCaptureLoomieAttempt;
-    return data.capture ? CAPTURE_RESULT.CAPTURED : CAPTURE_RESULT.ESCAPED;
+    return data.was_captured ? CAPTURE_RESULT.CAPTURED : CAPTURE_RESULT.ESCAPED;
   } catch (error) {
     // If 401, try to refresh the access token and retry the request
     if (
