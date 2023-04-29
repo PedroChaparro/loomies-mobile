@@ -17,6 +17,9 @@ import { LOOMBALL_STATE } from './CaptureLoomie3D';
 import { CAPTURE_RESULT } from '@src/services/capture.services';
 import { iAniState } from './CaptureSM';
 import { useToastAlert } from '@src/hooks/useToastAlert';
+//import { TWildLoomies } from '@src/types/types';
+import { useContext } from 'react';
+import { GymsModalContext } from '@src/context/GymsModalContext';
 
 export const collidedWithObject = (
   pointerInfo: Babylon.PointerInfo,
@@ -140,6 +143,7 @@ export const fallCalculatePosition = (stt: iAniState): Babylon.Vector3 => {
 };
 
 export const attemptToCatch = async (stt: iAniState) => {
+  const { setCurrentModalCapturedInfo } = useContext(GymsModalContext);
   // get toast
   const { showInfoToast } = useToastAlert();
 
@@ -154,7 +158,7 @@ export const attemptToCatch = async (stt: iAniState) => {
     case CAPTURE_RESULT.CAPTURED:
       {
         // print loomie info
-        console.log(loomie);
+        //const example = loomie as TWildLoomies;
 
         // remove captured loomie
         const loomies = stt.mapContext.getWildLoomies();
@@ -166,11 +170,14 @@ export const attemptToCatch = async (stt: iAniState) => {
         stt.mapContext.setWildLoomies(updatedLoomies);
 
         // go back to map
+        console.log(loomie, 'testing');
+        setCurrentModalCapturedInfo(loomie);
         navigate('Map', null);
       }
       break;
     case CAPTURE_RESULT.ESCAPED:
       {
+        setCurrentModalCapturedInfo(null);
         showInfoToast('Loomie escaped');
 
         // reset state
@@ -179,6 +186,7 @@ export const attemptToCatch = async (stt: iAniState) => {
       break;
     case CAPTURE_RESULT.NOTFOUND:
       {
+        setCurrentModalCapturedInfo(null);
         // loomie disappeared
         showInfoToast('Loomie escaped');
 

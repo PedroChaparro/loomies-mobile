@@ -12,7 +12,11 @@ import { useToastAlert } from '../hooks/useToastAlert';
 import { Map3D } from '@src/components/Map3D/Map3D';
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 import { ModalGym } from '@src/components/Modals/Gyms/ModalGym';
-import { GymsModalProvider } from '@src/context/GymsModalContext';
+import {
+  GymsModalContext,
+  GymsModalProvider
+} from '@src/context/GymsModalContext';
+import { ModalCongratsCapture } from '@src/components/Modals/Capture/ModalCongratsCapture';
 
 interface MapViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,6 +28,15 @@ export const MapView = ({ navigation }: MapViewProps) => {
   const { isLoading, isAuthenticated } = useAuth();
   const { showInfoToast } = useToastAlert();
   const { showScene } = useContext(BabylonContext);
+
+  const { currentModalCapturedInfo, toggleCongratsModalVisibility } =
+    useContext(GymsModalContext);
+
+  useEffect(() => {
+    if (currentModalCapturedInfo) {
+      toggleCongratsModalVisibility();
+    }
+  }, [currentModalCapturedInfo]);
 
   // Redirects to the login view if the user is not authenticated
   useEffect(() => {
@@ -49,6 +62,7 @@ export const MapView = ({ navigation }: MapViewProps) => {
       <View style={Styles.container}>
         <Map3D />
         <ModalGym />
+        <ModalCongratsCapture />
         <Pressable
           style={{
             borderWidth: 1,
