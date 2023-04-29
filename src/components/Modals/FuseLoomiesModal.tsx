@@ -21,7 +21,6 @@ export const FuseLoomiesModal = ({
   toggleVisibilityCallback
 }: IProps) => {
   const { showErrorToast, showSuccessToast } = useToastAlert();
-  const [team, setTeam] = useState<string>();
   const [fuseLoomie, setFuseLoomie] = useState<string>('');
   const [loomies, setLoomies] = useState<TCaughtLoomieToRender[]>();
 
@@ -33,7 +32,7 @@ export const FuseLoomiesModal = ({
     const loomies: TCaughtLoomies[] = response.loomies;
 
     const loomiesWithTeamProperty = loomies.map((loomie) => {
-      const isSelectedLoomie = team === loomie._id ? true : false;
+      const isSelectedLoomie = fuseLoomie === loomie._id ? true : false;
 
       return {
         ...loomie,
@@ -55,7 +54,7 @@ export const FuseLoomiesModal = ({
 
   useEffect(() => {
     fetchLoomies();
-  }, [team]);
+  }, [fuseLoomie]);
 
   const handleLoomiePress = useCallback((loomieId: string) => {
     // If the loomie is busy, ignore the action
@@ -63,8 +62,6 @@ export const FuseLoomiesModal = ({
     if (loomie?.is_busy) return;
 
     setFuseLoomie(loomieId);
-    setTeam(loomieId);
-
     console.log('Loomie pressed: ', loomieId);
   }, []);
 
