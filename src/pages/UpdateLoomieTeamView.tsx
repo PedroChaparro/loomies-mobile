@@ -35,14 +35,26 @@ export const UpdateLoomieTeamView = ({ navigation }: IProps) => {
   };
 
   const getLoomies = async () => {
-    const [response, error] = await getLoomiesRequest();
-    if (error) return;
+    let currentLoomies: TCaughtLoomies[];
 
-    const loomies: TCaughtLoomies[] = response.loomies;
+    // Get the loomies from the database the first time
+    if (!loomies || loomies.length === 0) {
+      const [response, error] = await getLoomiesRequest();
+      if (error || !response.loomies || response.loomies.length == 0) return;
 
-    const loomiesWithTeamProperty = loomies.map((loomie) => {
+      const responseLoomies: TCaughtLoomies[] = response.loomies;
+      currentLoomies = responseLoomies;
+    } else {
+      currentLoomies = loomies;
+    }
+
+    const loomiesWithTeamProperty = currentLoomies.map((loomie) => {
       const isTeamLoomie = team.includes(loomie._id);
-      return { ...loomie, is_in_team: isTeamLoomie, is_selected: isTeamLoomie };
+      return {
+        ...loomie,
+        is_in_team: isTeamLoomie,
+        is_selected: isTeamLoomie
+      };
     });
 
     setLoomies(loomiesWithTeamProperty);
