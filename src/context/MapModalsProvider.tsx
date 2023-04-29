@@ -65,7 +65,6 @@ export const MapModalsProvider = ({ children }: IProps) => {
 
   useEffect(() => {
     if (currentModalCapturedInfo) {
-      /*       setIsCongratsModalOpen(true); */
       setIsCongratsModalOpen(true);
     }
   }, [currentModalCapturedInfo]);

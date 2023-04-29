@@ -59,8 +59,7 @@ export const CaptureLoomie3D = ({
   const modelContext = useContext(ModelContext);
   const userPositionContext = useContext(UserPositionContext);
   const mapContext = useContext(MapContext);
-  const { setCurrentModalCapturedInfo, toggleCongratsModalVisibility } =
-    useContext(MapModalsContext);
+  const { setCurrentModalCapturedInfo } = useContext(MapModalsContext);
 
   // stores the ballState
   const stateMachine = useRef<CaptureSM | null>(null);
@@ -129,7 +128,6 @@ export const CaptureLoomie3D = ({
 
       if (captured === CAPTURE_RESULT.CAPTURED) {
         setCurrentModalCapturedInfo(loomie as TWildLoomies);
-        toggleCongratsModalVisibility();
       }
       return [captured, loomie];
     }
