@@ -14,13 +14,13 @@ export const GymsModalContext = createContext({
   isGymModalOpen: false,
   isCongratsModalOpen: false,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  toggleCongratsModalVisibility: () => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   toggleGymModalVisibility: () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  toggleCongratsModalVisibility: () => {},
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   setCurrentModalGymId: (_id: string) => {},
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setCurrentModalCapturedInfo: (_loomie: TWildLoomies | null) => {}
+  setCurrentModalCapturedInfo: (_wildLoomie: TWildLoomies) => {}
 });
 
 interface IProps {
@@ -32,14 +32,14 @@ export const GymsModalProvider = ({ children }: IProps) => {
   const [currentModalCapturedInfo, setCurrentModalCapturedInfo] =
     useState<TWildLoomies | null>(null);
   const [isGymModalOpen, setIsGymModalOpen] = useState(false);
-  const [isCongratsModalOpen, setCongratsModalOpen] = useState(false);
+  const [isCongratsModalOpen, setIsCongratsModalOpen] = useState(false);
 
   const toggleGymModalVisibility = () => {
     setIsGymModalOpen(!isGymModalOpen);
   };
 
   const toggleCongratsModalVisibility = () => {
-    setCongratsModalOpen(!isCongratsModalOpen);
+    setIsCongratsModalOpen(!isCongratsModalOpen);
   };
 
   // If the modal is closed, we reset the current gym id to
@@ -57,11 +57,18 @@ export const GymsModalProvider = ({ children }: IProps) => {
     }
   }, [currentModalGymId]);
 
-  /* useEffect(() => {
-    if (currentModalCapturedInfo) {
-      setCongratsModalOpen(true);
+  useEffect(() => {
+    if (!isCongratsModalOpen) {
+      setCurrentModalCapturedInfo(null);
     }
-  }, [currentModalCapturedInfo]); */
+  }, [isCongratsModalOpen]);
+
+  useEffect(() => {
+    if (currentModalCapturedInfo) {
+      /*       setIsCongratsModalOpen(true); */
+      setIsCongratsModalOpen(true);
+    }
+  }, [currentModalCapturedInfo]);
 
   return (
     <GymsModalContext.Provider

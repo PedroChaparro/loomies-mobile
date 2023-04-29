@@ -24,6 +24,7 @@ import { TLoomball, TWildLoomies } from '@src/types/types';
 import { CaptureSM } from './CaptureSM';
 import { CONFIG } from '@src/services/config.services';
 import { MapContext } from '@src/context/MapProvider';
+import { GymsModalContext } from '@src/context/GymsModalContext';
 const { MAP_DEBUG } = CONFIG;
 
 interface iCaptureLoomie3D {
@@ -58,6 +59,8 @@ export const CaptureLoomie3D = ({
   const modelContext = useContext(ModelContext);
   const userPositionContext = useContext(UserPositionContext);
   const mapContext = useContext(MapContext);
+  const { setCurrentModalCapturedInfo, toggleCongratsModalVisibility } =
+    useContext(GymsModalContext);
 
   // stores the ballState
   const stateMachine = useRef<CaptureSM | null>(null);
@@ -123,6 +126,11 @@ export const CaptureLoomie3D = ({
         loomie._id,
         loomball._id
       );
+
+      if (captured === CAPTURE_RESULT.CAPTURED) {
+        setCurrentModalCapturedInfo(loomie as TWildLoomies);
+        toggleCongratsModalVisibility();
+      }
       return [captured, loomie];
     }
     return [CAPTURE_RESULT.NOTFOUND, null];
