@@ -32,7 +32,7 @@ export enum TYPE {
   ERROR_USING_ITEM,
   USER_ITEM_USED,
 
-  LOOMIES_TEAM,
+  USER_LOOMIE_TEAM,
 
   // client -> server
 
@@ -41,7 +41,7 @@ export enum TYPE {
   USER_DODGE,
   USER_ATTACK,
   USER_ESCAPE_COMBAT,
-  USER_LOOMIES_TEAM
+  USER_GET_LOOMIE_TEAM
 }
 
 export interface iCombatMessage {

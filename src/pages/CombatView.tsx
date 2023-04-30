@@ -356,7 +356,7 @@ export const CombatView = ({ route }: iCombatViewProps) => {
 
       // update gym loomie
 
-      case TYPE.LOOMIES_TEAM:
+      case TYPE.USER_LOOMIE_TEAM:
         {
           if ((data.payload as iPayload_LOOMIES_TEAM) === undefined) return;
           const payload = data.payload as iPayload_LOOMIES_TEAM;
@@ -408,7 +408,7 @@ export const CombatView = ({ route }: iCombatViewProps) => {
 
   const userLoomiesTeam = () => {
     const message = JSON.stringify({
-      type: TYPE[TYPE.USER_LOOMIES_TEAM] as string
+      type: TYPE[TYPE.USER_GET_LOOMIE_TEAM] as string
     });
     sendMessage(message, false);
   };
