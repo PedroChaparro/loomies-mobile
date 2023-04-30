@@ -57,8 +57,10 @@ interface iPropsCombatUI {
   //change loomie
   modalLoomiesTeamVisible: boolean;
   modalLoomiesTeamToggle: () => void;
-  getUserLoomiesTeam:() => void;
+  getUserLoomiesTeam: () => void;
   loomieTeamPlayer: iLoomie[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  changeLoomie(_a: any): void;
 }
 
 const GIZMO_SIZE = 30;
@@ -372,6 +374,7 @@ export const CombatUI = (props: iPropsCombatUI) => {
         loomiesTeam={props.loomieTeamPlayer}
         isVisible={props.modalLoomiesTeamVisible}
         toggleVisibilityCallback={props.modalLoomiesTeamToggle}
+        changeLoomie={props.changeLoomie}
       />
 
       {/* you loose modal */}

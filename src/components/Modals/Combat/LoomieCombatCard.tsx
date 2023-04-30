@@ -55,7 +55,7 @@ export const LoomieCombatCard = ({
 
   return (
     <View style={Styles.card}>
-      <Pressable onPress={() => cardCallback(loomie._id)}>
+      <Pressable onPress={() => cardCallback(loomie)}>
         {/* Inner spacing to create a gap between the elements */}
         <View style={Styles.spacing}>
           <View

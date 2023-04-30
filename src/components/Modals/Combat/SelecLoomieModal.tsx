@@ -9,41 +9,47 @@ interface IProps {
   loomiesTeam: iLoomie[];
   isVisible: boolean;
   toggleVisibilityCallback: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  changeLoomie(_a: any): void;
 }
 
 export const SelecLoomieModal = ({
   loomiesTeam,
   isVisible,
-  toggleVisibilityCallback
+  toggleVisibilityCallback,
+  changeLoomie
 }: IProps) => {
-  const [selectedLoomie, setSelectedLoomie] = useState<string>();
+  const [loomiesInternal, setLoomiesInternal] = useState<iLoomie[]>();
+  const [selectedLoomie, setSelectedLoomie] = useState<iLoomie>();
 
   const test = () => {
-    console.log(loomiesTeam);
+    changeLoomie(selectedLoomie);
+    toggleVisibilityCallback();
   };
 
   const updateSelectedLoomie = () => {
     const loomiesWithTeamProperty = loomiesTeam?.map((loomie) => {
-      const isSelectedLoomie = selectedLoomie === loomie._id ? true : false;
+      const isSelectedLoomie =
+        selectedLoomie?._id === loomie._id ? true : false;
       return {
         ...loomie,
         is_selected: isSelectedLoomie
       };
     });
 
-    console.log(loomiesWithTeamProperty);
+    setLoomiesInternal(loomiesWithTeamProperty);
   };
 
   useEffect(() => {
     updateSelectedLoomie();
   }, [selectedLoomie]);
 
-  const handleLoomiePress = useCallback((loomieId: string) => {
-    // If the loomie is busy, ignore the action
-    const loomie = loomiesTeam?.find((loomie) => loomie._id === loomieId);
-    if (loomie?.is_busy) return;
+  useEffect(() => {
+    setLoomiesInternal(loomiesTeam);
+  }, [loomiesTeam]);
 
-    setSelectedLoomie(loomieId);
+  const handleLoomiePress = useCallback((selectedLoomie: iLoomie) => {
+    setSelectedLoomie(selectedLoomie);
   }, []);
 
   return (
@@ -56,7 +62,8 @@ export const SelecLoomieModal = ({
       <Text style={Styles.modalTitle}>Loomies Team</Text>
       <View style={{ flex: 1, marginVertical: 8 }}>
         <LoomiesCombatGrid
-          loomies={loomiesTeam}
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          loomies={loomiesInternal!}
           markIsWeakenedLoomies={true}
           markSelectedLoomies={true}
           elementsCallback={handleLoomiePress}

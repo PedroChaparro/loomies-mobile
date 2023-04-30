@@ -70,7 +70,8 @@ export const CombatView = ({ route }: iCombatViewProps) => {
   const [modalLooseVisible, setModalLooseVisible] = useState<boolean>(false);
   const [modalWinVisible, setModalWinVisible] = useState<boolean>(false);
   const [modalItemVisible, setModalItemVisible] = useState<boolean>(false);
-  const [modalLoomiesTeamVisible, setModalLoomiesTeamVisible] = useState<boolean>(false);
+  const [modalLoomiesTeamVisible, setModalLoomiesTeamVisible] =
+    useState<boolean>(false);
   const modalLooseToggle = (open?: boolean) => {
     if (open != undefined) setModalLooseVisible(open);
     else setModalLooseVisible((value) => !value);
@@ -353,17 +354,16 @@ export const CombatView = ({ route }: iCombatViewProps) => {
         }
         break;
 
-        // update gym loomie
+      // update gym loomie
 
       case TYPE.LOOMIES_TEAM:
         {
-          if ((data.payload as iPayload_LOOMIES_TEAM) === undefined)
-            return;
+          if ((data.payload as iPayload_LOOMIES_TEAM) === undefined) return;
           const payload = data.payload as iPayload_LOOMIES_TEAM;
-          setLoomieTeamPlayer(payload.loomies)
+          setLoomieTeamPlayer(payload.loomies);
         }
         break;
-        
+
       default:
         console.log(`Warn: Message not recognized ${data.type}`);
         break;
@@ -411,6 +411,21 @@ export const CombatView = ({ route }: iCombatViewProps) => {
       type: TYPE[TYPE.USER_LOOMIES_TEAM] as string
     });
     sendMessage(message, false);
+  };
+
+  const changeLoomie = (newLoomie: iLoomie) => {
+    if (newLoomie.boosted_hp > 0) {
+      const message = JSON.stringify({
+        type: TYPE[TYPE.USER_CHANGE_LOOMIE] as string,
+        payload: {
+          loomie_id: newLoomie._id
+        }
+      });
+
+      sendMessage(message, true);
+    } else {
+      queueMessage('Loomie Weakened', false);
+    }
   };
 
   const exitCombat = () => {
@@ -513,6 +528,7 @@ export const CombatView = ({ route }: iCombatViewProps) => {
           modalLoomiesTeamVisible={modalLoomiesTeamVisible}
           modalLoomiesTeamToggle={() => modalLoomiesTeamToggle()}
           getUserLoomiesTeam={userLoomiesTeam}
+          changeLoomie={changeLoomie}
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           loomieTeamPlayer={loomieTeamPlayer!}
         />
