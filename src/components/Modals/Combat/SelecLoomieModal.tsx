@@ -49,6 +49,8 @@ export const SelecLoomieModal = ({
   }, [loomiesTeam]);
 
   const handleLoomiePress = useCallback((selectedLoomie: iLoomie) => {
+    // If the loomie is weakened, ignore the action
+    if (selectedLoomie.boosted_hp < 0) return;
     setSelectedLoomie(selectedLoomie);
   }, []);
 
