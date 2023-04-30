@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   NavigationProp,
   RouteProp,
@@ -40,7 +40,6 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
   const { showScene } = useContext(BabylonContext);
 
   // state
-  const [balls, setBalls] = useState<TLoomball[]>([]);
   const [ballSelected, setBallSelected] = useState<TLoomball | null>(null);
   const [aniState, setAniState] = useState<LOOMBALL_STATE>(
     LOOMBALL_INITIAL_STATE
@@ -97,10 +96,6 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
         showInfoToast("You don't have any Loomballs to catch this Loomie");
       }
 
-      // set loomballs available to player
-      setBalls(loomballs);
-      console.log(balls);
-
       // still has balls of this kind available?
       let available = false;
 
@@ -146,10 +141,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
     }
 
     setLoomie(foundLoomie);
-
     fetchLoomballs();
-
-    console.log('INFO: Loomie exists', foundLoomie);
   }, [ballSelected]);
 
   // toggle render loop on focus events
