@@ -424,7 +424,7 @@ export const CombatView = ({ route }: iCombatViewProps) => {
 
       sendMessage(message, true);
     } else {
-      queueMessage('Loomie Weakened', false);
+      queueMessage('Loomie is Weakened', false);
     }
   };
 
