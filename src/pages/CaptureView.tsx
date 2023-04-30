@@ -26,6 +26,12 @@ interface CaptureViewProps {
   route: RouteProp<{ params: { loomieId: string } }, 'params'>;
 }
 
+const interactableStates = [
+  LOOMBALL_STATE.GRABBABLE,
+  LOOMBALL_STATE.ANI_GRABBED,
+  LOOMBALL_STATE.ANI_RETURNING
+];
+
 export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
   const { showInfoToast } = useToastAlert();
 
@@ -36,17 +42,19 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
   // state
   const [balls, setBalls] = useState<TLoomball[]>([]);
   const [ballSelected, setBallSelected] = useState<TLoomball | null>(null);
-  const ballState = useRef<LOOMBALL_STATE>(LOOMBALL_INITIAL_STATE);
+  const [aniState, setAniState] = useState<LOOMBALL_STATE>(
+    LOOMBALL_INITIAL_STATE
+  );
   const [showLoomBallModal, setShowLoomBallModal] = useState(false);
   const [loombalImage, setLoombalImage] = useState<string>();
 
   // set state
 
   const setBallState = (state: LOOMBALL_STATE) => {
-    ballState.current = state;
+    setAniState(state);
     console.log(`Info: Capture animation state: ${state}`);
 
-    switch (ballState.current) {
+    switch (state) {
       // decrease loomball quantity
 
       case LOOMBALL_STATE.ANI_THROW: {
@@ -179,41 +187,49 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
       {/* header */}
       <View style={styles.circle}></View>
       {loomie && <Text style={styles.title}>{loomie.name}</Text>}
-      {loomie && <Text style={styles.subtitle}>Level {loomie.level}</Text>}
-
-      {/* loomball bubble */}
-      <Pressable
-        style={styles.bubbleLoomball}
-        onPress={() => {
-          toggleItemModalVisibility();
-        }}
-      >
-        <Image
-          style={{ width: 65, height: 65 }}
-          source={images[`O-${loombalImage}`]}
-        />
-      </Pressable>
-
-      <Pressable
-        style={styles.bubbleLoomballAmount}
-        onPress={() => {
-          toggleItemModalVisibility();
-        }}
-      >
-        <Text style={{ color: 'black' }}>
-          {ballSelected ? ballSelected.quantity : ''}
+      {loomie && (
+        <Text style={styles.subtitle}>
+          {aniState} Level {loomie.level}
         </Text>
-      </Pressable>
+      )}
 
-      {/* scape bubble */}
-      <Pressable style={styles.bubbleEscape} onPress={escape}>
-        <MaterialCommunityIcons
-          size={30}
-          name={'run'}
-          color={'white'}
-          style={{ transform: [{ scaleX: -1 }] }}
-        />
-      </Pressable>
+      {interactableStates.some((i) => i == aniState) && (
+        <>
+          {/* loomball bubble */}
+          <Pressable
+            style={styles.bubbleLoomball}
+            onPress={() => {
+              toggleItemModalVisibility();
+            }}
+          >
+            <Image
+              style={{ width: 65, height: 65 }}
+              source={images[`O-${loombalImage}`]}
+            />
+          </Pressable>
+
+          <Pressable
+            style={styles.bubbleLoomballAmount}
+            onPress={() => {
+              toggleItemModalVisibility();
+            }}
+          >
+            <Text style={{ color: 'black' }}>
+              {ballSelected ? ballSelected.quantity : ''}
+            </Text>
+          </Pressable>
+
+          {/* scape bubble */}
+          <Pressable style={styles.bubbleEscape} onPress={escape}>
+            <MaterialCommunityIcons
+              size={30}
+              name={'run'}
+              color={'white'}
+              style={{ transform: [{ scaleX: -1 }] }}
+            />
+          </Pressable>
+        </>
+      )}
     </View>
   );
 };
