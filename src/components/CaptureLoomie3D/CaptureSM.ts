@@ -237,6 +237,7 @@ export class CaptureSM {
       model.parent = this.stt.ballModel;
       model.position = Vector3.Zero();
       model.parent = this.stt.ballVisualNode;
+      model.rotation.y = Math.PI;
     } catch (e) {
       console.log(e);
     }

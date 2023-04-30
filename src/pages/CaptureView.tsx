@@ -179,11 +179,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
       {/* header */}
       <View style={styles.circle}></View>
       {loomie && <Text style={styles.title}>{loomie.name}</Text>}
-      {loomie && (
-        <Text style={styles.subtitle}>
-          {aniState} Level {loomie.level}
-        </Text>
-      )}
+      {loomie && <Text style={styles.subtitle}>Level {loomie.level}</Text>}
 
       {interactableStates.some((i) => i == aniState) && (
         <>
@@ -195,7 +191,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
             }}
           >
             <Image
-              style={{ width: 65, height: 65 }}
+              style={{ width: 70, height: 70 }}
               source={images[`O-${loombalImage}`]}
             />
           </Pressable>
@@ -272,7 +268,8 @@ const styles = StyleSheet.create({
     bottom: 15,
     right: 15,
     height: 70,
-    backgroundColor: '#ED4A5F',
+    //backgroundColor: '#ED4A5F',
+    backgroundColor: 'transparent',
     borderRadius: 200
   },
   bubbleLoomballAmount: {
