@@ -21,6 +21,7 @@ import {
 } from './CombatFloatingMessage';
 import { GenericModal } from '../Modals/GenericModal';
 import { SelectItemModal } from '../Modals/Combat/SelectItemModal';
+import { SelecLoomieModal } from '../Modals/Combat/SelecLoomieModal';
 
 interface iPropsCombatUI {
   // state
@@ -52,6 +53,12 @@ interface iPropsCombatUI {
   queueUpdated: number;
   getMessageQueue: () => iDisplayMessage[];
   removeMessageFromQueue: (_ids: number[]) => void;
+
+  //change loomie
+  modalLoomiesTeamVisible: boolean;
+  modalLoomiesTeamToggle: () => void;
+  getUserLoomiesTeam:() => void;
+  loomieTeamPlayer: iLoomie[];
 }
 
 const GIZMO_SIZE = 30;
@@ -307,7 +314,8 @@ export const CombatUI = (props: iPropsCombatUI) => {
                   <Pressable
                     style={{ ...styles.bubbleBig }}
                     onPress={() => {
-                      console.log('Pressed Loomie team bubble');
+                      props.getUserLoomiesTeam();
+                      props.modalLoomiesTeamToggle();
                     }}
                   >
                     <FeatherIcon size={30} name={'github'} color={'white'} />
@@ -356,6 +364,14 @@ export const CombatUI = (props: iPropsCombatUI) => {
         isVisible={props.modalItemVisible}
         toggleVisibilityCallback={props.modalItemToggle}
         submitCallback={props.modalItemCallback}
+      />
+
+      {/* change loomie modal */}
+
+      <SelecLoomieModal
+        loomiesTeam={props.loomieTeamPlayer}
+        isVisible={props.modalLoomiesTeamVisible}
+        toggleVisibilityCallback={props.modalLoomiesTeamToggle}
       />
 
       {/* you loose modal */}
