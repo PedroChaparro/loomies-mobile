@@ -117,4 +117,6 @@ export interface iLoomie {
   rarity: string;
   serial: number;
   types: string[];
+  // Property to render a red border around the loomie card
+  is_selected?: boolean;
 }
