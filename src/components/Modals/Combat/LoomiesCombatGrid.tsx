@@ -17,6 +17,11 @@ export const LoomiesCombatGrid = ({
   markSelectedLoomies,
   elementsCallback
 }: IProps) => {
+  // Sort the weakened loomies to the end
+  if (loomies) {
+    loomies.sort((a, b) => Number(a.boosted_hp < 0) - Number(b.boosted_hp < 0));
+  }
+
   return (
     <FlatList
       data={loomies}

@@ -414,7 +414,7 @@ export const CombatView = ({ route }: iCombatViewProps) => {
   };
 
   const changeLoomie = (newLoomie: iLoomie) => {
-    if (newLoomie.boosted_hp > 0) {
+    if (newLoomie && newLoomie.boosted_hp > 0) {
       const message = JSON.stringify({
         type: TYPE[TYPE.USER_CHANGE_LOOMIE] as string,
         payload: {
