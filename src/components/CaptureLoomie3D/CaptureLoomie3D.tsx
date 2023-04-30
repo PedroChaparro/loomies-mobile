@@ -161,6 +161,7 @@ export const CaptureLoomie3D = ({
         modelContext,
         userPositionContext,
         mapContext,
+        loomball,
 
         attemptToCatch,
         setBallState
@@ -177,6 +178,7 @@ export const CaptureLoomie3D = ({
     modelContext,
     userPosition,
     mapContext,
+    loomball,
 
     attemptToCatch,
     setBallState

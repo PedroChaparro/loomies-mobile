@@ -60,6 +60,7 @@ export interface iAniState {
   // objects
   loomieModel?: Babylon.InstantiatedEntries;
   ballModel?: Babylon.Mesh;
+  ballVisualNode?: Babylon.Mesh;
 
   hitbox?: Babylon.Mesh;
   scratchPad?: Babylon.Mesh;
@@ -72,6 +73,7 @@ export interface iAniState {
   // loomball vars
 
   state: LOOMBALL_STATE;
+  ballSerial: number;
 
   ballPosCurrLocal: Babylon.Vector3;
   ballPosCurr: Babylon.Vector3;
@@ -130,6 +132,7 @@ export class CaptureSM {
       // loombal vars
 
       state: LOOMBALL_INITIAL_STATE,
+      ballSerial: -1,
 
       ballPosCurrLocal: Vector3.Zero(),
       ballPosCurr: Vector3.Zero(),
@@ -173,6 +176,7 @@ export class CaptureSM {
     modelContext: iModelProvider,
     userPositionContext: iUserPositionContext,
     mapContext: iMapProvider,
+    loomball: TLoomball,
 
     attemptToCatch: () => Promise<[CAPTURE_RESULT, TWildLoomies | null]>,
     setBallState: (_state: LOOMBALL_STATE) => void
@@ -189,15 +193,56 @@ export class CaptureSM {
       this.stt.state = state;
       setBallState(state);
     };
+
+    this.updateLoomballModel(loomball);
   }
 
   setup(loomieSerial: number, loomball: TLoomball) {
     if (!this.stt.sceneCapture) return;
 
-    this.setupScene(loomieSerial, loomball);
+    this.setupScene(loomieSerial);
+    this.updateLoomballModel(loomball);
   }
 
-  setupScene(loomieSerial: number, loomball: TLoomball) {
+  async updateLoomballModel(loomball: TLoomball) {
+    if (!this.stt.ballModel) return;
+    if (!this.stt.ballVisualNode) return;
+    if (loomball.serial == this.stt.ballSerial) return;
+    this.stt.ballSerial = loomball.serial;
+
+    try {
+      // dispose previous model
+
+      for (let i = 0; i < 10; i++) {
+        this.stt.ballVisualNode.getChildren().forEach((mesh) => {
+          console.log(`Info: Disposing (try ${i}) "${mesh.name}"`);
+          mesh.dispose();
+        });
+        if (!this.stt.ballVisualNode.getChildren().length) break;
+      }
+
+      // load current model
+
+      const model = await this.stt.modelContext.cloneModel(
+        `loomball-${loomball.serial.toString().padStart(3, '0')}`,
+        this.stt.sceneCapture
+      );
+
+      if (!model)
+        throw "Error: updateLoomballModel: Couldn't instantiate loomball model";
+
+      // hook it
+
+      model.isPickable = false;
+      model.parent = this.stt.ballModel;
+      model.position = Vector3.Zero();
+      model.parent = this.stt.ballVisualNode;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  setupScene(loomieSerial: number) {
     const sceneCapture = this.stt.sceneCapture;
     const cameraCapture = this.stt.cameraCapture;
 
@@ -226,16 +271,14 @@ export class CaptureSM {
     (async () => {
       try {
         // models
+
         const modelLoomie = await this.stt.modelContext.instantiateModel(
           loomieSerial.toString(),
           sceneCapture
         );
+
         const modelEnv = await this.stt.modelContext.instantiateModel(
           'ENV_GRASS',
-          sceneCapture
-        );
-        const modelBall = await this.stt.modelContext.cloneModel(
-          `loomball-${loomball.serial.toString().padStart(3, '0')}`,
           sceneCapture
         );
 
@@ -244,7 +287,22 @@ export class CaptureSM {
         if (!modelLoomie)
           throw "Error: Couldn't instantiate Loomie modelLoomie";
         if (!modelEnv) throw "Error: Couldn't instantiate env modelEnv";
-        if (!modelBall) throw "Error: Couldn't instantiate env modelBall";
+
+        // helper nodes
+
+        const modelBall = Babylon.MeshBuilder.CreateBox(
+          `loomball`,
+          { size: 0.2 },
+          sceneCapture
+        );
+
+        const ballVisual = Babylon.MeshBuilder.CreateBox(
+          `loomballVisual`,
+          { size: 0.1 },
+          sceneCapture
+        );
+        ballVisual.isPickable = false;
+        ballVisual.parent = modelBall;
 
         // position model loomie
 
@@ -354,6 +412,7 @@ export class CaptureSM {
         this.stt.ballInitialOrigin = initialOriginBall;
         this.stt.cameraDummy = cameraDummy;
         this.stt.ballDummy = ballDummy;
+        this.stt.ballVisualNode = ballVisual;
       } catch (error) {
         console.error(error);
       }
