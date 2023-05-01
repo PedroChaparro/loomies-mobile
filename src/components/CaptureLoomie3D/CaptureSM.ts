@@ -243,23 +243,68 @@ export class CaptureSM {
     }
   }
 
-  async setupAR(camera: Babylon.ArcRotateCamera) {
-    const xr = await this.stt.sceneCapture.createDefaultXRExperienceAsync({
-      disableDefaultUI: true,
-      disableTeleportation: true
-    });
+  /**
+   * Tries to setup an AR session
+   * @param camera Base camera to get position from
+   * @returns A promise with a boolean indicating success and the WebXRCamera
+   */
+  async setupAR(
+    camera: Babylon.ArcRotateCamera
+  ): Promise<[boolean, Babylon.WebXRCamera | null]> {
+    try {
+      // create session
 
-    await xr.baseExperience.enterXRAsync(
-      'immersive-ar',
-      'unbounded',
-      xr.renderTarget
-    );
+      const xr = await this.stt.sceneCapture.createDefaultXRExperienceAsync({
+        disableDefaultUI: true,
+        disableTeleportation: true
+      });
 
-    // set XR camera transform to already configured camera
-    const xrCamera = xr.input.xrCamera;
-    if (xr.input.xrCamera) {
-      xrCamera.setTransformationFromNonVRCamera(camera);
+      const session = await xr.baseExperience.enterXRAsync(
+        'immersive-ar',
+        'local',
+        xr.renderTarget
+      );
+
+      // set XR camera transform to already configured camera
+
+      if (!xr.input.xrCamera) {
+        session.exitXRAsync();
+        session.dispose();
+      }
+
+      // position camera
+
+      //const xrCamera = xr.input.xrCamera;
+      //console.log(xrCamera.realWorldHeight);
+      
+      //xrCamera.position = new Vector3(0, 2, 0);
+
+      //const heightChange = new XRRigidTransform({
+        //x: 0,
+        //y: xrCamera.realWorldHeight ? -xrCamera.realWorldHeight : -1.7,
+        //z: 0
+      //});
+
+      //// get a new reference space object using the current reference space
+      //const newReferenceSpace = session.referenceSpace.getOffsetReferenceSpace(heightChange);
+
+      //console.log(newReferenceSpace);
+      //session.referenceSpace = newReferenceSpace;
+
+      console.log('camera.position', camera.position);
+      xr.input.xrCamera.setTransformationFromNonVRCamera(camera, true);
+
+      // register XR session
+
+      this.stt.babylonContext.setXrSessionCapture(session);
+
+      return [true, xr.input.xrCamera];
+
+    } catch (e) {
+      console.error(e);
     }
+
+    return [false, null];
   }
 
   setupScene(loomieSerial: number) {
@@ -267,7 +312,8 @@ export class CaptureSM {
     const cameraCapture = this.stt.cameraCapture;
 
     // config camera
-    const camera = cameraCapture as Babylon.ArcRotateCamera;
+    let camera: Babylon.ArcRotateCamera | Babylon.WebXRCamera =
+      cameraCapture as Babylon.ArcRotateCamera;
 
     // no panning
     camera.panningSensibility = 0;
@@ -290,14 +336,25 @@ export class CaptureSM {
 
     (async () => {
       try {
-        const arSupported =
+        let arSupported =
           await Babylon.WebXRSessionManager.IsSessionSupportedAsync(
             'immersive-ar'
           );
+
         if (arSupported) {
-          console.log('AR SUPPORTED');
-          await this.setupAR(camera);
+          console.log('Info: AR supported');
+          const arResult = await this.setupAR(camera);
+
+          // use WRcamera instead of normal camera
+
+          arSupported = arResult[0];
+          if (arSupported && arResult[1]){
+            console.log("USING XR camera");
+            camera = arResult[1];
+          }
         }
+
+        console.log(camera.name);
 
         // models
 
@@ -348,7 +405,7 @@ export class CaptureSM {
 
         // make camera target the Loomie at the middle
 
-        camera.setTarget(new Vector3(0, height / 2, 0));
+        if (arSupported) camera.setTarget(new Vector3(0, height / 2, 0));
 
         // DEBUG: Target loomball
         //const modelBall2 = await this.stt.modelContext.cloneModel(
@@ -364,7 +421,7 @@ export class CaptureSM {
 
         modelBall.scaling = Vector3.One().scale(LOOMBALL_SCALE);
         modelBall.position = new Vector3().copyFrom(LOOMBALL_SPAWN_POS);
-        modelBall.parent = cameraCapture;
+        modelBall.parent = camera;
 
         // loomball initial position
 
@@ -376,7 +433,7 @@ export class CaptureSM {
         initialOriginBall.position = new Vector3().copyFrom(
           LOOMBALL_INITIAL_POS
         );
-        initialOriginBall.parent = cameraCapture;
+        initialOriginBall.parent = camera;
         initialOriginBall.isPickable = false;
         initialOriginBall.visibility = 0;
 
@@ -401,7 +458,7 @@ export class CaptureSM {
         );
         scratchPad.position.y = -0.5;
         scratchPad.position.z = LOOMBALL_CAMERA_DISTANCE;
-        scratchPad.parent = cameraCapture;
+        scratchPad.parent = camera;
         scratchPad.isPickable = true;
         scratchPad.visibility = 0;
 

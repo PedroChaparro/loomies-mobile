@@ -3,7 +3,13 @@
  * Distributes the babylonjs engine, Map scene, and Loomies View scene.
  */
 
-import React, { createContext, useEffect, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useState,
+  ReactNode,
+  useRef
+} from 'react';
 import * as Babylon from '@babylonjs/core';
 import { useEngineRenderLoop } from '@src/hooks/useEngineRenderLoop';
 import { useEngine } from '@babylonjs/react-native';
@@ -30,6 +36,9 @@ export interface iBabylonProvider {
   cameraCapture: Babylon.Camera | undefined;
   cameraCombat: Babylon.Camera | undefined;
 
+  getXrSessionCapture: () => Babylon.WebXRSessionManager | undefined;
+  setXrSessionCapture: (_session: Babylon.WebXRSessionManager) => void;
+
   showScene: (_scene: APP_SCENE) => void;
   getCurrentScene: () => APP_SCENE;
 }
@@ -45,6 +54,11 @@ export const BabylonContext = createContext<iBabylonProvider>({
   cameraDetails: undefined,
   cameraCapture: undefined,
   cameraCombat: undefined,
+
+  getXrSessionCapture: () => undefined,
+  setXrSessionCapture: (_session) => {
+    return;
+  },
 
   showScene: (_scene: APP_SCENE) => {
     return;
@@ -68,7 +82,24 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
   const [cameraCapture, setCameraCapture] = useState<Babylon.Camera>();
   const [cameraCombat, setCameraCombat] = useState<Babylon.Camera>();
 
-  const showScene = (scene: APP_SCENE) => {
+  const xrSessionCapture = useRef<Babylon.WebXRSessionManager | undefined>(
+    undefined
+  );
+
+  const getXrSessionCapture = () => {
+    return xrSessionCapture.current;
+  };
+
+  const setXrSessionCapture = async (session: Babylon.WebXRSessionManager) => {
+    // clean previous if any
+    await clearXrSessions();
+
+    // set session
+    xrSessionCapture.current = session;
+  };
+
+  const showScene = async (scene: APP_SCENE) => {
+    await clearXrSessions();
     clearScene(sceneDetails);
     clearScene(sceneCapture);
     clearScene(sceneCombat);
@@ -132,6 +163,13 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
         mesh.dispose();
       });
       if (!scene.meshes.length) break;
+    }
+  };
+
+  const clearXrSessions = async () => {
+    if (xrSessionCapture.current) {
+      await xrSessionCapture.current.exitXRAsync();
+      xrSessionCapture.current.dispose();
     }
   };
 
@@ -268,6 +306,9 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
         cameraDetails,
         cameraCapture,
         cameraCombat,
+
+        getXrSessionCapture,
+        setXrSessionCapture,
 
         showScene,
         getCurrentScene

@@ -90,6 +90,7 @@ export const controllerGrabbed: iStateController = {
     if (!stt.ballModel) return;
     if (!stt.ballDummy) return;
     if (!stt.cameraDummy) return;
+    if (!stt.sceneCapture.activeCamera) return;
 
     // return to state returning
 
@@ -106,7 +107,8 @@ export const controllerGrabbed: iStateController = {
       // config animation
       // use dummy camera
 
-      const camera = stt.cameraCapture as Babylon.ArcRotateCamera;
+      //const camera = stt.cameraCapture as Babylon.ArcRotateCamera;
+      const camera = stt.sceneCapture.activeCamera;
       stt.cameraDummy.setAbsolutePosition(camera.globalPosition);
       stt.cameraDummy.lookAt(Vector3.Zero());
 
@@ -167,6 +169,7 @@ export const controllerGrabbed: iStateController = {
     if (!stt.ballModel) return;
     if (!stt.ballDummy) return;
     if (!stt.cameraDummy) return;
+    if (!stt.sceneCapture.activeCamera) return;
 
     const absolutePos = stt.ballModel.getAbsolutePosition();
 
@@ -184,7 +187,7 @@ export const controllerGrabbed: iStateController = {
 
     // update dummy objects
     stt.cameraDummy.setAbsolutePosition(
-      (stt.cameraCapture as Babylon.ArcRotateCamera).globalPosition
+      (stt.sceneCapture.activeCamera).globalPosition
     );
     stt.cameraDummy.lookAt(Vector3.Zero());
     stt.ballDummy.setAbsolutePosition(stt.ballPosCurr);
@@ -305,11 +308,12 @@ export const controllerEscaped: iStateController = {
   frame: (stt) => {
     if (!stt.ballModel) return;
     if (!stt.loomieModel) return;
+    if (!stt.sceneCapture.activeCamera) return;
 
     // reset loomball hierarchy and move to spawn point
     // TODO: Use new Loomball model
 
-    stt.ballModel.parent = stt.cameraCapture;
+    stt.ballModel.parent = stt.sceneCapture.activeCamera;
     stt.ballModel.position = new Babylon.Vector3().copyFrom(LOOMBALL_SPAWN_POS);
     controllerReturning.setup && controllerReturning.setup(stt);
     stt.setBallState(LOOMBALL_STATE.ANI_RETURNING);
