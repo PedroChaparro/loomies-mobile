@@ -8,6 +8,7 @@ import { useToastAlert } from '@src/hooks/useToastAlert';
 import { navigate } from '@src/navigation/RootNavigation';
 import { EmptyMessage } from '../EmptyMessage';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 interface IProps {
   selectedLoomie: TCaughtLoomieToRender;
@@ -36,7 +37,7 @@ const CancelMergeButton = ({ onPress }: { onPress: () => void }) => {
       style={{ ...Styles.floatingButton, ...Styles.floatingCancelButton }}
       onTouchEnd={onPress}
     >
-      <MaterialCommunityIcon name='cancel' size={36} color='white' />
+      <MaterialIcon name='cancel' size={36} color='white' />
     </Pressable>
   );
 };
