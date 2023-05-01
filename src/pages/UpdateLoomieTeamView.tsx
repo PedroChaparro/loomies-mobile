@@ -10,8 +10,9 @@ import { Container } from '@src/components/Container';
 import { NavigationProp, useIsFocused } from '@react-navigation/native';
 import { LoomiesGridSkeleton } from '@src/skeletons/CaughtLoomiesGrid/LoomiesGridSkeleton';
 import { CustomButton } from '@src/components/CustomButton';
-import { View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useToastAlert } from '@src/hooks/useToastAlert';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface IProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -118,25 +119,36 @@ export const UpdateLoomieTeamView = ({ navigation }: IProps) => {
     }
   };
 
-  const redirectionHeader = (
-    <View style={{ paddingHorizontal: 10 }}>
-      <CustomButton title='Save' type='primary' callback={handleSave} />
+  return (
+    <View style={{ position: 'relative', flex: 1 }}>
+      <Container>
+        {loading ? (
+          <LoomiesGridSkeleton />
+        ) : (
+          <LoomiesGrid
+            loomies={loomies}
+            markBusyLoomies={true}
+            markSelectedLoomies={true}
+            elementsCallback={handleLoomiePress}
+          />
+        )}
+      </Container>
+      {!loading && loomies.length > 0 && (
+        <Pressable style={Styles.floatingButton} onTouchEnd={handleSave}>
+          <MaterialCommunityIcon name='content-save' size={36} color='white' />
+        </Pressable>
+      )}
     </View>
   );
-
-  return (
-    <Container>
-      {loading ? (
-        <LoomiesGridSkeleton />
-      ) : (
-        <LoomiesGrid
-          loomies={loomies}
-          markBusyLoomies={true}
-          markSelectedLoomies={true}
-          elementsCallback={handleLoomiePress}
-          listHeaderComponent={redirectionHeader}
-        />
-      )}
-    </Container>
-  );
 };
+
+const Styles = StyleSheet.create({
+  floatingButton: {
+    position: 'absolute',
+    bottom: 16,
+    right: 16,
+    backgroundColor: '#ED4A5F',
+    padding: 8,
+    borderRadius: 50
+  }
+});
