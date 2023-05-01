@@ -1,19 +1,46 @@
 import { fuseLoomies, getLoomiesRequest } from '@src/services/loomies.services';
 import { TCaughtLoomieToRender, TCaughtLoomies } from '@src/types/types';
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { LoomiesGrid } from '../CaughtLoomiesGrid/LoomiesGrid';
 import { CustomButton } from '../CustomButton';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import { navigate } from '@src/navigation/RootNavigation';
 import { EmptyMessage } from '../EmptyMessage';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface IProps {
   selectedLoomie: TCaughtLoomieToRender;
   isVisible: boolean;
   toggleVisibilityCallback: () => void;
 }
+
+const ConfirmMergeButton = ({ onPress }: { onPress: () => void }) => {
+  return (
+    <Pressable
+      style={{ ...Styles.floatingButton, ...Styles.floatingMergeButton }}
+      onTouchEnd={onPress}
+    >
+      <MaterialCommunityIcon
+        name='checkbox-marked-circle-outline'
+        size={36}
+        color='white'
+      />
+    </Pressable>
+  );
+};
+
+const CancelMergeButton = ({ onPress }: { onPress: () => void }) => {
+  return (
+    <Pressable
+      style={{ ...Styles.floatingButton, ...Styles.floatingCancelButton }}
+      onTouchEnd={onPress}
+    >
+      <MaterialCommunityIcon name='cancel' size={36} color='white' />
+    </Pressable>
+  );
+};
 
 export const FuseLoomiesModal = ({
   selectedLoomie,
@@ -105,7 +132,7 @@ export const FuseLoomiesModal = ({
       style={Styles.modal}
     >
       <Text style={Styles.modalTitle}>Merge Loomies</Text>
-      <View style={{ flex: 1, marginVertical: 8 }}>
+      <View style={{ flex: 1, position: 'relative', marginVertical: 8 }}>
         {loomies.length === 0 ? (
           <EmptyMessage
             text={`You have to catch another "${selectedLoomie.name}" to merge it`}
@@ -121,22 +148,8 @@ export const FuseLoomiesModal = ({
             elementsCallback={handleLoomiePress}
           />
         )}
-      </View>
-      {loomies.length === 0 ? null : (
-        <View style={Styles.containerButton}>
-          <CustomButton
-            title='Merge'
-            type='primary'
-            callback={callfuseLoomies}
-          />
-        </View>
-      )}
-      <View style={Styles.containerButton}>
-        <CustomButton
-          title='Cancel'
-          type='primary'
-          callback={toggleVisibilityCallback}
-        />
+        {loomies.length > 0 && <ConfirmMergeButton onPress={callfuseLoomies} />}
+        <CancelMergeButton onPress={toggleVisibilityCallback} />
       </View>
     </Modal>
   );
@@ -158,5 +171,19 @@ const Styles = StyleSheet.create({
   containerButton: {
     alignSelf: 'center',
     width: '90%'
+  },
+  floatingButton: {
+    position: 'absolute',
+    backgroundColor: '#ED4A5F',
+    padding: 8,
+    borderRadius: 50
+  },
+  floatingMergeButton: {
+    bottom: 16,
+    right: 16
+  },
+  floatingCancelButton: {
+    bottom: 80,
+    right: 16
   }
 });
