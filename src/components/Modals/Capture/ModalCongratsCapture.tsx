@@ -4,7 +4,7 @@ import Modal from 'react-native-modal';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { CustomButton } from '@src/components/CustomButton';
 import { MapModalsContext } from '@src/context/MapModalsProvider';
-import { CustomTag } from '../../CustomTag';
+import { LoomieRarityTag } from '../../LoomieDetails/LoomieRarityTag';
 
 export const ModalCongratsCapture = () => {
   const {
@@ -38,7 +38,7 @@ export const ModalCongratsCapture = () => {
               <Text style={Styles.modalText}>
                 Level: {loomieCaptured.level}
               </Text>
-              <CustomTag rarity={loomieCaptured.rarity} />
+              <LoomieRarityTag rarity={loomieCaptured.rarity} />
             </View>
             <View style={Styles.containerButton}>
               <CustomButton

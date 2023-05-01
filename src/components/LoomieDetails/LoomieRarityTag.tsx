@@ -11,7 +11,7 @@ const backgroundMap: Record<string, string> = {
   Normal: '#fcecc7'
 };
 
-export const CustomTag = ({ rarity }: IProps) => {
+export const LoomieRarityTag = ({ rarity }: IProps) => {
   const backgroundColor = backgroundMap[rarity];
   return (
     <View style={[Styles.tagBackground, { backgroundColor }]}>
@@ -29,8 +29,8 @@ const Styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 4,
-    width: '30%',
-    height: 28,
-    borderRadius: 30
+    borderRadius: 30,
+    paddingVertical: 4,
+    paddingHorizontal: 16
   }
 });
