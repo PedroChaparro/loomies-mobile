@@ -57,7 +57,7 @@ export const BottomNavigation = () => {
               ) : (
                 <Image
                   source={images['015']}
-                  style={{ width: 80, height: 80, top: -16 }}
+                  style={{ width: 76, height: 76, top: -16 }}
                 />
               )
           }}
