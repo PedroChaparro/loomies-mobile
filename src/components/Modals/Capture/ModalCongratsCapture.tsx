@@ -67,16 +67,16 @@ const Styles = StyleSheet.create({
   },
   modalTitle: {
     color: '#ED4A5F',
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
     textTransform: 'uppercase'
   },
   cardImage: {
-    height: 100,
+    height: 150,
     resizeMode: 'center',
     alignSelf: 'center',
-    width: 100
+    width: 150
   },
   modalText: {
     color: '#5C5C5C',
@@ -85,10 +85,12 @@ const Styles = StyleSheet.create({
     textAlign: 'center'
   },
   boldText: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    marginVertical: 4
   },
   containerButton: {
     alignSelf: 'center',
-    width: '92%'
+    width: '92%',
+    marginTop: 8
   }
 });
