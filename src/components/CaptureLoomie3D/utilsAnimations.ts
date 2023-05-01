@@ -154,7 +154,7 @@ export const attemptToCatch = async (stt: iAniState) => {
     case CAPTURE_RESULT.CAPTURED:
       {
         // print loomie info
-        console.log(loomie);
+        //console.log(loomie);
 
         // remove captured loomie
         const loomies = stt.mapContext.getWildLoomies();

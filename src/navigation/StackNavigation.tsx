@@ -16,6 +16,7 @@ import { MapProvider } from '@src/context/MapProvider';
 import { ModelProvider } from '@src/context/ModelProvider';
 import { BabylonProvider } from '@src/context/BabylonProvider';
 import { UserPositionProvider } from '@src/context/UserPositionProvider';
+import { MapModalsProvider } from '@src/context/MapModalsProvider';
 
 const Stack = createStackNavigator();
 export const StackNavigation = () => {
@@ -28,37 +29,39 @@ export const StackNavigation = () => {
       <BabylonProvider>
         <MapProvider>
           <ModelProvider>
-            <Stack.Navigator
-              initialRouteName='Login'
-              screenOptions={{ headerShown: false }}
-            >
-              {/* Views that are not included in the bottom tabs navigation but are reachable using the navigator hook */}
-              <Stack.Screen name='Map' component={MapView} />
-              <Stack.Screen name='Capture' component={CaptureView} />
-              <Stack.Screen name='Combat' component={CombatView} />
-              <Stack.Screen name='Login' component={Login} />
-              <Stack.Screen name='Signup' component={Signup} />
-              <Stack.Screen
-                name='EmailValidation'
-                component={EmailValidationView}
-              />
-              <Stack.Screen name='NewCode' component={NewCodeView} />
-              <Stack.Screen
-                name='ResetPassword'
-                component={ResetPasswordView}
-              />
-              <Stack.Screen
-                name='ChangePassword'
-                component={ChangePasswordView}
-              />
-              {/* Views that includes the bottom tabs navigation */}
-              <Stack.Screen name='Application' component={BottomNavigation} />
-              <Stack.Screen name='LoomieDetails' component={LoomieDetails} />
-              <Stack.Screen
-                name='UpdateLoomieTeam'
-                component={UpdateLoomieTeamView}
-              />
-            </Stack.Navigator>
+            <MapModalsProvider>
+              <Stack.Navigator
+                initialRouteName='Login'
+                screenOptions={{ headerShown: false }}
+              >
+                {/* Views that are not included in the bottom tabs navigation but are reachable using the navigator hook */}
+                <Stack.Screen name='Map' component={MapView} />
+                <Stack.Screen name='Capture' component={CaptureView} />
+                <Stack.Screen name='Combat' component={CombatView} />
+                <Stack.Screen name='Login' component={Login} />
+                <Stack.Screen name='Signup' component={Signup} />
+                <Stack.Screen
+                  name='EmailValidation'
+                  component={EmailValidationView}
+                />
+                <Stack.Screen name='NewCode' component={NewCodeView} />
+                <Stack.Screen
+                  name='ResetPassword'
+                  component={ResetPasswordView}
+                />
+                <Stack.Screen
+                  name='ChangePassword'
+                  component={ChangePasswordView}
+                />
+                {/* Views that includes the bottom tabs navigation */}
+                <Stack.Screen name='Application' component={BottomNavigation} />
+                <Stack.Screen name='LoomieDetails' component={LoomieDetails} />
+                <Stack.Screen
+                  name='UpdateLoomieTeam'
+                  component={UpdateLoomieTeamView}
+                />
+              </Stack.Navigator>
+            </MapModalsProvider>
           </ModelProvider>
         </MapProvider>
       </BabylonProvider>
