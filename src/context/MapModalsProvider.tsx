@@ -13,14 +13,19 @@ export const MapModalsContext = createContext({
   currentModalCapturedInfo: null as TWildLoomies | null,
   isGymModalOpen: false,
   isCongratsModalOpen: false,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  toggleGymModalVisibility: () => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  toggleCongratsModalVisibility: () => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setCurrentModalGymId: (_id: string) => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setCurrentModalCapturedInfo: (_wildLoomie: TWildLoomies) => {}
+
+  toggleGymModalVisibility: () => {
+    return;
+  },
+  toggleCongratsModalVisibility: () => {
+    return;
+  },
+  setCurrentModalGymId: (_id: string) => {
+    return;
+  },
+  setCurrentModalCapturedInfo: (_wildLoomie: TWildLoomies) => {
+    return;
+  }
 });
 
 interface IProps {
