@@ -1,6 +1,6 @@
 import { TCaughtLoomieToRender } from '@src/types/types';
 import React from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList } from 'react-native';
 import { LoomieCard } from './CaughtLoomieCard';
 
 interface IProps {
@@ -9,22 +9,19 @@ interface IProps {
   markSelectedLoomies: boolean;
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
   elementsCallback: (a?: any) => void;
-  listHeaderComponent?: React.ReactElement;
 }
 
 export const LoomiesGrid = ({
   loomies,
   markBusyLoomies,
   markSelectedLoomies,
-  elementsCallback,
-  listHeaderComponent
+  elementsCallback
 }: IProps) => {
   // Sort the busy loomies to the end
   loomies.sort((a, b) => Number(a.is_busy) - Number(b.is_busy));
 
   return (
     <FlatList
-      ListHeaderComponent={listHeaderComponent || <View />}
       data={loomies}
       keyExtractor={(item) => item._id}
       numColumns={2}

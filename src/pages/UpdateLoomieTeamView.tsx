@@ -9,7 +9,6 @@ import { LoomiesGrid } from '@src/components/CaughtLoomiesGrid/LoomiesGrid';
 import { Container } from '@src/components/Container';
 import { NavigationProp, useIsFocused } from '@react-navigation/native';
 import { LoomiesGridSkeleton } from '@src/skeletons/CaughtLoomiesGrid/LoomiesGridSkeleton';
-import { CustomButton } from '@src/components/CustomButton';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';

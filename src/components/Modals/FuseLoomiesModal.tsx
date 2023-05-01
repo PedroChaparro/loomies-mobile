@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { LoomiesGrid } from '../CaughtLoomiesGrid/LoomiesGrid';
-import { CustomButton } from '../CustomButton';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import { navigate } from '@src/navigation/RootNavigation';
 import { EmptyMessage } from '../EmptyMessage';
@@ -167,10 +166,6 @@ const Styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     textTransform: 'uppercase'
-  },
-  containerButton: {
-    alignSelf: 'center',
-    width: '90%'
   },
   floatingButton: {
     position: 'absolute',
