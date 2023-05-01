@@ -18,6 +18,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import { LOOMBALL_INITIAL_STATE } from '@src/components/CaptureLoomie3D/animations';
+import { SelectLoomBallModal } from '@src/components/Modals/SelectLoomBall';
 
 interface CaptureViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,6 +37,8 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
   const [balls, setBalls] = useState<TLoomball[]>([]);
   const [ballSelected, setBallSelected] = useState<TLoomball | null>(null);
   const ballState = useRef<LOOMBALL_STATE>(LOOMBALL_INITIAL_STATE);
+  const [showLoomBallModal, setShowLoomBallModal] = useState(false);
+  const [loombalImage, setLoombalImage] = useState<string>();
 
   // set state
 
@@ -88,6 +91,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
 
       // set loomballs available to player
       setBalls(loomballs);
+      console.log(balls);
 
       // still has balls of this kind available?
       let available = false;
@@ -103,10 +107,15 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
         setBallSelected(loomballs[0]);
       }
 
-      // TODO: Delete me once you implement switching loomballs
-      console.log(loomballs);
-      console.log(balls);
+      //Set image of loomBall
+      setLoombalImage(ballSelected?.serial.toString().padStart(3, '0'));
     })();
+  };
+
+  //update ballSelected
+
+  const updateSelectLoomBall = (loomBall: TLoomball) => {
+    setBallSelected(loomBall);
   };
 
   const escape = () => {
@@ -129,12 +138,11 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
     }
 
     setLoomie(foundLoomie);
-    console.log('INFO: Loomie exists', foundLoomie);
-
-    // get user loomballs
 
     fetchLoomballs();
-  }, []);
+
+    console.log('INFO: Loomie exists', foundLoomie);
+  }, [ballSelected]);
 
   // toggle render loop on focus events
   useFocusEffect(
@@ -144,8 +152,20 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
     }, [])
   );
 
+  //Visibility from LoomBall modal
+  const toggleItemModalVisibility = () => {
+    setShowLoomBallModal(!showLoomBallModal);
+  };
+
   return (
     <View style={styles.container}>
+      {showLoomBallModal && (
+        <SelectLoomBallModal
+          isVisible={showLoomBallModal}
+          toggleVisibilityCallback={toggleItemModalVisibility}
+          submitCallback={updateSelectLoomBall}
+        />
+      )}
       <View style={styles.scene}>
         {loomie && ballSelected && (
           <CaptureLoomie3D
@@ -165,16 +185,19 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
       <Pressable
         style={styles.bubbleLoomball}
         onPress={() => {
-          console.log('Pressed loomball bubble');
+          toggleItemModalVisibility();
         }}
       >
-        <Image style={{ width: 65, height: 65 }} source={images['LOOMBALL']} />
+        <Image
+          style={{ width: 65, height: 65 }}
+          source={images[`O-${loombalImage}`]}
+        />
       </Pressable>
 
       <Pressable
         style={styles.bubbleLoomballAmount}
         onPress={() => {
-          console.log('Pressed loomball bubble');
+          toggleItemModalVisibility();
         }}
       >
         <Text style={{ color: 'black' }}>

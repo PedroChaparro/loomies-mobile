@@ -1,29 +1,52 @@
-import { TInventoryItem } from '@src/types/types';
+import { TLoomball } from '@src/types/types';
 import { images } from '@src/utils/utils';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { Pressable } from 'react-native';
 
 interface IProps {
-  item: TInventoryItem;
-  handleClickCallback?: (_: TInventoryItem) => void;
+  loomBall: TLoomball;
+  markIfSelected: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cardCallback(_a: any): void;
 }
 
-export const ItemCard = ({ item, handleClickCallback }: IProps) => {
-  const itemSerial = item.serial.toString().padStart(3, '0');
+export const LoomBallCard = ({
+  loomBall,
+  markIfSelected,
+  cardCallback
+}: IProps) => {
+  const itemSerial = loomBall.serial.toString().padStart(3, '0');
+
+  // Function to render a border if the loomball is selected
+  const renderBorder = () => {
+    if (markIfSelected && loomBall.is_selected) {
+      return {
+        borderColor: '#ED4A5F'
+      };
+    } else {
+      return {
+        borderColor: 'transparent'
+      };
+    }
+  };
 
   return (
     <View style={Styles.card}>
       <Pressable
         onPress={() => {
-          // Call the callback if it exists and pass the item
-          handleClickCallback && handleClickCallback(item);
+          cardCallback(loomBall);
         }}
       >
         <View style={Styles.spacing}>
-          <View style={Styles.background}>
+          <View
+            style={{
+              ...Styles.background,
+              ...renderBorder()
+            }}
+          >
             <Text style={{ ...Styles.itemQuantity, ...Styles.cardText }}>
-              x{item.quantity}
+              x{loomBall.quantity}
             </Text>
             <View style={Styles.cardImageBg} />
             <Image
@@ -36,7 +59,7 @@ export const ItemCard = ({ item, handleClickCallback }: IProps) => {
                 numberOfLines={2}
                 ellipsizeMode='tail'
               >
-                {item.name}
+                {loomBall.name}
               </Text>
             </View>
           </View>
@@ -56,11 +79,12 @@ const Styles = StyleSheet.create({
     padding: 10
   },
   background: {
-    borderRadius: 12,
-    elevation: 6,
+    borderRadius: 5,
     flex: 1,
     padding: 16,
     shadowColor: '#7c7c7c',
+    borderWidth: 3,
+    elevation: 6,
     backgroundColor: '#eaeaea'
   },
   cardImageBg: {

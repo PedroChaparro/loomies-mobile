@@ -21,7 +21,6 @@ export const FuseLoomiesModal = ({
   toggleVisibilityCallback
 }: IProps) => {
   const { showErrorToast, showSuccessToast } = useToastAlert();
-  const [team, setTeam] = useState<string>();
   const [fuseLoomie, setFuseLoomie] = useState<string>('');
   const [loomies, setLoomies] = useState<TCaughtLoomieToRender[]>();
 
@@ -29,20 +28,10 @@ export const FuseLoomiesModal = ({
   const fetchLoomies = async () => {
     const [response, err] = await getLoomiesRequest();
     if (err) return;
-
     const loomies: TCaughtLoomies[] = response.loomies;
 
-    const loomiesWithTeamProperty = loomies.map((loomie) => {
-      const isSelectedLoomie = team === loomie._id ? true : false;
-
-      return {
-        ...loomie,
-        is_selected: isSelectedLoomie
-      };
-    });
-
     // Filter loomies to show only the ones that can be merged
-    const fuseCandidates = loomiesWithTeamProperty.filter((loomie) => {
+    const fuseCandidates = loomies.filter((loomie) => {
       return (
         loomie._id !== selectedLoomie._id &&
         loomie.serial === selectedLoomie.serial &&
@@ -53,9 +42,26 @@ export const FuseLoomiesModal = ({
     setLoomies(fuseCandidates);
   };
 
+  // Update the selected loomie when the user clicks a card
+  const updateSelectedLoomie = () => {
+    const loomiesWithTeamProperty = loomies?.map((loomie) => {
+      const isSelectedLoomie = fuseLoomie === loomie._id ? true : false;
+      return {
+        ...loomie,
+        is_selected: isSelectedLoomie
+      };
+    });
+
+    setLoomies(loomiesWithTeamProperty);
+  };
+
   useEffect(() => {
     fetchLoomies();
-  }, [team]);
+  }, []);
+
+  useEffect(() => {
+    updateSelectedLoomie();
+  }, [fuseLoomie]);
 
   const handleLoomiePress = useCallback((loomieId: string) => {
     // If the loomie is busy, ignore the action
@@ -63,9 +69,6 @@ export const FuseLoomiesModal = ({
     if (loomie?.is_busy) return;
 
     setFuseLoomie(loomieId);
-    setTeam(loomieId);
-
-    console.log('Loomie pressed: ', loomieId);
   }, []);
 
   const callfuseLoomies = async () => {

@@ -166,7 +166,10 @@ export const CaptureLoomie3D = ({
         babylonContext,
         modelContext,
         userPositionContext,
-        mapContext
+        mapContext,
+
+        attemptToCatch,
+        setBallState
       );
     }
 
@@ -179,7 +182,10 @@ export const CaptureLoomie3D = ({
     babylonContext,
     modelContext,
     userPosition,
-    mapContext
+    mapContext,
+
+    attemptToCatch,
+    setBallState
   ]);
 
   // none state create scene
