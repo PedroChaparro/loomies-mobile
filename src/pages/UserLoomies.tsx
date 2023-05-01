@@ -10,8 +10,8 @@ import { Container } from '@src/components/Container';
 import { LoomiesGridSkeleton } from '@src/skeletons/CaughtLoomiesGrid/LoomiesGridSkeleton';
 import { NavigationProp, useIsFocused } from '@react-navigation/native';
 import { EmptyMessage } from '@src/components/EmptyMessage';
-import { Pressable, StyleSheet, View } from 'react-native';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { View } from 'react-native';
+import { FloatingRedIcon } from '@src/components/FloatingRedIcon';
 
 interface IProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -103,21 +103,14 @@ export const UserLoomies = ({ navigation }: IProps) => {
       </Container>
       {/* Floating button to update the loomie team */}
       {!loading && loomies.length > 0 && (
-        <Pressable style={Styles.floatingButton} onTouchEnd={goToLoomieTeam}>
-          <MaterialCommunityIcon name='sword' size={36} color='white' />
-        </Pressable>
+        <FloatingRedIcon
+          onPress={goToLoomieTeam}
+          collection='MaterialCommunityIcons'
+          name='sword'
+          bottom={16}
+          right={16}
+        />
       )}
     </View>
   );
 };
-
-const Styles = StyleSheet.create({
-  floatingButton: {
-    position: 'absolute',
-    bottom: 16,
-    right: 16,
-    backgroundColor: '#ED4A5F',
-    padding: 8,
-    borderRadius: 50
-  }
-});

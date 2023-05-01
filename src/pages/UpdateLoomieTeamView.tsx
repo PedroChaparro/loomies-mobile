@@ -9,9 +9,9 @@ import { LoomiesGrid } from '@src/components/CaughtLoomiesGrid/LoomiesGrid';
 import { Container } from '@src/components/Container';
 import { NavigationProp, useIsFocused } from '@react-navigation/native';
 import { LoomiesGridSkeleton } from '@src/skeletons/CaughtLoomiesGrid/LoomiesGridSkeleton';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { useToastAlert } from '@src/hooks/useToastAlert';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { FloatingRedIcon } from '@src/components/FloatingRedIcon';
 
 interface IProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -133,21 +133,14 @@ export const UpdateLoomieTeamView = ({ navigation }: IProps) => {
         )}
       </Container>
       {!loading && loomies.length > 0 && (
-        <Pressable style={Styles.floatingButton} onTouchEnd={handleSave}>
-          <MaterialCommunityIcon name='content-save' size={36} color='white' />
-        </Pressable>
+        <FloatingRedIcon
+          onPress={handleSave}
+          collection='MaterialCommunityIcons'
+          name='content-save'
+          bottom={16}
+          right={16}
+        />
       )}
     </View>
   );
 };
-
-const Styles = StyleSheet.create({
-  floatingButton: {
-    position: 'absolute',
-    bottom: 16,
-    right: 16,
-    backgroundColor: '#ED4A5F',
-    padding: 8,
-    borderRadius: 50
-  }
-});

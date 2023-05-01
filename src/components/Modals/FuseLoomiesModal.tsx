@@ -1,46 +1,19 @@
 import { fuseLoomies, getLoomiesRequest } from '@src/services/loomies.services';
 import { TCaughtLoomieToRender, TCaughtLoomies } from '@src/types/types';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { LoomiesGrid } from '../CaughtLoomiesGrid/LoomiesGrid';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import { navigate } from '@src/navigation/RootNavigation';
 import { EmptyMessage } from '../EmptyMessage';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import { FloatingRedIcon } from '../FloatingRedIcon';
 
 interface IProps {
   selectedLoomie: TCaughtLoomieToRender;
   isVisible: boolean;
   toggleVisibilityCallback: () => void;
 }
-
-const ConfirmMergeButton = ({ onPress }: { onPress: () => void }) => {
-  return (
-    <Pressable
-      style={{ ...Styles.floatingButton, ...Styles.floatingMergeButton }}
-      onTouchEnd={onPress}
-    >
-      <MaterialCommunityIcon
-        name='checkbox-marked-circle-outline'
-        size={36}
-        color='white'
-      />
-    </Pressable>
-  );
-};
-
-const CancelMergeButton = ({ onPress }: { onPress: () => void }) => {
-  return (
-    <Pressable
-      style={{ ...Styles.floatingButton, ...Styles.floatingCancelButton }}
-      onTouchEnd={onPress}
-    >
-      <MaterialIcon name='cancel' size={36} color='white' />
-    </Pressable>
-  );
-};
 
 export const FuseLoomiesModal = ({
   selectedLoomie,
@@ -148,8 +121,23 @@ export const FuseLoomiesModal = ({
             elementsCallback={handleLoomiePress}
           />
         )}
-        {loomies.length > 0 && <ConfirmMergeButton onPress={callfuseLoomies} />}
-        <CancelMergeButton onPress={toggleVisibilityCallback} />
+
+        {loomies.length > 0 && (
+          <FloatingRedIcon
+            onPress={callfuseLoomies}
+            collection='MaterialCommunityIcons'
+            name='checkbox-marked-circle-outline'
+            bottom={80}
+            right={16}
+          />
+        )}
+        <FloatingRedIcon
+          onPress={callfuseLoomies}
+          collection='MaterialIcons'
+          name='cancel'
+          bottom={16}
+          right={16}
+        />
       </View>
     </Modal>
   );
@@ -167,19 +155,5 @@ const Styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     textTransform: 'uppercase'
-  },
-  floatingButton: {
-    position: 'absolute',
-    backgroundColor: '#ED4A5F',
-    padding: 8,
-    borderRadius: 50
-  },
-  floatingMergeButton: {
-    bottom: 16,
-    right: 16
-  },
-  floatingCancelButton: {
-    bottom: 80,
-    right: 16
   }
 });
