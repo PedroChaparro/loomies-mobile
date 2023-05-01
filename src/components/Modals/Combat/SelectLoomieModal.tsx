@@ -13,7 +13,7 @@ interface IProps {
   changeLoomie(_a: any): void;
 }
 
-export const SelecLoomieModal = ({
+export const SelectLoomieModal = ({
   loomiesTeam,
   isVisible,
   toggleVisibilityCallback,
@@ -64,8 +64,7 @@ export const SelecLoomieModal = ({
       <Text style={Styles.modalTitle}>Loomies Team</Text>
       <View style={{ flex: 1, marginVertical: 8 }}>
         <LoomiesCombatGrid
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          loomies={loomiesInternal!}
+          loomies={loomiesInternal || []}
           markIsWeakenedLoomies={true}
           markSelectedLoomies={true}
           elementsCallback={handleLoomiePress}

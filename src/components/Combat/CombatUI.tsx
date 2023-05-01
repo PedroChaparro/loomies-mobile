@@ -21,7 +21,7 @@ import {
 } from './CombatFloatingMessage';
 import { GenericModal } from '../Modals/GenericModal';
 import { SelectItemModal } from '../Modals/Combat/SelectItemModal';
-import { SelecLoomieModal } from '../Modals/Combat/SelecLoomieModal';
+import { SelectLoomieModal } from '../Modals/Combat/SelectLoomieModal';
 
 interface iPropsCombatUI {
   // state
@@ -370,7 +370,7 @@ export const CombatUI = (props: iPropsCombatUI) => {
 
       {/* change loomie modal */}
 
-      <SelecLoomieModal
+      <SelectLoomieModal
         loomiesTeam={props.loomieTeamPlayer}
         isVisible={props.modalLoomiesTeamVisible}
         toggleVisibilityCallback={props.modalLoomiesTeamToggle}
