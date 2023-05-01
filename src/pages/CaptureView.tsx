@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   NavigationProp,
   RouteProp,
@@ -26,6 +26,12 @@ interface CaptureViewProps {
   route: RouteProp<{ params: { loomieId: string } }, 'params'>;
 }
 
+const interactableStates = [
+  LOOMBALL_STATE.GRABBABLE,
+  LOOMBALL_STATE.ANI_GRABBED,
+  LOOMBALL_STATE.ANI_RETURNING
+];
+
 export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
   const { showInfoToast } = useToastAlert();
 
@@ -34,19 +40,20 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
   const { showScene } = useContext(BabylonContext);
 
   // state
-  const [balls, setBalls] = useState<TLoomball[]>([]);
   const [ballSelected, setBallSelected] = useState<TLoomball | null>(null);
-  const ballState = useRef<LOOMBALL_STATE>(LOOMBALL_INITIAL_STATE);
+  const [aniState, setAniState] = useState<LOOMBALL_STATE>(
+    LOOMBALL_INITIAL_STATE
+  );
   const [showLoomBallModal, setShowLoomBallModal] = useState(false);
   const [loombalImage, setLoombalImage] = useState<string>();
 
   // set state
 
   const setBallState = (state: LOOMBALL_STATE) => {
-    ballState.current = state;
+    setAniState(state);
     console.log(`Info: Capture animation state: ${state}`);
 
-    switch (ballState.current) {
+    switch (state) {
       // decrease loomball quantity
 
       case LOOMBALL_STATE.ANI_THROW: {
@@ -88,10 +95,6 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
         navigation?.navigate('Map');
         showInfoToast("You don't have any Loomballs to catch this Loomie");
       }
-
-      // set loomballs available to player
-      setBalls(loomballs);
-      console.log(balls);
 
       // still has balls of this kind available?
       let available = false;
@@ -138,10 +141,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
     }
 
     setLoomie(foundLoomie);
-
     fetchLoomballs();
-
-    console.log('INFO: Loomie exists', foundLoomie);
   }, [ballSelected]);
 
   // toggle render loop on focus events
@@ -181,39 +181,43 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
       {loomie && <Text style={styles.title}>{loomie.name}</Text>}
       {loomie && <Text style={styles.subtitle}>Level {loomie.level}</Text>}
 
-      {/* loomball bubble */}
-      <Pressable
-        style={styles.bubbleLoomball}
-        onPress={() => {
-          toggleItemModalVisibility();
-        }}
-      >
-        <Image
-          style={{ width: 65, height: 65 }}
-          source={images[`O-${loombalImage}`]}
-        />
-      </Pressable>
+      {interactableStates.some((i) => i == aniState) && (
+        <>
+          {/* loomball bubble */}
+          <Pressable
+            style={styles.bubbleLoomball}
+            onPress={() => {
+              toggleItemModalVisibility();
+            }}
+          >
+            <Image
+              style={{ width: 70, height: 70 }}
+              source={images[`O-${loombalImage}`]}
+            />
+          </Pressable>
 
-      <Pressable
-        style={styles.bubbleLoomballAmount}
-        onPress={() => {
-          toggleItemModalVisibility();
-        }}
-      >
-        <Text style={{ color: 'black' }}>
-          {ballSelected ? ballSelected.quantity : ''}
-        </Text>
-      </Pressable>
+          <Pressable
+            style={styles.bubbleLoomballAmount}
+            onPress={() => {
+              toggleItemModalVisibility();
+            }}
+          >
+            <Text style={{ color: 'black' }}>
+              {ballSelected ? ballSelected.quantity : ''}
+            </Text>
+          </Pressable>
 
-      {/* scape bubble */}
-      <Pressable style={styles.bubbleEscape} onPress={escape}>
-        <MaterialCommunityIcons
-          size={30}
-          name={'run'}
-          color={'white'}
-          style={{ transform: [{ scaleX: -1 }] }}
-        />
-      </Pressable>
+          {/* scape bubble */}
+          <Pressable style={styles.bubbleEscape} onPress={escape}>
+            <MaterialCommunityIcons
+              size={30}
+              name={'run'}
+              color={'white'}
+              style={{ transform: [{ scaleX: -1 }] }}
+            />
+          </Pressable>
+        </>
+      )}
     </View>
   );
 };
@@ -264,7 +268,8 @@ const styles = StyleSheet.create({
     bottom: 15,
     right: 15,
     height: 70,
-    backgroundColor: '#ED4A5F',
+    //backgroundColor: '#ED4A5F',
+    backgroundColor: 'transparent',
     borderRadius: 200
   },
   bubbleLoomballAmount: {
