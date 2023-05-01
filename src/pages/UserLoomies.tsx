@@ -10,8 +10,8 @@ import { Container } from '@src/components/Container';
 import { LoomiesGridSkeleton } from '@src/skeletons/CaughtLoomiesGrid/LoomiesGridSkeleton';
 import { NavigationProp, useIsFocused } from '@react-navigation/native';
 import { EmptyMessage } from '@src/components/EmptyMessage';
-import { CustomButton } from '@src/components/CustomButton';
 import { View } from 'react-native';
+import { FloatingRedIcon } from '@src/components/FloatingRedIcon';
 
 interface IProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,28 +86,31 @@ export const UserLoomies = ({ navigation }: IProps) => {
         />
       );
 
-    const redirectionHeader = (
-      <View style={{ paddingHorizontal: 10 }}>
-        <CustomButton
-          title='Update Loomie Team'
-          type='primary'
-          callback={goToLoomieTeam}
-        />
-      </View>
-    );
-
     return (
       <LoomiesGrid
         loomies={loomies}
         markBusyLoomies={false}
         markSelectedLoomies={false}
         elementsCallback={goToDetails}
-        listHeaderComponent={redirectionHeader}
       />
     );
   };
 
   return (
-    <Container>{loading ? <LoomiesGridSkeleton /> : renderLoomies()}</Container>
+    <View style={{ position: 'relative', flex: 1 }}>
+      <Container>
+        {loading ? <LoomiesGridSkeleton /> : renderLoomies()}
+      </Container>
+      {/* Floating button to update the loomie team */}
+      {!loading && loomies.length > 0 && (
+        <FloatingRedIcon
+          onPress={goToLoomieTeam}
+          collection='MaterialCommunityIcons'
+          name='sword'
+          bottom={16}
+          right={16}
+        />
+      )}
+    </View>
   );
 };

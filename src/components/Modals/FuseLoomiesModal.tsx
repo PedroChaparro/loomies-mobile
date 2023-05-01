@@ -4,10 +4,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { LoomiesGrid } from '../CaughtLoomiesGrid/LoomiesGrid';
-import { CustomButton } from '../CustomButton';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import { navigate } from '@src/navigation/RootNavigation';
 import { EmptyMessage } from '../EmptyMessage';
+import { FloatingRedIcon } from '../FloatingRedIcon';
 
 interface IProps {
   selectedLoomie: TCaughtLoomieToRender;
@@ -105,7 +105,7 @@ export const FuseLoomiesModal = ({
       style={Styles.modal}
     >
       <Text style={Styles.modalTitle}>Merge Loomies</Text>
-      <View style={{ flex: 1, marginVertical: 8 }}>
+      <View style={{ flex: 1, position: 'relative', marginVertical: 8 }}>
         {loomies.length === 0 ? (
           <EmptyMessage
             text={`You have to catch another "${selectedLoomie.name}" to merge it`}
@@ -121,21 +121,22 @@ export const FuseLoomiesModal = ({
             elementsCallback={handleLoomiePress}
           />
         )}
-      </View>
-      {loomies.length === 0 ? null : (
-        <View style={Styles.containerButton}>
-          <CustomButton
-            title='Merge'
-            type='primary'
-            callback={callfuseLoomies}
+
+        {loomies.length > 0 && (
+          <FloatingRedIcon
+            onPress={callfuseLoomies}
+            collection='MaterialCommunityIcons'
+            name='checkbox-marked-circle-outline'
+            bottom={80}
+            right={16}
           />
-        </View>
-      )}
-      <View style={Styles.containerButton}>
-        <CustomButton
-          title='Cancel'
-          type='primary'
-          callback={toggleVisibilityCallback}
+        )}
+        <FloatingRedIcon
+          onPress={toggleVisibilityCallback}
+          collection='MaterialIcons'
+          name='cancel'
+          bottom={16}
+          right={16}
         />
       </View>
     </Modal>
@@ -154,9 +155,5 @@ const Styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     textTransform: 'uppercase'
-  },
-  containerButton: {
-    alignSelf: 'center',
-    width: '90%'
   }
 });
