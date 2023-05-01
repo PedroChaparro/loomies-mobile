@@ -6,9 +6,10 @@ import Modal from 'react-native-modal';
 import { getLoomiesRequest } from '@src/services/loomies.services';
 import { Title } from '@src/components/Title';
 import { EmptyMessage } from '@src/components/EmptyMessage';
-import { navigate } from '@src/navigation/RootNavigation';
 import { LoomiesGrid } from '@src/components/CaughtLoomiesGrid/LoomiesGrid';
 import { FloatingRedIcon } from '@src/components/FloatingRedIcon';
+import { UpdateGymProtectorsService } from '@src/services/gyms.services';
+import { useToastAlert } from '@src/hooks/useToastAlert';
 
 export const ModalUpdateProtectors = () => {
   const [loading, setLoading] = useState(true);
@@ -17,13 +18,11 @@ export const ModalUpdateProtectors = () => {
   const {
     isProtectorsModalOpen,
     toggleProtectorsModalVisibility,
-    currentGymProtectors
+    toggleGymModalVisibility,
+    currentGymProtectors,
+    currentModalGymId
   } = useContext(MapModalsContext);
-
-  const redirectToMapView = () => {
-    toggleProtectorsModalVisibility();
-    navigate('Map', null);
-  };
+  const { showSuccessToast, showErrorToast } = useToastAlert();
 
   const getUserLoomies = async () => {
     const [response, err] = await getLoomiesRequest();
@@ -41,6 +40,26 @@ export const ModalUpdateProtectors = () => {
     }));
     setLoomies(markedLoomies);
     setLoading(false);
+  };
+
+  const handleSubmit = async () => {
+    const [response, err] = await UpdateGymProtectorsService(
+      currentModalGymId,
+      protectors
+    );
+
+    if (err) {
+      showErrorToast(
+        response.message || 'There was an error updating the gym protectors'
+      );
+      return;
+    }
+
+    console.log(response);
+    showSuccessToast('Gym protectors updated successfully');
+    // Hide the current modals to update the UI
+    toggleGymModalVisibility();
+    toggleProtectorsModalVisibility();
   };
 
   // Handle the loomie card click event
@@ -86,7 +105,10 @@ export const ModalUpdateProtectors = () => {
         <EmptyMessage
           text="You don't have any available loomies to protect this gym."
           buttonText='Catch loomies'
-          buttonCallback={redirectToMapView}
+          buttonCallback={() => {
+            toggleGymModalVisibility();
+            toggleProtectorsModalVisibility();
+          }}
           showButton={true}
         />
       );
@@ -118,14 +140,14 @@ export const ModalUpdateProtectors = () => {
               {renderLoomies()}
               {/* Action buttons */}
               <FloatingRedIcon
-                onPress={() => console.log('Save')}
+                onPress={handleSubmit}
                 collection='MaterialCommunityIcons'
                 name='checkbox-marked-circle-outline'
                 bottom={80}
                 right={16}
               />
               <FloatingRedIcon
-                onPress={() => console.log('Cancel')}
+                onPress={toggleProtectorsModalVisibility}
                 collection='MaterialIcons'
                 name='cancel'
                 bottom={16}
