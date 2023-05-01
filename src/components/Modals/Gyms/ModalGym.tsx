@@ -16,8 +16,12 @@ import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { iCombatViewParams } from '@src/pages/CombatView';
 
 export const ModalGym = () => {
-  const { isGymModalOpen, currentModalGymId, toggleGymModalVisibility } =
-    useContext(MapModalsContext);
+  const {
+    isGymModalOpen,
+    currentModalGymId,
+    toggleGymModalVisibility,
+    toggleProtectorsModalVisibility
+  } = useContext(MapModalsContext);
   const { userPosition } = useContext(UserPositionContext);
 
   const { showErrorToast } = useToastAlert();
@@ -166,6 +170,17 @@ export const ModalGym = () => {
                   callback={() => {
                     goToCombat();
                   }}
+                />
+              )}
+              {gymInfo.user_owns_it && (
+                <CustomButton
+                  title='Update protectors'
+                  type='primary'
+                  callback={() =>
+                    toggleProtectorsModalVisibility(
+                      gymInfo.protectors.map((p) => p._id)
+                    )
+                  }
                 />
               )}
             </View>
