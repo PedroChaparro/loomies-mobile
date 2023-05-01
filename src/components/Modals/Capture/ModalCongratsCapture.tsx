@@ -31,11 +31,14 @@ export const ModalCongratsCapture = () => {
               style={Styles.cardImage}
             />
             <View style={Styles.modalText}>
-              <Text style={Styles.boldText}>You have captured:</Text>
-              <Text>{loomieCaptured?.name}</Text>
-              <Text>Level: {loomieCaptured?.level}</Text>
-              {/* TODO CHANGE THIS */}
-              <CustomTag rarity={'Normal'} />
+              <Text style={[Styles.boldText, Styles.modalText]}>
+                You have captured:
+              </Text>
+              <Text style={Styles.modalText}>{loomieCaptured.name}</Text>
+              <Text style={Styles.modalText}>
+                Level: {loomieCaptured.level}
+              </Text>
+              <CustomTag rarity={loomieCaptured.rarity} />
             </View>
             <View style={Styles.containerButton}>
               <CustomButton
@@ -76,9 +79,9 @@ const Styles = StyleSheet.create({
     width: 100
   },
   modalText: {
-    marginVertical: 10,
+    color: '#5C5C5C',
     alignItems: 'center',
-    fontSize: 22,
+    fontSize: 16,
     textAlign: 'center'
   },
   boldText: {
