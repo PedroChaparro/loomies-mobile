@@ -1,10 +1,10 @@
 import { getItemsService } from '@src/services/items.services';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import Modal from 'react-native-modal';
-import { CustomButton } from '@src/components/CustomButton';
 import { TLoomball } from '@src/types/types';
 import { SelectLoomballGrid } from '../ItemsGrid/SelectLoomballGrid';
+import { FloatingRedIcon } from '../FloatingRedIcon';
 
 export interface iPropsSelectLoomBallModal {
   isVisible: boolean;
@@ -79,16 +79,20 @@ export const SelectLoomBallModal = ({
         elementsCallback={handleItemPress}
       />
 
-      <View style={Styles.containerButton}>
-        <CustomButton title='Select' type='primary' callback={changeLoomBall} />
-      </View>
-      <View style={Styles.containerButton}>
-        <CustomButton
-          title='Cancel'
-          type='bordered'
-          callback={toggleVisibilityCallback}
-        />
-      </View>
+      <FloatingRedIcon
+        onPress={changeLoomBall}
+        collection='MaterialCommunityIcons'
+        name='checkbox-marked-circle-outline'
+        bottom={80}
+        right={16}
+      />
+      <FloatingRedIcon
+        onPress={toggleVisibilityCallback}
+        collection='MaterialIcons'
+        name='cancel'
+        bottom={16}
+        right={16}
+      />
     </Modal>
   );
 };
@@ -105,9 +109,5 @@ const Styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     textTransform: 'uppercase'
-  },
-  containerButton: {
-    alignSelf: 'center',
-    width: '90%'
   }
 });
