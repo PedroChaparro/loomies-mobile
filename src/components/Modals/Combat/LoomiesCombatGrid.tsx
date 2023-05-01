@@ -2,6 +2,7 @@ import React from 'react';
 import { FlatList } from 'react-native';
 import { iLoomie } from '@src/types/combatInterfaces';
 import { LoomieCombatCard } from './LoomieCombatCard';
+import { EmptyMessage } from '@src/components/EmptyMessage';
 
 interface IProps {
   loomies: Array<iLoomie>;
@@ -21,6 +22,9 @@ export const LoomiesCombatGrid = ({
   if (loomies) {
     loomies.sort((a, b) => Number(a.boosted_hp < 0) - Number(b.boosted_hp < 0));
   }
+
+  if (loomies.length === 0)
+    return <EmptyMessage text='No loomies to select' showButton={false} />;
 
   return (
     <FlatList
