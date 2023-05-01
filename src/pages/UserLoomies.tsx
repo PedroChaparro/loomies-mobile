@@ -104,7 +104,7 @@ export const UserLoomies = ({ navigation }: IProps) => {
       {/* Floating button to update the loomie team */}
       {!loading && loomies.length > 0 && (
         <Pressable style={Styles.floatingButton} onTouchEnd={goToLoomieTeam}>
-          <MaterialCommunityIcon name='sword' size={32} color='white' />
+          <MaterialCommunityIcon name='sword' size={36} color='white' />
         </Pressable>
       )}
     </View>
