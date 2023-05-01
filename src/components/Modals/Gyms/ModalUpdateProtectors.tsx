@@ -123,6 +123,31 @@ export const ModalUpdateProtectors = () => {
     }
   };
 
+  const renderActionButtons = () => {
+    if (loomies?.length && loomies.length > 0) {
+      return (
+        <>
+          <FloatingRedIcon
+            onPress={handleSubmit}
+            collection='MaterialCommunityIcons'
+            name='checkbox-marked-circle-outline'
+            bottom={80}
+            right={16}
+          />
+          <FloatingRedIcon
+            onPress={toggleProtectorsModalVisibility}
+            collection='MaterialIcons'
+            name='cancel'
+            bottom={16}
+            right={16}
+          />
+        </>
+      );
+    } else {
+      return <></>;
+    }
+  };
+
   return (
     <Modal
       isVisible={isProtectorsModalOpen}
@@ -137,21 +162,7 @@ export const ModalUpdateProtectors = () => {
             <>
               <Title text='Update gym protectors' />
               {renderLoomies()}
-              {/* Action buttons */}
-              <FloatingRedIcon
-                onPress={handleSubmit}
-                collection='MaterialCommunityIcons'
-                name='checkbox-marked-circle-outline'
-                bottom={80}
-                right={16}
-              />
-              <FloatingRedIcon
-                onPress={toggleProtectorsModalVisibility}
-                collection='MaterialIcons'
-                name='cancel'
-                bottom={16}
-                right={16}
-              />
+              {renderActionButtons()}
             </>
           )}
         </View>
