@@ -9,39 +9,35 @@ export const UpdateGymProtectorsService = async (
   protectors: string[],
   wasRetried = false
 ): Promise<[any, boolean]> => {
-  return new Promise(async (resolve) => {
-    try {
-      const [accessToken, error] = await getStorageData('accessToken');
-      if (error || !accessToken) return [null, true];
+  try {
+    const [accessToken, error] = await getStorageData('accessToken');
+    if (error || !accessToken) return [null, true];
 
-      const response = await Axios.put(
-        `${API_URL}/gyms/update-protectors`,
-        { gym_id: gymId, protectors },
-        {
-          headers: {
-            'Access-Token': accessToken
-          }
+    const response = await Axios.put(
+      `${API_URL}/gyms/update-protectors`,
+      { gym_id: gymId, protectors },
+      {
+        headers: {
+          'Access-Token': accessToken
         }
-      );
-
-      resolve([response.data, false]);
-    } catch (err) {
-      if (
-        Axios.isAxiosError(err) &&
-        err.response?.status === 401 &&
-        !wasRetried
-      ) {
-        await refreshRequest();
-        return resolve(
-          await UpdateGymProtectorsService(gymId, protectors, true)
-        );
       }
+    );
 
-      if (Axios.isAxiosError(err)) {
-        return [err.response?.data, true];
-      }
-
-      return [null, true];
+    return [response.data, false];
+  } catch (err) {
+    if (
+      Axios.isAxiosError(err) &&
+      err.response?.status === 401 &&
+      !wasRetried
+    ) {
+      await refreshRequest();
+      return await UpdateGymProtectorsService(gymId, protectors, true);
     }
-  });
+
+    if (Axios.isAxiosError(err)) {
+      return [err.response?.data, true];
+    }
+
+    return [null, true];
+  }
 };

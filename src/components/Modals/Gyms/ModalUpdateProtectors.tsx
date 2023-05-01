@@ -55,7 +55,6 @@ export const ModalUpdateProtectors = () => {
       return;
     }
 
-    console.log(response);
     showSuccessToast('Gym protectors updated successfully');
     // Hide the current modals to update the UI
     toggleGymModalVisibility();
