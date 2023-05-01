@@ -371,7 +371,13 @@ export const CombatUI = (props: iPropsCombatUI) => {
       {/* change loomie modal */}
 
       <SelectLoomieModal
-        loomiesTeam={props.loomieTeamPlayer}
+        loomiesTeam={
+          props.loomieTeamPlayer
+            ? props.loomieTeamPlayer.filter(
+                (l) => l._id != props.loomiePlayer._id
+              )
+            : []
+        }
         isVisible={props.modalLoomiesTeamVisible}
         toggleVisibilityCallback={props.modalLoomiesTeamToggle}
         changeLoomie={props.changeLoomie}
