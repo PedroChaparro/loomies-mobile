@@ -131,15 +131,15 @@ export const ModalUpdateProtectors = () => {
             onPress={handleSubmit}
             collection='MaterialCommunityIcons'
             name='checkbox-marked-circle-outline'
-            bottom={80}
-            right={16}
+            bottom={74}
+            right={8}
           />
           <FloatingRedIcon
             onPress={toggleProtectorsModalVisibility}
             collection='MaterialIcons'
             name='cancel'
-            bottom={16}
-            right={16}
+            bottom={8}
+            right={8}
           />
         </>
       );
@@ -181,7 +181,7 @@ const Styles = StyleSheet.create({
     width: '96%',
     maxHeight: '95%',
     backgroundColor: 'white',
-    padding: 12
+    padding: 16
   },
   modalText: {
     fontSize: 16,
