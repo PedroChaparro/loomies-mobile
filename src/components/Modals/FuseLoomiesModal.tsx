@@ -132,7 +132,7 @@ export const FuseLoomiesModal = ({
           />
         )}
         <FloatingRedIcon
-          onPress={callfuseLoomies}
+          onPress={toggleVisibilityCallback}
           collection='MaterialIcons'
           name='cancel'
           bottom={16}
