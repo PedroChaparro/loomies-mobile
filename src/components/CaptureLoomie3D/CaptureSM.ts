@@ -243,6 +243,25 @@ export class CaptureSM {
     }
   }
 
+  async setupAR(camera: Babylon.ArcRotateCamera) {
+    const xr = await this.stt.sceneCapture.createDefaultXRExperienceAsync({
+      disableDefaultUI: true,
+      disableTeleportation: true
+    });
+
+    await xr.baseExperience.enterXRAsync(
+      'immersive-ar',
+      'unbounded',
+      xr.renderTarget
+    );
+
+    // set XR camera transform to already configured camera
+    const xrCamera = xr.input.xrCamera;
+    if (xr.input.xrCamera) {
+      xrCamera.setTransformationFromNonVRCamera(camera);
+    }
+  }
+
   setupScene(loomieSerial: number) {
     const sceneCapture = this.stt.sceneCapture;
     const cameraCapture = this.stt.cameraCapture;
@@ -271,6 +290,15 @@ export class CaptureSM {
 
     (async () => {
       try {
+        const arSupported =
+          await Babylon.WebXRSessionManager.IsSessionSupportedAsync(
+            'immersive-ar'
+          );
+        if (arSupported) {
+          console.log('AR SUPPORTED');
+          await this.setupAR(camera);
+        }
+
         // models
 
         const modelLoomie = await this.stt.modelContext.instantiateModel(
@@ -278,16 +306,18 @@ export class CaptureSM {
           sceneCapture
         );
 
-        const modelEnv = await this.stt.modelContext.instantiateModel(
-          'ENV_GRASS',
-          sceneCapture
-        );
-
-        // check
-
         if (!modelLoomie)
           throw "Error: Couldn't instantiate Loomie modelLoomie";
-        if (!modelEnv) throw "Error: Couldn't instantiate env modelEnv";
+
+        // create environment in case AR is not supported
+        if (!arSupported) {
+          const modelEnv = await this.stt.modelContext.instantiateModel(
+            'ENV_GRASS',
+            sceneCapture
+          );
+
+          if (!modelEnv) throw "Error: Couldn't instantiate env modelEnv";
+        }
 
         // helper nodes
 
