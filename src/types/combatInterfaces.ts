@@ -32,13 +32,16 @@ export enum TYPE {
   ERROR_USING_ITEM,
   USER_ITEM_USED,
 
+  USER_LOOMIE_TEAM,
+
   // client -> server
 
   USER_USE_ITEM,
   USER_CHANGE_LOOMIE,
   USER_DODGE,
   USER_ATTACK,
-  USER_ESCAPE_COMBAT
+  USER_ESCAPE_COMBAT,
+  USER_GET_LOOMIE_TEAM
 }
 
 export interface iCombatMessage {
@@ -51,7 +54,8 @@ export interface iCombatMessage {
     | iPayload_GYM_LOOMIE_WEAKENED
     | iPayload_USER_LOOMIE_WEAKENED
     | iPayload_USER_ITEM_USED
-    | iPayload_ERROR_USING_ITEM;
+    | iPayload_ERROR_USING_ITEM
+    | iPayload_LOOMIES_TEAM;
 }
 
 export interface iPayload_START {
@@ -70,6 +74,10 @@ export interface iPayload_UPDATE_USER_LOOMIE_HP {
 
 export interface iPayload_UPDATE_PLAYER_LOOMIE {
   loomie: iLoomie;
+}
+
+export interface iPayload_LOOMIES_TEAM {
+  loomies: iLoomie[];
 }
 
 export interface iPayload_USER_LOOMIE_WEAKENED {
@@ -109,4 +117,6 @@ export interface iLoomie {
   rarity: string;
   serial: number;
   types: string[];
+  // Property to render a red border around the loomie card
+  is_selected?: boolean;
 }
