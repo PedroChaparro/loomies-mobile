@@ -152,7 +152,6 @@ export const ModalUpdateProtectors = () => {
     <Modal
       isVisible={isProtectorsModalOpen}
       onBackdropPress={toggleProtectorsModalVisibility}
-      backdropOpacity={0.3}
     >
       <View style={Styles.container}>
         <View style={Styles.modalBackground}>

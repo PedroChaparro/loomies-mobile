@@ -109,7 +109,6 @@ export const UseItemModal = ({
       isVisible={isVisible}
       onBackButtonPress={toggleVisibilityCallback}
       onBackdropPress={toggleVisibilityCallback}
-      backdropOpacity={0.3}
       style={Styles.modal}
     >
       <Text style={Styles.modalTitle}>Apply {selectedItem.name} to:</Text>
