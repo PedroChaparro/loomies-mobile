@@ -4,15 +4,17 @@ import {
   useIsFocused
 } from '@react-navigation/native';
 import React, { useContext, useEffect } from 'react';
+import { MapModalsContext } from '@src/context/MapModalsProvider';
+
 import { View, Pressable, StyleSheet } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-
 import { useAuth } from '../hooks/useAuth';
 import { useToastAlert } from '../hooks/useToastAlert';
 import { Map3D } from '@src/components/Map3D/Map3D';
 import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 import { ModalGym } from '@src/components/Modals/Gyms/ModalGym';
 import { ModalCongratsCapture } from '@src/components/Modals/Capture/ModalCongratsCapture';
+import { ModalUpdateProtectors } from '@src/components/Modals/Gyms/ModalUpdateProtectors';
 
 interface MapViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,6 +26,7 @@ export const MapView = ({ navigation }: MapViewProps) => {
   const { isLoading, isAuthenticated } = useAuth();
   const { showInfoToast } = useToastAlert();
   const { showScene } = useContext(BabylonContext);
+  const { isProtectorsModalOpen } = useContext(MapModalsContext);
 
   // Redirects to the login view if the user is not authenticated
   useEffect(() => {
@@ -49,6 +52,7 @@ export const MapView = ({ navigation }: MapViewProps) => {
       <Map3D />
       <ModalGym />
       <ModalCongratsCapture />
+      {isProtectorsModalOpen && <ModalUpdateProtectors />}
       <Pressable
         style={{
           borderWidth: 1,
