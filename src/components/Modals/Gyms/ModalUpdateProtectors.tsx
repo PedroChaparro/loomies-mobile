@@ -69,18 +69,15 @@ export const ModalUpdateProtectors = () => {
       // Remove the loomie from the protectors array
       const newProtectors = protectors.filter((id) => id !== loomieId);
       setProtectors(newProtectors);
-      console.log('Removed');
     } else if (protectors.length === 6) {
       // Remove the first loomie from the protectors array and add the new one
       const newProtectors = protectors.slice(1);
       newProtectors.push(loomieId);
       setProtectors(newProtectors);
-      console.log('Replaced');
     } else {
       // Add the loomie to the protectors array
       const newProtectors = [...protectors, loomieId];
       setProtectors(newProtectors);
-      console.log('Added');
     }
   };
 
