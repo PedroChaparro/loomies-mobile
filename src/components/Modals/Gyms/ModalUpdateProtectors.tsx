@@ -31,7 +31,8 @@ export const ModalUpdateProtectors = () => {
     // Filter the loomies that are not busy
     const loomies = response['loomies'] as Array<TCaughtLoomieToRender>;
     const availableLoomies = loomies.filter(
-      (loomie) => loomie.is_busy === false
+      (loomie) =>
+        loomie.is_busy === false || currentGymProtectors.includes(loomie._id)
     );
 
     const markedLoomies = availableLoomies.map((loomie) => ({
@@ -40,6 +41,7 @@ export const ModalUpdateProtectors = () => {
     }));
     setLoomies(markedLoomies);
     setLoading(false);
+    setProtectors(currentGymProtectors);
   };
 
   const handleSubmit = async () => {
