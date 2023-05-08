@@ -116,7 +116,7 @@ export const CombatUI = (props: iPropsCombatUI) => {
 
   const touchAttack = (event: GestureResponderEvent) => {
     // Ignore the event if the player has attacked / dodged in the last 2 seconds
-    if (lastPlayerInteractionTime + 2000 > Date.now()) {
+    if (lastPlayerInteractionTime + 1500 > Date.now()) {
       props.queueMessage('Wait to attack again', false);
       return;
     }
@@ -131,7 +131,7 @@ export const CombatUI = (props: iPropsCombatUI) => {
 
   const touchDodge = (event: GestureResponderEvent, direction: boolean) => {
     // Ignore the event if the player has attacked / dodged in the last 2 seconds
-    if (lastPlayerInteractionTime + 2000 > Date.now()) {
+    if (lastPlayerInteractionTime + 1500 > Date.now()) {
       props.queueMessage('Wait to dodge again', false);
       return;
     }
