@@ -525,7 +525,7 @@ export const CombatView = ({ route }: iCombatViewProps) => {
           queueUpdated={queueUpdated}
           getMessageQueue={getMessageQueue}
           removeMessageFromQueue={removeMessageFromQueue}
-          //Modal loomies team
+          //Modal loomie team
           modalLoomiesTeamVisible={modalLoomiesTeamVisible}
           modalLoomiesTeamToggle={() => modalLoomiesTeamToggle()}
           getUserLoomiesTeam={userLoomiesTeam}

@@ -61,7 +61,7 @@ export const SelectLoomieModal = ({
       onBackdropPress={toggleVisibilityCallback}
       style={Styles.modal}
     >
-      <Text style={Styles.modalTitle}>Loomies Team</Text>
+      <Text style={Styles.modalTitle}>Loomie Team</Text>
       <View style={{ flex: 1, marginVertical: 8 }}>
         <LoomiesCombatGrid
           loomies={loomiesInternal || []}
