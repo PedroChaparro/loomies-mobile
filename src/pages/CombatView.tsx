@@ -521,6 +521,7 @@ export const CombatView = ({ route }: iCombatViewProps) => {
           modalItemToggle={() => modalItemToggle()}
           modalItemCallback={applyItem}
           // display message
+          queueMessage={queueMessage}
           queueUpdated={queueUpdated}
           getMessageQueue={getMessageQueue}
           removeMessageFromQueue={removeMessageFromQueue}

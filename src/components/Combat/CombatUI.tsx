@@ -50,6 +50,7 @@ interface iPropsCombatUI {
   modalItemCallback: (_itemId: string) => void;
 
   // display message
+  queueMessage: (_message: string, _direction: boolean) => void;
   queueUpdated: number;
   getMessageQueue: () => iDisplayMessage[];
   removeMessageFromQueue: (_ids: number[]) => void;
@@ -115,7 +116,10 @@ export const CombatUI = (props: iPropsCombatUI) => {
 
   const touchAttack = (event: GestureResponderEvent) => {
     // Ignore the event if the player has attacked / dodged in the last 2 seconds
-    if (lastPlayerInteractionTime + 2000 > Date.now()) return;
+    if (lastPlayerInteractionTime + 2000 > Date.now()) {
+      props.queueMessage('Wait to attack again', false);
+      return;
+    }
 
     showGizmo(
       { x: event.nativeEvent.pageX, y: event.nativeEvent.pageY },
@@ -127,7 +131,10 @@ export const CombatUI = (props: iPropsCombatUI) => {
 
   const touchDodge = (event: GestureResponderEvent, direction: boolean) => {
     // Ignore the event if the player has attacked / dodged in the last 2 seconds
-    if (lastPlayerInteractionTime + 2000 > Date.now()) return;
+    if (lastPlayerInteractionTime + 2000 > Date.now()) {
+      props.queueMessage('Wait to dodge again', false);
+      return;
+    }
 
     showGizmo(
       { x: event.nativeEvent.pageX, y: event.nativeEvent.pageY },
