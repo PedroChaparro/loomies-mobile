@@ -272,3 +272,30 @@ export const createGradientPlane = (
 
   return plane;
 };
+
+export const instantiatedEntriesTranslate = (
+  entries: Babylon.InstantiatedEntries,
+  pos: Vector3
+) => {
+  entries.rootNodes.forEach((rootNode) => {
+    rootNode.position = pos;
+  });
+};
+
+export const instantiatedEntriesRotate = (
+  entries: Babylon.InstantiatedEntries,
+  radians: number
+) => {
+  entries.rootNodes.forEach((rootNode) => {
+    rootNode.rotate(Babylon.Axis.Y, radians, Babylon.Space.LOCAL);
+  });
+};
+
+export const instantiatedEntriesScale = (
+  entries: Babylon.InstantiatedEntries,
+  scale: Babylon.Vector3
+) => {
+  entries.rootNodes.forEach((rootNode) => {
+    rootNode.scaling = scale;
+  });
+};

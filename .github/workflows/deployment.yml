@@ -2,9 +2,9 @@ name: Continuous Deployment
 
 on:
   # Create a new release when a tag is pushed
-  push: 
+  push:
     tags:
-    - 'v*' # Match tags starting with v*: v1.0, v20.15.10
+      - 'v*' # Match tags starting with v*: v1.0, v20.15.10
 
 jobs:
   deploy:
@@ -14,17 +14,24 @@ jobs:
       # -- Setup the environment
       - name: Checkout and Authenticate
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
       - name: Setup JDK
         uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
           java-version: 11
-      
+
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
-      
+
       - name: Restore node_modules cache
         uses: actions/cache@v2
         id: yarn-cache
@@ -33,7 +40,17 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      
+
+      - name: Create .env file
+        run: |
+          echo "API_URL=${{ secrets.DEPLOYMENT_API_URL }}" > .env
+          echo "PORT=${{ secrets.DEPLOYMENT_PORT }}" >> .env
+          echo "TLS=${{ secrets.DEPLOYMENT_TLS }}" >> .env
+          echo "MAP_DEBUG=false" >> .env
+          echo "GAME_MIN_REQUIRED_EXPERIENCE=100" >> .env
+          echo "GAME_EXPERIENCE_FACTOR=1000" >> .env
+          echo "PLAYER_REACH_RADIUS=0.0008" >> .env
+
       - name: Install yarn dependencies
         run: yarn install --from-lock-file
 
@@ -42,22 +59,32 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
-      
+          key:
+            ${{ runner.os }}-gradle-wrapper-${{
+            hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+
       - name: Cache Gradle Dependencies
         uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+          key:
+            ${{ runner.os }}-gradle-caches-${{
+            hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-caches-
 
       - name: Make Gradle executable
         run: cd android && chmod +x ./gradlew
-      
+
+      - name: Update version
+        run: python versioning.py ${GITHUB_REF#refs/*/}
+
       # -- Build and sign the Android app
       - name: Build Android
-        run: cd android && ./gradlew assembleRelease --no-daemon
+        run: |
+          yarn assets:link
+          cd android
+          ./gradlew assembleRelease --no-daemon
 
       - name: Sign Android
         id: sign_app
@@ -68,7 +95,7 @@ jobs:
           alias: ${{ secrets.ANDROID_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
-      
+
       # -- Create a new release and upload the signed APK
       - name: Create new release
         id: create_release
@@ -83,7 +110,7 @@ jobs:
             - ${{ github.event.release.body }}
           draft: false
           prerelease: false
-      
+
       - name: Upload release artifact
         uses: actions/upload-release-asset@v1
         env:
@@ -93,3 +120,10 @@ jobs:
           asset_path: ${{ steps.sign_app.outputs.signedReleaseFile }}
           asset_name: Loomies.apk
           asset_content_type: application/vnd.android.package-archive
+
+      # - name: Push files changes
+      # run: |
+      # git config user.name [BOT]
+      # git add ./package.json ./android/app/build.gradle
+      # git commit -m "[ci skip] chore(release): ${GITHUB_REF#refs/*/}"
+      # git push

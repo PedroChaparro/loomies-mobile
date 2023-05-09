@@ -41,8 +41,8 @@ const Styles = StyleSheet.create({
   // Take the entire height and place the box in the center
   container: {
     alignItems: 'center',
-    height: '100%',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingVertical: 24
   },
   box: {
     padding: 20,
@@ -56,6 +56,7 @@ const Styles = StyleSheet.create({
     // Add a separation between the dots of the dotted border
   },
   boxText: {
-    color: '#5C5C5C'
+    color: '#5C5C5C',
+    textAlign: 'center'
   }
 });

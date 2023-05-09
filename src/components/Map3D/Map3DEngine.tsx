@@ -4,20 +4,12 @@
  * Manages the Babylon 3D engine
  */
 
-import React, {
-  FunctionComponent,
-  useEffect,
-  useState,
-  useRef,
-  useContext
-} from 'react';
-import { SafeAreaView, View, Button, ViewProps } from 'react-native';
-import { EngineView, useEngine } from '@babylonjs/react-native';
+import React, { useEffect, useRef, useContext } from 'react';
+import { SafeAreaView, View, Button } from 'react-native';
+import { EngineView } from '@babylonjs/react-native';
 
 import * as Babylon from '@babylonjs/core';
 import { Tools } from '@babylonjs/core/Misc';
-import { Scene } from '@babylonjs/core/scene';
-import { Camera } from '@babylonjs/core/Cameras/camera';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
 import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
@@ -33,17 +25,18 @@ import { createGradientPlane } from './utilsVertex';
 import { iMapBundleVertexData, generateRoad } from './utilsMapBuilder';
 
 // modules
-import { MapElementManager } from './MapElementManager';
+import { MapElementManager } from '@src/components/MapElementManager/MapElementManager';
 
 // debug
 import { CONFIG } from '@src/services/config.services';
 import { ModelContext } from '@src/context/ModelProvider';
+import { APP_SCENE, BabylonContext } from '@src/context/BabylonProvider';
 const { MAP_DEBUG } = CONFIG;
 const DEBUG_MOVE_DISTANCE = 0.0002;
 
 // drawing constants
 export const PLANE_SIZE = 20;
-const GROUND_SCALE = 3.5;
+const GROUND_SCALE = 4;
 const ROAD_HEIGHT = 0.07;
 const ROAD_BORDER_HEIGHT = 0.05;
 const CIRCLE_INDICATOR_HEIGHT = 0.09;
@@ -59,7 +52,7 @@ const ANI_LERP_SPEED = 0.2;
 const ANI_LERP_MERGE_DISTANCE_POSITION = 0.1;
 const ANI_LERP_MERGE_DISTANCE_ROTATION = Tools.ToRadians(1);
 
-export const Map3DEngine: FunctionComponent<ViewProps> = () => {
+export const Map3DEngine = () => {
   // user position debug method
   const { userPosition, debugMovePosition } = useContext(UserPositionContext);
   const { deviceYaw } = useContext(SensorContext);
@@ -78,48 +71,44 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
   } = useContext(MapContext);
 
   // engine related
-  const engine = useEngine();
-  const [camera, setCamera] = useState<Camera>();
-  const [scene, setScene] = useState<Scene>();
+  const { engine, sceneMap, cameraMap, getCurrentScene } =
+    useContext(BabylonContext);
 
   // map drawing
-  const { instantiateModel } = useContext(ModelContext);
+  const { cloneModel } = useContext(ModelContext);
   const playerNode = useRef<Babylon.Mesh>();
   const playerNodeTargetPos = useRef<Babylon.Vector3>(Vector3.Zero());
   const meshGrid = useRef<Array<Array<Babylon.Mesh | null>>>([]);
-
-  // expose methods such as
-  // - draw object in pos
-  // - click on object
-  // - modify object list
 
   // startup
   useEffect(() => {
     if (meshGrid.current.length) return;
     if (!engine) return;
-    const scene = new Scene(engine);
-    if (!scene) return;
+    if (!sceneMap) return;
 
-    console.log('INFO: Creating scene');
+    console.log('INFO: Setting up scene');
 
     // create player
     const playerRootMesh: Babylon.Mesh = Babylon.MeshBuilder.CreateBox(
       'playerRootMesh',
       { size: 1 },
-      scene
+      sceneMap
     );
-    playerRootMesh.isVisible = false;
+    playerRootMesh.visibility = 0;
     playerNode.current = playerRootMesh;
 
     // create lights
-    const light = new HemisphericLight('light', new Vector3(5, 10, 0), scene);
+    const light = new HemisphericLight(
+      'light',
+      new Vector3(5, 10, 0),
+      sceneMap
+    );
     light.intensity = 0.9;
 
-    // create camera
-    scene.createDefaultCamera(true, true, true);
+    // config camera
 
-    if (scene.activeCamera) {
-      const camera = scene.activeCamera as ArcRotateCamera;
+    if (sceneMap.activeCamera) {
+      const camera = sceneMap.activeCamera as ArcRotateCamera;
       camera.checkCollisions = false;
       camera.panningSensibility = 0;
 
@@ -138,8 +127,6 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       camera.beta = Math.PI / 8;
       camera.radius = 10;
 
-      setCamera(scene.activeCamera);
-
       // lock to player
       camera.lockedTarget = playerNode.current;
     }
@@ -149,10 +136,11 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       PLANE_SIZE * GROUND_SCALE,
       new Babylon.Color3(...COLOR_BACKGROUND_BOT),
       new Babylon.Color3(...COLOR_BACKGROUND_TOP),
-      scene
+      sceneMap
     );
     planeGround.position.y = 0;
     planeGround.rotation.x = Math.PI / 2;
+    planeGround.isPickable = false;
 
     // initialize gridmap
     const gridOffset = (GRIDMAP_SIZE - 1) / 2 + 0.5;
@@ -194,7 +182,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
           Babylon.MeshBuilder.CreateTube(
             'tube',
             { path: boundariesPath, radius: 1 },
-            scene
+            sceneMap
           );
         }
       }
@@ -203,35 +191,38 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
     // load player model
     (async () => {
       try {
-        const playerModel = await instantiateModel('MAP_PLAYER', scene);
-        const circleIndicatorModel = await instantiateModel(
+        console.log('A1');
+        const playerModel = await cloneModel('MAP_PLAYER', sceneMap);
+        const circleIndicatorModel = await cloneModel(
           'MAP_CIRCLE_INDICATOR',
-          scene
+          sceneMap
         );
 
+        console.log('A1');
         if (playerModel && playerNode.current) {
           playerModel.setParent(playerNode.current);
         }
+        console.log('A1');
 
         if (circleIndicatorModel && playerNode.current) {
           circleIndicatorModel.position.y = CIRCLE_INDICATOR_HEIGHT;
           circleIndicatorModel.setParent(playerNode.current);
         }
+        console.log('A1');
       } catch (error) {
         console.log("ERROR: Couldn't load model.");
       }
     })();
 
     // (debug) map axes
-    if (MAP_DEBUG) new Babylon.AxesViewer(scene, 5);
+    if (MAP_DEBUG) new Babylon.AxesViewer(sceneMap, 5);
 
-    console.log('INFO: Scene created');
-    setScene(scene);
-  }, [engine]);
+    console.log('INFO: Finished setting up scene');
+  }, [sceneMap]);
 
   const UpdateTileMesh = () => {
     // everything is initialized
-    if (!scene) return;
+    if (!sceneMap) return;
     if (!meshGrid.current.length) return;
 
     // apply offset if any
@@ -312,14 +303,14 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
       // Create different elements
 
       // ROADS
-      const roads = generateRoad(mapBundle.roads, COLOR_ROAD_FILL, scene);
+      const roads = generateRoad(mapBundle.roads, COLOR_ROAD_FILL, sceneMap);
       roads.position.y = ROAD_HEIGHT;
 
       // ROADS BORDER
       const roadsBorder = generateRoad(
         mapBundle.roadsBorder,
         COLOR_ROAD_BORDER,
-        scene
+        sceneMap
       );
       roadsBorder.position.y = ROAD_BORDER_HEIGHT;
 
@@ -338,6 +329,7 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
           0,
           (tilePos.y - gridOffset) * PLANE_SIZE
         );
+        finalMergedMesh.isPickable = false;
       }
 
       // store
@@ -422,17 +414,17 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
   // move / rotate player
   useEffect(() => {
-    if (scene) {
+    if (sceneMap) {
       const handler = () => {
         frameUpdate();
       };
-      scene.registerBeforeRender(handler);
+      sceneMap.registerBeforeRender(handler);
 
       return () => {
-        scene.unregisterBeforeRender(handler);
+        sceneMap.unregisterBeforeRender(handler);
       };
     }
-  }, [playerNodeTargetPos.current, deviceYaw, scene]);
+  }, [playerNodeTargetPos.current, deviceYaw, sceneMap]);
 
   // update meshes
   useEffect(() => {
@@ -446,12 +438,13 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
 
   // check tiles at creation
   useEffect(() => {
+    console.log('Initial useEeffect');
     UpdateTileMesh();
   }, []);
 
   return (
     <>
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'red' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
         <View style={{ flex: 1 }}>
           {!!MAP_DEBUG && (
             <>
@@ -482,11 +475,13 @@ export const Map3DEngine: FunctionComponent<ViewProps> = () => {
             </>
           )}
           <View style={{ flex: 1 }}>
-            <EngineView camera={camera} displayFrameRate={MAP_DEBUG} />
+            {getCurrentScene() == APP_SCENE.MAP && (
+              <EngineView camera={cameraMap} displayFrameRate={MAP_DEBUG} />
+            )}
           </View>
         </View>
       </SafeAreaView>
-      {!!scene && <MapElementManager scene={scene} />}
+      {!!sceneMap && <MapElementManager scene={sceneMap} />}
     </>
   );
 };

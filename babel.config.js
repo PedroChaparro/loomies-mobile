@@ -9,7 +9,6 @@ module.exports = {
           '@assets': './assets'
         }
       }
-    ],
-    ['module:react-native-dotenv', { moduleName: '@env', path: '.env' }]
+    ]
   ]
 };

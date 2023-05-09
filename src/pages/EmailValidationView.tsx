@@ -8,8 +8,8 @@ import { useToastAlert } from '../hooks/useToastAlert';
 
 interface EmailValidationViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  navigation: NavigationProp<any, any>;
-  route: RouteProp<{ params: { email: string } }, 'params'>;
+  navigation?: NavigationProp<any, any>;
+  route?: RouteProp<{ params: { email: string } }, 'params'>;
 }
 
 export const EmailValidationView = ({
@@ -19,16 +19,16 @@ export const EmailValidationView = ({
   const { showSuccessToast, showErrorToast } = useToastAlert();
 
   const redirectToLogin = () => {
-    navigation.navigate('Login');
+    navigation?.navigate('Login');
   };
 
   const redirectToNewCode = () => {
     // Redirect to the validation screen and pass the email as a param
-    navigation.navigate('NewCode', { email: formik.values.email });
+    navigation?.navigate('NewCode', { email: formik.values.email });
   };
 
   // Try to get the email from the params
-  const { email } = route.params || {};
+  const email = route?.params?.email || '';
 
   const formik = useFormik({
     initialValues: {
