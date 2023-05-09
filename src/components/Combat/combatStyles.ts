@@ -261,5 +261,23 @@ export const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '500',
     fontSize: 16
+  },
+
+  // gyzmo
+
+  gyzmoContainer: {
+    flexGrow: 1,
+    flexDirection: 'column'
+  },
+
+  gyzmoLoadingBar: {
+    backgroundColor: 'black',
+    width: '100%',
+    height: 10
+  },
+
+  gyzmoLoadingBarFill: {
+    backgroundColor: colors.red,
+    height: 10
   }
 });
