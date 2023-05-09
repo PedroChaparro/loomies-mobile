@@ -340,22 +340,31 @@ export class CaptureSM {
 
     (async () => {
       try {
-        let arSupported =
-          await Babylon.WebXRSessionManager.IsSessionSupportedAsync(
-            'immersive-ar'
-          );
+        let arSupported = false;
 
-        if (arSupported) {
-          console.log('Info: AR supported');
-          const arResult = await this.setupAR();
+        // isolate the AR check
 
-          // use WRcamera instead of normal camera
+        try {
+          arSupported =
+            await Babylon.WebXRSessionManager.IsSessionSupportedAsync(
+              'immersive-ar'
+            );
 
-          arSupported = arResult[0];
-          if (arSupported && arResult[1]) {
-            console.log('Info: Using XR camera');
-            camera = arResult[1];
+          if (arSupported) {
+            console.log('Info: AR supported');
+            const arResult = await this.setupAR();
+
+            // use WRcamera instead of normal camera
+
+            arSupported = arResult[0];
+            if (arSupported && arResult[1]) {
+              console.log('Info: Using XR camera');
+              camera = arResult[1];
+            }
           }
+        } catch (e) {
+          console.error(e);
+          arSupported = false;
         }
 
         // models
