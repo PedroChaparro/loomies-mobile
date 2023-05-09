@@ -1,10 +1,17 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   NavigationProp,
   RouteProp,
   useFocusEffect
 } from '@react-navigation/core';
-import { View, Text, Pressable, Image, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  Pressable,
+  Image,
+  StyleSheet,
+  BackHandler
+} from 'react-native';
 import { TWildLoomies } from '@src/types/types';
 import { MapContext } from '@src/context/MapProvider';
 import { TLoomball } from '@src/types/types';
@@ -40,12 +47,22 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
   const { showScene } = useContext(BabylonContext);
 
   // state
+
   const [ballSelected, setBallSelected] = useState<TLoomball | null>(null);
   const [aniState, setAniState] = useState<LOOMBALL_STATE>(
     LOOMBALL_INITIAL_STATE
   );
   const [showLoomBallModal, setShowLoomBallModal] = useState(false);
   const [loombalImage, setLoombalImage] = useState<string>();
+  const cleanUp = useRef<() => Promise<void>>(async () => {
+    return;
+  });
+
+  // clean up function
+
+  const setCleanUp = (newCleanUp: () => Promise<void>) => {
+    cleanUp.current = newCleanUp;
+  };
 
   // set state
 
@@ -92,6 +109,9 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
 
       // if no loomballs return to map
       if (!loomballs.length) {
+        // clean
+        await cleanUp.current();
+
         navigation?.navigate('Map');
         showInfoToast("You don't have any Loomballs to catch this Loomie");
       }
@@ -121,7 +141,10 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
     setBallSelected(loomBall);
   };
 
-  const escape = () => {
+  const escape = async () => {
+    // clean
+    await cleanUp.current();
+
     navigation?.navigate('Map');
   };
 
@@ -147,8 +170,17 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
   // toggle render loop on focus events
   useFocusEffect(
     React.useCallback(() => {
-      //showScene( APP_SCENE.CAPTURE );
-      return () => showScene(APP_SCENE.NONE);
+      // prevent user from going back
+
+      const subscription = BackHandler.addEventListener(
+        'hardwareBackPress',
+        () => true
+      );
+
+      return () => {
+        subscription.remove();
+        showScene(APP_SCENE.NONE);
+      };
     }, [])
   );
 
@@ -172,6 +204,7 @@ export const CaptureView = ({ navigation, route }: CaptureViewProps) => {
             loomie={loomie}
             loomball={ballSelected}
             setBallState={setBallState}
+            setCleanUp={setCleanUp}
           />
         )}
       </View>

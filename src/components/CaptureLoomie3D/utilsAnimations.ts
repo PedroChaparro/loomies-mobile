@@ -165,6 +165,9 @@ export const attemptToCatch = async (stt: iAniState) => {
 
         stt.mapContext.setWildLoomies(updatedLoomies);
 
+        // clean
+        await closeXRSession(stt);
+
         // go back to map
         navigate('Map', null);
       }
@@ -182,9 +185,25 @@ export const attemptToCatch = async (stt: iAniState) => {
         // loomie disappeared
         showInfoToast('Loomie escaped');
 
+        // clean
+        await closeXRSession(stt);
+
         // or user lost connection
         navigate('Map', null);
       }
       break;
+  }
+};
+
+// close XR session
+
+export const closeXRSession = async (stt: iAniState) => {
+  try {
+    if (stt.xrSession) {
+      await stt.xrSession.exitXRAsync();
+      stt.xrSession.dispose();
+    }
+  } catch (e) {
+    console.log(e);
   }
 };

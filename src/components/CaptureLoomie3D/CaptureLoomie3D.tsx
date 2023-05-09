@@ -25,12 +25,14 @@ import { CaptureSM } from './CaptureSM';
 import { CONFIG } from '@src/services/config.services';
 import { MapContext } from '@src/context/MapProvider';
 import { MapModalsContext } from '@src/context/MapModalsProvider';
+import { closeXRSession } from './utilsAnimations';
 const { MAP_DEBUG } = CONFIG;
 
 interface iCaptureLoomie3D {
   loomie: TWildLoomies;
   loomball: TLoomball;
   setBallState: (_state: LOOMBALL_STATE) => void;
+  setCleanUp: (cleanUp: () => Promise<void>) => void;
 }
 
 export const enum LOOMBALL_STATE {
@@ -48,7 +50,8 @@ export const enum LOOMBALL_STATE {
 export const CaptureLoomie3D = ({
   loomie,
   loomball,
-  setBallState
+  setBallState,
+  setCleanUp
 }: iCaptureLoomie3D) => {
   const { sceneCapture, cameraCapture, getCurrentScene } =
     useContext(BabylonContext);
@@ -61,7 +64,8 @@ export const CaptureLoomie3D = ({
   const mapContext = useContext(MapContext);
   const { setCurrentModalCapturedInfo } = useContext(MapModalsContext);
 
-  // stores the ballState
+  // stores the loomball state
+
   const stateMachine = useRef<CaptureSM | null>(null);
 
   // frame
@@ -174,6 +178,15 @@ export const CaptureLoomie3D = ({
       );
     }
 
+    // update cleanUp function
+
+    if (stateMachine.current != null) {
+      setCleanUp(async () => {
+        stateMachine.current != null &&
+          (await closeXRSession(stateMachine.current.stt));
+      });
+    }
+
     return () => {
       // destroy everything
     };
@@ -189,15 +202,6 @@ export const CaptureLoomie3D = ({
     attemptToCatch,
     setBallState
   ]);
-
-  // none state create scene
-  useEffect(() => {
-    // create scene
-
-    return () => {
-      // destroy everything
-    };
-  }, []);
 
   // toggle scene
 

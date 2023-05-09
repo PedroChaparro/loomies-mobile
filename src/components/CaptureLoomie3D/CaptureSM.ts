@@ -41,8 +41,13 @@ const LOOMBALL_CAMERA_DISTANCE_AR = 1.4;
 const LOOMBALL_CAMERA_DISTANCE = 2.1;
 const LOOMBALL_SCALE = 0.4;
 const get_loomball_initial_pos = (arSupported: boolean) => {
-  return new Vector3(0, -0.5, arSupported ? LOOMBALL_CAMERA_DISTANCE_AR : LOOMBALL_CAMERA_DISTANCE);
-}
+  return new Vector3(
+    0,
+    -0.5,
+    arSupported ? LOOMBALL_CAMERA_DISTANCE_AR : LOOMBALL_CAMERA_DISTANCE
+  );
+};
+const XRCAMERA_POSITION = new Vector3(0, 4, 5);
 
 export interface iAniState {
   // babylon related
@@ -52,6 +57,7 @@ export interface iAniState {
   modelContext: iModelProvider;
   userPositionContext: iUserPositionContext;
   mapContext: iMapProvider;
+  xrSession: Babylon.WebXRSessionManager | undefined;
 
   // callbacks
   attemptToCatch: () => Promise<[CAPTURE_RESULT, TWildLoomies | null]>;
@@ -119,6 +125,7 @@ export class CaptureSM {
       modelContext,
       userPositionContext,
       mapContext,
+      xrSession: undefined,
 
       // callbacks
 
@@ -252,6 +259,13 @@ export class CaptureSM {
    */
   async setupAR(): Promise<[boolean, Babylon.WebXRCamera | null]> {
     try {
+      // delete any previous session if any
+
+      if (this.stt.xrSession) {
+        await this.stt.xrSession.exitXRAsync();
+        this.stt.xrSession.dispose();
+      }
+
       // create session
 
       const xr = await this.stt.sceneCapture.createDefaultXRExperienceAsync({
@@ -268,11 +282,8 @@ export class CaptureSM {
       if (!xr.input.xrCamera) {
         session.exitXRAsync();
         session.dispose();
+        throw 'Could not find XR camera';
       }
-
-      // register XR session
-
-      this.stt.babylonContext.setXrSessionCapture(session);
 
       // pivot to transform XR camera
 
@@ -282,14 +293,17 @@ export class CaptureSM {
         this.stt.sceneCapture
       );
 
-      xrPivot.position = new Vector3(0, 4, 5);
+      xrPivot.position = XRCAMERA_POSITION.clone();
       xrPivot.rotation.y = Math.PI;
       xrPivot.visibility = 0;
       xrPivot.isPickable = false;
       xr.input.xrCamera.parent = xrPivot;
 
-      return [true, xr.input.xrCamera];
+      // register XR session
 
+      this.stt.xrSession = session;
+
+      return [true, xr.input.xrCamera];
     } catch (e) {
       console.error(e);
     }
@@ -331,6 +345,8 @@ export class CaptureSM {
             'immersive-ar'
           );
 
+        arSupported = false;
+
         //arSupported = false;
 
         if (arSupported) {
@@ -340,8 +356,8 @@ export class CaptureSM {
           // use WRcamera instead of normal camera
 
           arSupported = arResult[0];
-          if (arSupported && arResult[1]){
-            console.log("Info: Using XR camera");
+          if (arSupported && arResult[1]) {
+            console.log('Info: Using XR camera');
             camera = arResult[1];
           }
         }
@@ -373,6 +389,7 @@ export class CaptureSM {
           { size: 0.2 },
           sceneCapture
         );
+        modelBall.visibility = 0;
 
         const ballVisual = Babylon.MeshBuilder.CreateBox(
           `loomballVisual`,
@@ -381,6 +398,7 @@ export class CaptureSM {
         );
         ballVisual.isPickable = false;
         ballVisual.parent = modelBall;
+        ballVisual.visibility = 0;
 
         // position model loomie
 
@@ -395,7 +413,7 @@ export class CaptureSM {
 
         // make camera target the Loomie at the middle
 
-        if (arSupported) camera.setTarget(new Vector3(0, height / 2, 0));
+        if (!arSupported) camera.setTarget(new Vector3(0, height / 2, 0));
 
         // DEBUG: Target loomball
         //const modelBall2 = await this.stt.modelContext.cloneModel(
@@ -445,7 +463,9 @@ export class CaptureSM {
           sceneCapture
         );
         scratchPad.position.y = -0.5;
-        scratchPad.position.z = arSupported ? LOOMBALL_CAMERA_DISTANCE_AR : LOOMBALL_CAMERA_DISTANCE;
+        scratchPad.position.z = arSupported
+          ? LOOMBALL_CAMERA_DISTANCE_AR
+          : LOOMBALL_CAMERA_DISTANCE;
         scratchPad.parent = camera;
         scratchPad.isPickable = true;
         scratchPad.visibility = 0;

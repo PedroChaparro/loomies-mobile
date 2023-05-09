@@ -107,7 +107,6 @@ export const controllerGrabbed: iStateController = {
       // config animation
       // use dummy camera
 
-      //const camera = stt.cameraCapture as Babylon.ArcRotateCamera;
       const camera = stt.sceneCapture.activeCamera;
       stt.cameraDummy.setAbsolutePosition(camera.globalPosition);
       stt.cameraDummy.lookAt(Vector3.Zero());
@@ -187,7 +186,7 @@ export const controllerGrabbed: iStateController = {
 
     // update dummy objects
     stt.cameraDummy.setAbsolutePosition(
-      (stt.sceneCapture.activeCamera).globalPosition
+      stt.sceneCapture.activeCamera.globalPosition
     );
     stt.cameraDummy.lookAt(Vector3.Zero());
     stt.ballDummy.setAbsolutePosition(stt.ballPosCurr);
