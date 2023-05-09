@@ -345,10 +345,6 @@ export class CaptureSM {
             'immersive-ar'
           );
 
-        arSupported = false;
-
-        //arSupported = false;
-
         if (arSupported) {
           console.log('Info: AR supported');
           const arResult = await this.setupAR();
