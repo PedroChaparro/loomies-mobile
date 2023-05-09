@@ -16,8 +16,12 @@ import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { iCombatViewParams } from '@src/pages/CombatView';
 
 export const ModalGym = () => {
-  const { isGymModalOpen, currentModalGymId, toggleGymModalVisibility } =
-    useContext(MapModalsContext);
+  const {
+    isGymModalOpen,
+    currentModalGymId,
+    toggleGymModalVisibility,
+    toggleProtectorsModalVisibility
+  } = useContext(MapModalsContext);
   const { userPosition } = useContext(UserPositionContext);
 
   const { showErrorToast } = useToastAlert();
@@ -134,7 +138,11 @@ export const ModalGym = () => {
         <View style={Styles.container}>
           <View style={Styles.modal}>
             <Text style={Styles.modalTitle}>{gymInfo.name}</Text>
-            <Text style={Styles.modalSubtitle}>
+            <Text
+              style={Styles.modalSubtitle}
+              numberOfLines={1}
+              ellipsizeMode='tail'
+            >
               Owner: {gymInfo.owner == null ? 'Unclaimed' : gymInfo.owner}
             </Text>
             {gymInfo.user_owns_it && (
@@ -166,6 +174,17 @@ export const ModalGym = () => {
                   callback={() => {
                     goToCombat();
                   }}
+                />
+              )}
+              {gymInfo.user_owns_it && (
+                <CustomButton
+                  title='Update protectors'
+                  type='primary'
+                  callback={() =>
+                    toggleProtectorsModalVisibility(
+                      gymInfo.protectors.map((p) => p._id)
+                    )
+                  }
                 />
               )}
             </View>
@@ -202,8 +221,10 @@ const Styles = StyleSheet.create({
   },
   modalSubtitle: {
     color: '#5c5c5c',
+    maxWidth: '95%',
     fontSize: 20,
-    textAlign: 'center'
+    textAlign: 'center',
+    alignSelf: 'center'
   },
   containerItem: {
     alignSelf: 'center',

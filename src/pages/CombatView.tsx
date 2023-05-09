@@ -521,10 +521,11 @@ export const CombatView = ({ route }: iCombatViewProps) => {
           modalItemToggle={() => modalItemToggle()}
           modalItemCallback={applyItem}
           // display message
+          queueMessage={queueMessage}
           queueUpdated={queueUpdated}
           getMessageQueue={getMessageQueue}
           removeMessageFromQueue={removeMessageFromQueue}
-          //Modal loomies team
+          //Modal loomie team
           modalLoomiesTeamVisible={modalLoomiesTeamVisible}
           modalLoomiesTeamToggle={() => modalLoomiesTeamToggle()}
           getUserLoomiesTeam={userLoomiesTeam}

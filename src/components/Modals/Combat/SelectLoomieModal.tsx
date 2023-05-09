@@ -1,9 +1,9 @@
-import { CustomButton } from '@src/components/CustomButton';
 import { iLoomie } from '@src/types/combatInterfaces';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { LoomiesCombatGrid } from './LoomiesCombatGrid';
+import { FloatingRedIcon } from '@src/components/FloatingRedIcon';
 
 interface IProps {
   loomiesTeam: iLoomie[];
@@ -22,7 +22,7 @@ export const SelectLoomieModal = ({
   const [loomiesInternal, setLoomiesInternal] = useState<iLoomie[]>();
   const [selectedLoomie, setSelectedLoomie] = useState<iLoomie>();
 
-  const test = () => {
+  const changePlayerLoomie = () => {
     changeLoomie(selectedLoomie);
     toggleVisibilityCallback();
   };
@@ -61,7 +61,7 @@ export const SelectLoomieModal = ({
       onBackdropPress={toggleVisibilityCallback}
       style={Styles.modal}
     >
-      <Text style={Styles.modalTitle}>Loomies Team</Text>
+      <Text style={Styles.modalTitle}>Loomie Team</Text>
       <View style={{ flex: 1, marginVertical: 8 }}>
         <LoomiesCombatGrid
           loomies={loomiesInternal || []}
@@ -70,16 +70,20 @@ export const SelectLoomieModal = ({
           elementsCallback={handleLoomiePress}
         />
       </View>
-      <View style={Styles.containerButton}>
-        <CustomButton title='Accept' type='primary' callback={test} />
-      </View>
-      <View style={Styles.containerButton}>
-        <CustomButton
-          title='Cancel'
-          type='primary'
-          callback={toggleVisibilityCallback}
-        />
-      </View>
+      <FloatingRedIcon
+        onPress={changePlayerLoomie}
+        collection='MaterialCommunityIcons'
+        name='checkbox-marked-circle-outline'
+        bottom={80}
+        right={16}
+      />
+      <FloatingRedIcon
+        onPress={toggleVisibilityCallback}
+        collection='MaterialIcons'
+        name='cancel'
+        bottom={16}
+        right={16}
+      />
     </Modal>
   );
 };
@@ -96,9 +100,5 @@ const Styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     textTransform: 'uppercase'
-  },
-  containerButton: {
-    alignSelf: 'center',
-    width: '90%'
   }
 });

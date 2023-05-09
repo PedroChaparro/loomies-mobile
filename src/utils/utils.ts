@@ -53,11 +53,7 @@ export const images: {
   'O-007': require('@assets/images/items/007.png'),
   'O-008': require('@assets/images/items/008.png'),
   'O-009': require('@assets/images/items/009.png'),
-  'O-010': require('@assets/images/items/010.png'),
-
-  // UI
-
-  'LOOMBALL': require('@assets/images/ui/loomball.png')
+  'O-010': require('@assets/images/items/010.png')
 };
 
 export function getRequiredExperienceFromLevel(level: number): number {

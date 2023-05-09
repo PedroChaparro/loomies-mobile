@@ -49,7 +49,11 @@ export const Profile = ({ navigation }: ProfileProps) => {
           <Text style={Styles.headerTitle}>PROFILE</Text>
         </View>
         <View style={Styles.main}>
-          <Text style={[Styles.mainTitle, Styles.mainTitleBold]}>
+          <Text
+            style={[Styles.mainTitle, Styles.mainTitleBold]}
+            numberOfLines={1}
+            ellipsizeMode='tail'
+          >
             {user?.username}
           </Text>
           <LinkCard
@@ -98,7 +102,9 @@ const Styles = StyleSheet.create({
     color: '#5C5C5C',
     textAlign: 'center',
     margin: 2,
-    fontSize: 16
+    maxWidth: '75%',
+    fontSize: 16,
+    alignSelf: 'center'
   },
   mainTitleBold: {
     fontWeight: 'bold'

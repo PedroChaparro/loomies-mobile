@@ -373,13 +373,15 @@ export class CaptureSM {
           throw "Error: Couldn't instantiate Loomie modelLoomie";
 
         // create environment in case AR is not supported
+
         if (!arSupported) {
-          const modelEnv = await this.stt.modelContext.instantiateModel(
+          const modelEnv = await this.stt.modelContext.cloneModel(
             'ENV_GRASS',
             sceneCapture
           );
 
           if (!modelEnv) throw "Error: Couldn't instantiate env modelEnv";
+          modelEnv.scaling = Vector3.One().scale(1.5);
         }
 
         // helper nodes
