@@ -37,9 +37,12 @@ import { LOOMBALL_STATE } from './CaptureLoomie3D';
 
 // control constants
 
+const LOOMBALL_CAMERA_DISTANCE_AR = 1.4;
 const LOOMBALL_CAMERA_DISTANCE = 2.1;
 const LOOMBALL_SCALE = 0.4;
-const LOOMBALL_INITIAL_POS = new Vector3(0, -0.5, LOOMBALL_CAMERA_DISTANCE);
+const get_loomball_initial_pos = (arSupported: boolean) => {
+  return new Vector3(0, -0.5, arSupported ? LOOMBALL_CAMERA_DISTANCE_AR : LOOMBALL_CAMERA_DISTANCE);
+}
 
 export interface iAniState {
   // babylon related
@@ -245,12 +248,9 @@ export class CaptureSM {
 
   /**
    * Tries to setup an AR session
-   * @param camera Base camera to get position from
    * @returns A promise with a boolean indicating success and the WebXRCamera
    */
-  async setupAR(
-    camera: Babylon.ArcRotateCamera
-  ): Promise<[boolean, Babylon.WebXRCamera | null]> {
+  async setupAR(): Promise<[boolean, Babylon.WebXRCamera | null]> {
     try {
       // create session
 
@@ -265,38 +265,28 @@ export class CaptureSM {
         xr.renderTarget
       );
 
-      // set XR camera transform to already configured camera
-
       if (!xr.input.xrCamera) {
         session.exitXRAsync();
         session.dispose();
       }
 
-      // position camera
-
-      //const xrCamera = xr.input.xrCamera;
-      //console.log(xrCamera.realWorldHeight);
-      
-      //xrCamera.position = new Vector3(0, 2, 0);
-
-      //const heightChange = new XRRigidTransform({
-        //x: 0,
-        //y: xrCamera.realWorldHeight ? -xrCamera.realWorldHeight : -1.7,
-        //z: 0
-      //});
-
-      //// get a new reference space object using the current reference space
-      //const newReferenceSpace = session.referenceSpace.getOffsetReferenceSpace(heightChange);
-
-      //console.log(newReferenceSpace);
-      //session.referenceSpace = newReferenceSpace;
-
-      console.log('camera.position', camera.position);
-      xr.input.xrCamera.setTransformationFromNonVRCamera(camera, true);
-
       // register XR session
 
       this.stt.babylonContext.setXrSessionCapture(session);
+
+      // pivot to transform XR camera
+
+      const xrPivot = Babylon.MeshBuilder.CreateBox(
+        `xrPivot`,
+        { size: 0.1 },
+        this.stt.sceneCapture
+      );
+
+      xrPivot.position = new Vector3(0, 4, 5);
+      xrPivot.rotation.y = Math.PI;
+      xrPivot.visibility = 0;
+      xrPivot.isPickable = false;
+      xr.input.xrCamera.parent = xrPivot;
 
       return [true, xr.input.xrCamera];
 
@@ -341,20 +331,20 @@ export class CaptureSM {
             'immersive-ar'
           );
 
+        //arSupported = false;
+
         if (arSupported) {
           console.log('Info: AR supported');
-          const arResult = await this.setupAR(camera);
+          const arResult = await this.setupAR();
 
           // use WRcamera instead of normal camera
 
           arSupported = arResult[0];
           if (arSupported && arResult[1]){
-            console.log("USING XR camera");
+            console.log("Info: Using XR camera");
             camera = arResult[1];
           }
         }
-
-        console.log(camera.name);
 
         // models
 
@@ -430,18 +420,16 @@ export class CaptureSM {
           { size: 0.2 },
           sceneCapture
         );
-        initialOriginBall.position = new Vector3().copyFrom(
-          LOOMBALL_INITIAL_POS
-        );
+        initialOriginBall.position = get_loomball_initial_pos(arSupported);
         initialOriginBall.parent = camera;
         initialOriginBall.isPickable = false;
         initialOriginBall.visibility = 0;
 
-        //// loomball hitbox
+        // loomball hitbox
 
         const hitbox = Babylon.MeshBuilder.CreateSphere(
           'loomball_hitbox',
-          { diameter: 1.1, segments: 6, sideOrientation: 2 },
+          { diameter: 2, segments: 6, sideOrientation: 2 },
           sceneCapture
         );
         hitbox.scaling = Vector3.One().scale(LOOMBALL_SCALE);
@@ -449,7 +437,7 @@ export class CaptureSM {
         hitbox.isPickable = true;
         hitbox.visibility = 0;
 
-        //// scratch pad
+        // scratch pad
 
         const scratchPad = Babylon.CreateDisc(
           'scratchPad',
@@ -457,7 +445,7 @@ export class CaptureSM {
           sceneCapture
         );
         scratchPad.position.y = -0.5;
-        scratchPad.position.z = LOOMBALL_CAMERA_DISTANCE;
+        scratchPad.position.z = arSupported ? LOOMBALL_CAMERA_DISTANCE_AR : LOOMBALL_CAMERA_DISTANCE;
         scratchPad.parent = camera;
         scratchPad.isPickable = true;
         scratchPad.visibility = 0;
