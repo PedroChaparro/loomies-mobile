@@ -83,11 +83,13 @@ export interface iPayload_LOOMIES_TEAM {
 export interface iPayload_USER_LOOMIE_WEAKENED {
   alive_user_loomies: number;
   loomie_id: string;
+  damage: number;
 }
 
 export interface iPayload_GYM_LOOMIE_WEAKENED {
   alive_gym_loomies: number;
   loomie_id: string;
+  damage: number;
 }
 
 export interface iPayload_USER_ITEM_USED {

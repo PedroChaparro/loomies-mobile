@@ -173,7 +173,7 @@ export const CombatView = ({ route }: iCombatViewProps) => {
               if (payload.damage > 0)
                 queueMessage(
                   payload.was_critical
-                    ? `Effective attack! -${payload.damage}`
+                    ? `-${payload.damage} Effective attack!`
                     : `-${payload.damage}`,
                   false
                 );
@@ -202,7 +202,7 @@ export const CombatView = ({ route }: iCombatViewProps) => {
               if (payload.damage > 0)
                 queueMessage(
                   payload.was_critical
-                    ? `Effective attack! -${payload.damage}`
+                    ? `-${payload.damage} Effective attack!`
                     : `-${payload.damage}`,
                   true
                 );
@@ -249,7 +249,21 @@ export const CombatView = ({ route }: iCombatViewProps) => {
           const payload = data.payload as iPayload_GYM_LOOMIE_WEAKENED;
 
           setGymLoomiesLeft(payload.alive_gym_loomies);
-          queueMessage('Enemy Loomie has weakened', true);
+          queueMessage(`-${payload.damage} Enemy fainted!`, true);
+
+          // set hp to zero and hide model
+
+          setLoomieGym((loomie) => {
+            if (loomie) {
+              // update hp
+              loomie.boosted_hp = 0;
+
+              // make serial invalid to hide model
+              loomie.serial = -1;
+
+              return loomie;
+            }
+          });
         }
         break;
 
@@ -260,11 +274,31 @@ export const CombatView = ({ route }: iCombatViewProps) => {
           const payload = data.payload as iPayload_USER_LOOMIE_WEAKENED;
 
           setUserLoomiesLeft(payload.alive_user_loomies);
-          queueMessage('Your Loomie has weakened', false);
+          queueMessage(`-${payload.damage} Loomie fainted!`, false);
+
+          // set hp to zero and hide model
+
+          setLoomiePlayer((loomie) => {
+            if (loomie) {
+              // update hp
+              loomie.boosted_hp = 0;
+
+              // make serial invalid to hide model
+              loomie.serial = -1;
+
+              return loomie;
+            }
+          });
         }
         break;
 
       // attack dodged
+
+      case TYPE.GYM_ATTACK_CANDIDATE:
+        {
+          queueMessage('Attack incoming', true);
+        }
+        break;
 
       case TYPE.GYM_ATTACK_DODGED:
         {

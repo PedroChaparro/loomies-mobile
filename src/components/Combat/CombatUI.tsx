@@ -64,9 +64,10 @@ interface iPropsCombatUI {
   changeLoomie(_a: any): void;
 }
 
-const GIZMO_SIZE = 30;
+const GIZMO_SIZE = 40;
 const MAX_DISPLAY_MESSAGES = [0, 1, 2, 3];
 const MAX_LOOMIES = [0, 1, 2, 3, 4, 5];
+export const USER_ACTION_WAIT_TIME = 1500;
 
 export const CombatUI = (props: iPropsCombatUI) => {
   // gizmo
@@ -85,11 +86,11 @@ export const CombatUI = (props: iPropsCombatUI) => {
   const [modalEscapeVisible, setModalEscapeVisible] = useState<boolean>(false);
 
   // Game logic states
-  const [lastPlayerInteractionTime, setLastPlayerInteractionTime] =
-    useState<number>(0);
+
+  const lastPlayerInteractionTime = useRef<number>(0);
 
   const updateLastPlayerInteractionTime = () => {
-    setLastPlayerInteractionTime(Date.now());
+    lastPlayerInteractionTime.current = Date.now();
   };
 
   const showGizmo = (origin: iGridPosition, icon: string) => {
@@ -108,7 +109,8 @@ export const CombatUI = (props: iPropsCombatUI) => {
     Animated.parallel([
       Animated.timing(gizmoOpacity.current, {
         toValue: 0,
-        duration: 500,
+        // Add a little more to compensate input
+        duration: USER_ACTION_WAIT_TIME * 1.1,
         useNativeDriver: false
       })
     ]).start();
@@ -116,8 +118,10 @@ export const CombatUI = (props: iPropsCombatUI) => {
 
   const touchAttack = (event: GestureResponderEvent) => {
     // Ignore the event if the player has attacked / dodged in the last 2 seconds
-    if (lastPlayerInteractionTime + 1500 > Date.now()) {
-      props.queueMessage('Wait to attack again', false);
+    if (
+      lastPlayerInteractionTime.current + USER_ACTION_WAIT_TIME >
+      Date.now()
+    ) {
       return;
     }
 
@@ -131,8 +135,10 @@ export const CombatUI = (props: iPropsCombatUI) => {
 
   const touchDodge = (event: GestureResponderEvent, direction: boolean) => {
     // Ignore the event if the player has attacked / dodged in the last 2 seconds
-    if (lastPlayerInteractionTime + 1500 > Date.now()) {
-      props.queueMessage('Wait to dodge again', false);
+    if (
+      lastPlayerInteractionTime.current + USER_ACTION_WAIT_TIME >
+      Date.now()
+    ) {
       return;
     }
 
@@ -261,11 +267,24 @@ export const CombatUI = (props: iPropsCombatUI) => {
             style={{ opacity: gizmoOpacity.current }}
             pointerEvents='none'
           >
-            <MaterialCommunityIcons
-              size={GIZMO_SIZE}
-              name={gizmoIcon}
-              color={'white'}
-            />
+            <View style={styles.gyzmoContainer}>
+              <MaterialCommunityIcons
+                size={GIZMO_SIZE}
+                name={gizmoIcon}
+                color={'white'}
+              />
+              <View style={styles.gyzmoLoadingBar}>
+                <Animated.View
+                  style={{
+                    ...styles.gyzmoLoadingBarFill,
+                    width: gizmoOpacity.current.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0%', '100%']
+                    })
+                  }}
+                ></Animated.View>
+              </View>
+            </View>
           </Animated.View>
         </View>
 
