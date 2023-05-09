@@ -13,7 +13,8 @@ import { iMapProvider } from '@src/context/MapProvider';
 import { iModelProvider } from '@src/context/ModelProvider';
 import {
   instantiatedEntriesTranslate,
-  instantiatedEntriesRotate
+  instantiatedEntriesRotate,
+  instantiatedEntriesScale
 } from '@src/components/Map3D/utilsVertex';
 
 import {
@@ -233,11 +234,21 @@ export class CombatSM {
 
   async updateLoomieModel(loomieStt: iCombatLoomieState, user: boolean) {
     try {
+      // if serial is not valid hide it
+
+      if (loomieStt.loomie.serial < 1) {
+        if (!loomieStt.model) return;
+        instantiatedEntriesScale(loomieStt.model, Vector3.Zero());
+        return;
+      }
+
       // free previous model
 
       loomieStt.model?.dispose();
 
       // load current model
+
+      console.log('Loomie serial ', loomieStt.loomie.serial.toString());
 
       const model = await this.stt.modelContext.instantiateModel(
         loomieStt.loomie.serial.toString(),
