@@ -61,7 +61,7 @@ const Styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     shadowColor: '#7c7c7c',
-    backgroundColor: '#e1e1e1'
+    backgroundColor: '#eaeaea'
   },
   cardImageBg: {
     alignSelf: 'center',

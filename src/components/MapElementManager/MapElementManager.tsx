@@ -8,7 +8,7 @@ import React, { useEffect, useContext, useRef } from 'react';
 import { iGym, iMapObject } from '@src/types/mapInterfaces';
 import { UserPositionContext } from '@src/context/UserPositionProvider';
 import { MapContext } from '@src/context/MapProvider';
-import { GymsModalContext } from '@src/context/GymsModalContext';
+import { MapModalsContext } from '@src/context/MapModalsProvider';
 import {
   requestNearGyms,
   requestWildLoomies
@@ -44,7 +44,7 @@ export const MapElementManager: React.FC<{
   scene: Babylon.Scene | null;
 }> = (props) => {
   const { instantiateModel } = useContext(ModelContext);
-  const { setCurrentModalGymId } = useContext(GymsModalContext);
+  const { setCurrentModalGymId } = useContext(MapModalsContext);
 
   const {
     setGyms,

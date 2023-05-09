@@ -37,9 +37,17 @@ import { LOOMBALL_STATE } from './CaptureLoomie3D';
 
 // control constants
 
+const LOOMBALL_CAMERA_DISTANCE_AR = 1.4;
 const LOOMBALL_CAMERA_DISTANCE = 2.1;
 const LOOMBALL_SCALE = 0.4;
-const LOOMBALL_INITIAL_POS = new Vector3(0, -0.5, LOOMBALL_CAMERA_DISTANCE);
+const get_loomball_initial_pos = (arSupported: boolean) => {
+  return new Vector3(
+    0,
+    -0.5,
+    arSupported ? LOOMBALL_CAMERA_DISTANCE_AR : LOOMBALL_CAMERA_DISTANCE
+  );
+};
+const XRCAMERA_POSITION = new Vector3(0, 4, 5);
 
 export interface iAniState {
   // babylon related
@@ -49,6 +57,7 @@ export interface iAniState {
   modelContext: iModelProvider;
   userPositionContext: iUserPositionContext;
   mapContext: iMapProvider;
+  xrSession: Babylon.WebXRSessionManager | undefined;
 
   // callbacks
   attemptToCatch: () => Promise<[CAPTURE_RESULT, TWildLoomies | null]>;
@@ -60,6 +69,7 @@ export interface iAniState {
   // objects
   loomieModel?: Babylon.InstantiatedEntries;
   ballModel?: Babylon.Mesh;
+  ballVisualNode?: Babylon.Mesh;
 
   hitbox?: Babylon.Mesh;
   scratchPad?: Babylon.Mesh;
@@ -72,6 +82,7 @@ export interface iAniState {
   // loomball vars
 
   state: LOOMBALL_STATE;
+  ballSerial: number;
 
   ballPosCurrLocal: Babylon.Vector3;
   ballPosCurr: Babylon.Vector3;
@@ -114,6 +125,7 @@ export class CaptureSM {
       modelContext,
       userPositionContext,
       mapContext,
+      xrSession: undefined,
 
       // callbacks
 
@@ -130,6 +142,7 @@ export class CaptureSM {
       // loombal vars
 
       state: LOOMBALL_INITIAL_STATE,
+      ballSerial: -1,
 
       ballPosCurrLocal: Vector3.Zero(),
       ballPosCurr: Vector3.Zero(),
@@ -172,7 +185,11 @@ export class CaptureSM {
     babylonContext: iBabylonProvider,
     modelContext: iModelProvider,
     userPositionContext: iUserPositionContext,
-    mapContext: iMapProvider
+    mapContext: iMapProvider,
+    loomball: TLoomball,
+
+    attemptToCatch: () => Promise<[CAPTURE_RESULT, TWildLoomies | null]>,
+    setBallState: (_state: LOOMBALL_STATE) => void
   ) {
     this.stt.sceneCapture = sceneCapture;
     this.stt.cameraCapture = cameraCapture;
@@ -180,20 +197,127 @@ export class CaptureSM {
     this.stt.modelContext = modelContext;
     this.stt.userPositionContext = userPositionContext;
     this.stt.mapContext = mapContext;
+
+    this.stt.attemptToCatch = attemptToCatch;
+    this.stt.setBallState = (state: LOOMBALL_STATE) => {
+      this.stt.state = state;
+      setBallState(state);
+    };
+
+    this.updateLoomballModel(loomball);
   }
 
   setup(loomieSerial: number, loomball: TLoomball) {
     if (!this.stt.sceneCapture) return;
 
-    this.setupScene(loomieSerial, loomball);
+    this.setupScene(loomieSerial);
+    this.updateLoomballModel(loomball);
   }
 
-  setupScene(loomieSerial: number, loomball: TLoomball) {
+  async updateLoomballModel(loomball: TLoomball) {
+    if (!this.stt.ballModel) return;
+    if (!this.stt.ballVisualNode) return;
+    if (loomball.serial == this.stt.ballSerial) return;
+    this.stt.ballSerial = loomball.serial;
+
+    try {
+      // dispose previous model
+
+      for (let i = 0; i < 10; i++) {
+        this.stt.ballVisualNode.getChildren().forEach((mesh) => {
+          console.log(`Info: Disposing (try ${i}) "${mesh.name}"`);
+          mesh.dispose();
+        });
+        if (!this.stt.ballVisualNode.getChildren().length) break;
+      }
+
+      // load current model
+
+      const model = await this.stt.modelContext.cloneModel(
+        `loomball-${loomball.serial.toString().padStart(3, '0')}`,
+        this.stt.sceneCapture
+      );
+
+      if (!model)
+        throw "Error: updateLoomballModel: Couldn't instantiate loomball model";
+
+      // hook it
+
+      model.isPickable = false;
+      model.parent = this.stt.ballModel;
+      model.position = Vector3.Zero();
+      model.parent = this.stt.ballVisualNode;
+      model.rotation.y = Math.PI;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  /**
+   * Tries to setup an AR session
+   * @returns A promise with a boolean indicating success and the WebXRCamera
+   */
+  async setupAR(): Promise<[boolean, Babylon.WebXRCamera | null]> {
+    try {
+      // delete any previous session if any
+
+      if (this.stt.xrSession) {
+        await this.stt.xrSession.exitXRAsync();
+        this.stt.xrSession.dispose();
+      }
+
+      // create session
+
+      const xr = await this.stt.sceneCapture.createDefaultXRExperienceAsync({
+        disableDefaultUI: true,
+        disableTeleportation: true
+      });
+
+      const session = await xr.baseExperience.enterXRAsync(
+        'immersive-ar',
+        'local',
+        xr.renderTarget
+      );
+
+      if (!xr.input.xrCamera) {
+        session.exitXRAsync();
+        session.dispose();
+        throw 'Could not find XR camera';
+      }
+
+      // pivot to transform XR camera
+
+      const xrPivot = Babylon.MeshBuilder.CreateBox(
+        `xrPivot`,
+        { size: 0.1 },
+        this.stt.sceneCapture
+      );
+
+      xrPivot.position = XRCAMERA_POSITION.clone();
+      xrPivot.rotation.y = Math.PI;
+      xrPivot.visibility = 0;
+      xrPivot.isPickable = false;
+      xr.input.xrCamera.parent = xrPivot;
+
+      // register XR session
+
+      this.stt.xrSession = session;
+
+      return [true, xr.input.xrCamera];
+    } catch (e) {
+      console.error(e);
+    }
+
+    return [false, null];
+  }
+
+  setupScene(loomieSerial: number) {
     const sceneCapture = this.stt.sceneCapture;
     const cameraCapture = this.stt.cameraCapture;
 
     // config camera
-    const camera = cameraCapture as Babylon.ArcRotateCamera;
+    let camera: Babylon.ArcRotateCamera | Babylon.WebXRCamera =
+      cameraCapture as Babylon.ArcRotateCamera;
 
     // no panning
     camera.panningSensibility = 0;
@@ -216,26 +340,72 @@ export class CaptureSM {
 
     (async () => {
       try {
+        let arSupported = false;
+
+        // isolate the AR check
+
+        try {
+          arSupported =
+            await Babylon.WebXRSessionManager.IsSessionSupportedAsync(
+              'immersive-ar'
+            );
+
+          if (arSupported) {
+            console.log('Info: AR supported');
+            const arResult = await this.setupAR();
+
+            // use WRcamera instead of normal camera
+
+            arSupported = arResult[0];
+            if (arSupported && arResult[1]) {
+              console.log('Info: Using XR camera');
+              camera = arResult[1];
+            }
+          }
+        } catch (e) {
+          console.error(e);
+          arSupported = false;
+        }
+
         // models
+
         const modelLoomie = await this.stt.modelContext.instantiateModel(
           loomieSerial.toString(),
           sceneCapture
         );
-        const modelEnv = await this.stt.modelContext.instantiateModel(
-          'ENV_GRASS',
-          sceneCapture
-        );
-        const modelBall = await this.stt.modelContext.cloneModel(
-          `loomball-${loomball.serial.toString().padStart(3, '0')}`,
-          sceneCapture
-        );
-
-        // check
 
         if (!modelLoomie)
           throw "Error: Couldn't instantiate Loomie modelLoomie";
-        if (!modelEnv) throw "Error: Couldn't instantiate env modelEnv";
-        if (!modelBall) throw "Error: Couldn't instantiate env modelBall";
+
+        // create environment in case AR is not supported
+
+        if (!arSupported) {
+          const modelEnv = await this.stt.modelContext.cloneModel(
+            'ENV_GRASS',
+            sceneCapture
+          );
+
+          if (!modelEnv) throw "Error: Couldn't instantiate env modelEnv";
+          modelEnv.scaling = Vector3.One().scale(1.5);
+        }
+
+        // helper nodes
+
+        const modelBall = Babylon.MeshBuilder.CreateBox(
+          `loomball`,
+          { size: 0.2 },
+          sceneCapture
+        );
+        modelBall.visibility = 0;
+
+        const ballVisual = Babylon.MeshBuilder.CreateBox(
+          `loomballVisual`,
+          { size: 0.1 },
+          sceneCapture
+        );
+        ballVisual.isPickable = false;
+        ballVisual.parent = modelBall;
+        ballVisual.visibility = 0;
 
         // position model loomie
 
@@ -250,7 +420,7 @@ export class CaptureSM {
 
         // make camera target the Loomie at the middle
 
-        camera.setTarget(new Vector3(0, height / 2, 0));
+        if (!arSupported) camera.setTarget(new Vector3(0, height / 2, 0));
 
         // DEBUG: Target loomball
         //const modelBall2 = await this.stt.modelContext.cloneModel(
@@ -266,7 +436,7 @@ export class CaptureSM {
 
         modelBall.scaling = Vector3.One().scale(LOOMBALL_SCALE);
         modelBall.position = new Vector3().copyFrom(LOOMBALL_SPAWN_POS);
-        modelBall.parent = cameraCapture;
+        modelBall.parent = camera;
 
         // loomball initial position
 
@@ -275,18 +445,16 @@ export class CaptureSM {
           { size: 0.2 },
           sceneCapture
         );
-        initialOriginBall.position = new Vector3().copyFrom(
-          LOOMBALL_INITIAL_POS
-        );
-        initialOriginBall.parent = cameraCapture;
+        initialOriginBall.position = get_loomball_initial_pos(arSupported);
+        initialOriginBall.parent = camera;
         initialOriginBall.isPickable = false;
         initialOriginBall.visibility = 0;
 
-        //// loomball hitbox
+        // loomball hitbox
 
         const hitbox = Babylon.MeshBuilder.CreateSphere(
           'loomball_hitbox',
-          { diameter: 1.1, segments: 6, sideOrientation: 2 },
+          { diameter: 2, segments: 6, sideOrientation: 2 },
           sceneCapture
         );
         hitbox.scaling = Vector3.One().scale(LOOMBALL_SCALE);
@@ -294,7 +462,7 @@ export class CaptureSM {
         hitbox.isPickable = true;
         hitbox.visibility = 0;
 
-        //// scratch pad
+        // scratch pad
 
         const scratchPad = Babylon.CreateDisc(
           'scratchPad',
@@ -302,8 +470,10 @@ export class CaptureSM {
           sceneCapture
         );
         scratchPad.position.y = -0.5;
-        scratchPad.position.z = LOOMBALL_CAMERA_DISTANCE;
-        scratchPad.parent = cameraCapture;
+        scratchPad.position.z = arSupported
+          ? LOOMBALL_CAMERA_DISTANCE_AR
+          : LOOMBALL_CAMERA_DISTANCE;
+        scratchPad.parent = camera;
         scratchPad.isPickable = true;
         scratchPad.visibility = 0;
 
@@ -345,6 +515,7 @@ export class CaptureSM {
         this.stt.ballInitialOrigin = initialOriginBall;
         this.stt.cameraDummy = cameraDummy;
         this.stt.ballDummy = ballDummy;
+        this.stt.ballVisualNode = ballVisual;
       } catch (error) {
         console.error(error);
       }

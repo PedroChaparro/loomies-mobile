@@ -17,7 +17,8 @@ import {
   iPayload_GYM_LOOMIE_WEAKENED,
   iPayload_USER_LOOMIE_WEAKENED,
   iPayload_USER_ITEM_USED,
-  iPayload_ERROR_USING_ITEM
+  iPayload_ERROR_USING_ITEM,
+  iPayload_LOOMIES_TEAM
 } from '@src/types/combatInterfaces';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import { delay } from '@src/utils/delay';
@@ -54,6 +55,7 @@ export const CombatView = ({ route }: iCombatViewProps) => {
   // state
 
   const [loomiePlayer, setLoomiePlayer] = useState<iLoomie>();
+  const [loomieTeamPlayer, setLoomieTeamPlayer] = useState<iLoomie[]>();
   const [loomieGym, setLoomieGym] = useState<iLoomie>();
   const [gymLoomiesLeft, setGymLoomiesLeft] = useState<number>(0);
   const [userLoomiesLeft, setUserLoomiesLeft] = useState<number>(0);
@@ -68,6 +70,8 @@ export const CombatView = ({ route }: iCombatViewProps) => {
   const [modalLooseVisible, setModalLooseVisible] = useState<boolean>(false);
   const [modalWinVisible, setModalWinVisible] = useState<boolean>(false);
   const [modalItemVisible, setModalItemVisible] = useState<boolean>(false);
+  const [modalLoomiesTeamVisible, setModalLoomiesTeamVisible] =
+    useState<boolean>(false);
   const modalLooseToggle = (open?: boolean) => {
     if (open != undefined) setModalLooseVisible(open);
     else setModalLooseVisible((value) => !value);
@@ -80,6 +84,11 @@ export const CombatView = ({ route }: iCombatViewProps) => {
     if (open != undefined) {
       setModalItemVisible(open);
     } else setModalItemVisible((value) => !value);
+  };
+  const modalLoomiesTeamToggle = (open?: boolean) => {
+    if (open != undefined) {
+      setModalLoomiesTeamVisible(open);
+    } else setModalLoomiesTeamVisible((value) => !value);
   };
 
   const modalCloseAll = () => {
@@ -164,7 +173,7 @@ export const CombatView = ({ route }: iCombatViewProps) => {
               if (payload.damage > 0)
                 queueMessage(
                   payload.was_critical
-                    ? `Effective attack! -${payload.damage}`
+                    ? `-${payload.damage} Effective attack!`
                     : `-${payload.damage}`,
                   false
                 );
@@ -193,7 +202,7 @@ export const CombatView = ({ route }: iCombatViewProps) => {
               if (payload.damage > 0)
                 queueMessage(
                   payload.was_critical
-                    ? `Effective attack! -${payload.damage}`
+                    ? `-${payload.damage} Effective attack!`
                     : `-${payload.damage}`,
                   true
                 );
@@ -240,7 +249,21 @@ export const CombatView = ({ route }: iCombatViewProps) => {
           const payload = data.payload as iPayload_GYM_LOOMIE_WEAKENED;
 
           setGymLoomiesLeft(payload.alive_gym_loomies);
-          queueMessage('Enemy Loomie has weakened', true);
+          queueMessage(`-${payload.damage} Enemy fainted!`, true);
+
+          // set hp to zero and hide model
+
+          setLoomieGym((loomie) => {
+            if (loomie) {
+              // update hp
+              loomie.boosted_hp = 0;
+
+              // make serial invalid to hide model
+              loomie.serial = -1;
+
+              return loomie;
+            }
+          });
         }
         break;
 
@@ -251,11 +274,31 @@ export const CombatView = ({ route }: iCombatViewProps) => {
           const payload = data.payload as iPayload_USER_LOOMIE_WEAKENED;
 
           setUserLoomiesLeft(payload.alive_user_loomies);
-          queueMessage('Your Loomie has weakened', false);
+          queueMessage(`-${payload.damage} Loomie fainted!`, false);
+
+          // set hp to zero and hide model
+
+          setLoomiePlayer((loomie) => {
+            if (loomie) {
+              // update hp
+              loomie.boosted_hp = 0;
+
+              // make serial invalid to hide model
+              loomie.serial = -1;
+
+              return loomie;
+            }
+          });
         }
         break;
 
       // attack dodged
+
+      case TYPE.GYM_ATTACK_CANDIDATE:
+        {
+          queueMessage('Attack incoming', true);
+        }
+        break;
 
       case TYPE.GYM_ATTACK_DODGED:
         {
@@ -345,6 +388,16 @@ export const CombatView = ({ route }: iCombatViewProps) => {
         }
         break;
 
+      // update gym loomie
+
+      case TYPE.USER_LOOMIE_TEAM:
+        {
+          if ((data.payload as iPayload_LOOMIES_TEAM) === undefined) return;
+          const payload = data.payload as iPayload_LOOMIES_TEAM;
+          setLoomieTeamPlayer(payload.loomies);
+        }
+        break;
+
       default:
         console.log(`Warn: Message not recognized ${data.type}`);
         break;
@@ -385,6 +438,28 @@ export const CombatView = ({ route }: iCombatViewProps) => {
       showInfoToast('Combat has ended');
       exitCombat();
     })();
+  };
+
+  const userLoomiesTeam = () => {
+    const message = JSON.stringify({
+      type: TYPE[TYPE.USER_GET_LOOMIE_TEAM] as string
+    });
+    sendMessage(message, false);
+  };
+
+  const changeLoomie = (newLoomie: iLoomie) => {
+    if (newLoomie && newLoomie.boosted_hp > 0) {
+      const message = JSON.stringify({
+        type: TYPE[TYPE.USER_CHANGE_LOOMIE] as string,
+        payload: {
+          loomie_id: newLoomie._id
+        }
+      });
+
+      sendMessage(message, true);
+    } else {
+      queueMessage('Loomie is Weakened', false);
+    }
   };
 
   const exitCombat = () => {
@@ -480,9 +555,17 @@ export const CombatView = ({ route }: iCombatViewProps) => {
           modalItemToggle={() => modalItemToggle()}
           modalItemCallback={applyItem}
           // display message
+          queueMessage={queueMessage}
           queueUpdated={queueUpdated}
           getMessageQueue={getMessageQueue}
           removeMessageFromQueue={removeMessageFromQueue}
+          //Modal loomie team
+          modalLoomiesTeamVisible={modalLoomiesTeamVisible}
+          modalLoomiesTeamToggle={() => modalLoomiesTeamToggle()}
+          getUserLoomiesTeam={userLoomiesTeam}
+          changeLoomie={changeLoomie}
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          loomieTeamPlayer={loomieTeamPlayer!}
         />
       )}
     </>

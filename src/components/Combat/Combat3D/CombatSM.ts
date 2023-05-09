@@ -13,7 +13,8 @@ import { iMapProvider } from '@src/context/MapProvider';
 import { iModelProvider } from '@src/context/ModelProvider';
 import {
   instantiatedEntriesTranslate,
-  instantiatedEntriesRotate
+  instantiatedEntriesRotate,
+  instantiatedEntriesScale
 } from '@src/components/Map3D/utilsVertex';
 
 import {
@@ -200,16 +201,24 @@ export class CombatSM {
       try {
         // models
 
-        const modelEnv = await this.stt.modelContext.instantiateModel(
+        const modelEnv1 = await this.stt.modelContext.cloneModel(
+          'ENV_GRASS',
+          sceneCombat
+        );
+
+        const modelEnv2 = await this.stt.modelContext.cloneModel(
           'ENV_GRASS',
           sceneCombat
         );
 
         // check
 
-        if (!modelEnv) throw "Error: Couldn't instantiate env modelEnv";
+        if (!modelEnv1 || !modelEnv2)
+          throw "Error: Couldn't instantiate env modelEnv";
 
-        instantiatedEntriesTranslate(modelEnv, Vector3.Zero());
+        modelEnv1.setAbsolutePosition(USER_LOOMIE_INITIAL_POS.clone());
+        modelEnv2.setAbsolutePosition(GYM_LOOMIE_INITIAL_POS.clone());
+        modelEnv1.rotation.y = (Math.PI * 2) / 3;
 
         // loomie models
 
@@ -225,11 +234,21 @@ export class CombatSM {
 
   async updateLoomieModel(loomieStt: iCombatLoomieState, user: boolean) {
     try {
+      // if serial is not valid hide it
+
+      if (loomieStt.loomie.serial < 1) {
+        if (!loomieStt.model) return;
+        instantiatedEntriesScale(loomieStt.model, Vector3.Zero());
+        return;
+      }
+
       // free previous model
 
       loomieStt.model?.dispose();
 
       // load current model
+
+      console.log('Loomie serial ', loomieStt.loomie.serial.toString());
 
       const model = await this.stt.modelContext.instantiateModel(
         loomieStt.loomie.serial.toString(),

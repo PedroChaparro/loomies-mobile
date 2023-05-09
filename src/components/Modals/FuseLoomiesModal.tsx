@@ -4,10 +4,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { LoomiesGrid } from '../CaughtLoomiesGrid/LoomiesGrid';
-import { CustomButton } from '../CustomButton';
 import { useToastAlert } from '@src/hooks/useToastAlert';
 import { navigate } from '@src/navigation/RootNavigation';
 import { EmptyMessage } from '../EmptyMessage';
+import { FloatingRedIcon } from '../FloatingRedIcon';
 
 interface IProps {
   selectedLoomie: TCaughtLoomieToRender;
@@ -21,7 +21,6 @@ export const FuseLoomiesModal = ({
   toggleVisibilityCallback
 }: IProps) => {
   const { showErrorToast, showSuccessToast } = useToastAlert();
-  const [team, setTeam] = useState<string>();
   const [fuseLoomie, setFuseLoomie] = useState<string>('');
   const [loomies, setLoomies] = useState<TCaughtLoomieToRender[]>();
 
@@ -29,20 +28,10 @@ export const FuseLoomiesModal = ({
   const fetchLoomies = async () => {
     const [response, err] = await getLoomiesRequest();
     if (err) return;
-
     const loomies: TCaughtLoomies[] = response.loomies;
 
-    const loomiesWithTeamProperty = loomies.map((loomie) => {
-      const isSelectedLoomie = team === loomie._id ? true : false;
-
-      return {
-        ...loomie,
-        is_selected: isSelectedLoomie
-      };
-    });
-
     // Filter loomies to show only the ones that can be merged
-    const fuseCandidates = loomiesWithTeamProperty.filter((loomie) => {
+    const fuseCandidates = loomies.filter((loomie) => {
       return (
         loomie._id !== selectedLoomie._id &&
         loomie.serial === selectedLoomie.serial &&
@@ -53,9 +42,26 @@ export const FuseLoomiesModal = ({
     setLoomies(fuseCandidates);
   };
 
+  // Update the selected loomie when the user clicks a card
+  const updateSelectedLoomie = () => {
+    const loomiesWithTeamProperty = loomies?.map((loomie) => {
+      const isSelectedLoomie = fuseLoomie === loomie._id ? true : false;
+      return {
+        ...loomie,
+        is_selected: isSelectedLoomie
+      };
+    });
+
+    setLoomies(loomiesWithTeamProperty);
+  };
+
   useEffect(() => {
     fetchLoomies();
-  }, [team]);
+  }, []);
+
+  useEffect(() => {
+    updateSelectedLoomie();
+  }, [fuseLoomie]);
 
   const handleLoomiePress = useCallback((loomieId: string) => {
     // If the loomie is busy, ignore the action
@@ -63,9 +69,6 @@ export const FuseLoomiesModal = ({
     if (loomie?.is_busy) return;
 
     setFuseLoomie(loomieId);
-    setTeam(loomieId);
-
-    console.log('Loomie pressed: ', loomieId);
   }, []);
 
   const callfuseLoomies = async () => {
@@ -102,7 +105,7 @@ export const FuseLoomiesModal = ({
       style={Styles.modal}
     >
       <Text style={Styles.modalTitle}>Merge Loomies</Text>
-      <View style={{ flex: 1, marginVertical: 8 }}>
+      <View style={{ flex: 1, position: 'relative', marginVertical: 8 }}>
         {loomies.length === 0 ? (
           <EmptyMessage
             text={`You have to catch another "${selectedLoomie.name}" to merge it`}
@@ -118,21 +121,22 @@ export const FuseLoomiesModal = ({
             elementsCallback={handleLoomiePress}
           />
         )}
-      </View>
-      {loomies.length === 0 ? null : (
-        <View style={Styles.containerButton}>
-          <CustomButton
-            title='Merge'
-            type='primary'
-            callback={callfuseLoomies}
+
+        {loomies.length > 0 && (
+          <FloatingRedIcon
+            onPress={callfuseLoomies}
+            collection='MaterialCommunityIcons'
+            name='checkbox-marked-circle-outline'
+            bottom={80}
+            right={16}
           />
-        </View>
-      )}
-      <View style={Styles.containerButton}>
-        <CustomButton
-          title='Cancel'
-          type='primary'
-          callback={toggleVisibilityCallback}
+        )}
+        <FloatingRedIcon
+          onPress={toggleVisibilityCallback}
+          collection='MaterialIcons'
+          name='cancel'
+          bottom={16}
+          right={16}
         />
       </View>
     </Modal>
@@ -151,9 +155,5 @@ const Styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     textTransform: 'uppercase'
-  },
-  containerButton: {
-    alignSelf: 'center',
-    width: '90%'
   }
 });

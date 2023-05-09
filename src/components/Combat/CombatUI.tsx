@@ -21,6 +21,7 @@ import {
 } from './CombatFloatingMessage';
 import { GenericModal } from '../Modals/GenericModal';
 import { SelectItemModal } from '../Modals/Combat/SelectItemModal';
+import { SelectLoomieModal } from '../Modals/Combat/SelectLoomieModal';
 
 interface iPropsCombatUI {
   // state
@@ -49,14 +50,24 @@ interface iPropsCombatUI {
   modalItemCallback: (_itemId: string) => void;
 
   // display message
+  queueMessage: (_message: string, _direction: boolean) => void;
   queueUpdated: number;
   getMessageQueue: () => iDisplayMessage[];
   removeMessageFromQueue: (_ids: number[]) => void;
+
+  //change loomie
+  modalLoomiesTeamVisible: boolean;
+  modalLoomiesTeamToggle: () => void;
+  getUserLoomiesTeam: () => void;
+  loomieTeamPlayer: iLoomie[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  changeLoomie(_a: any): void;
 }
 
-const GIZMO_SIZE = 30;
+const GIZMO_SIZE = 40;
 const MAX_DISPLAY_MESSAGES = [0, 1, 2, 3];
 const MAX_LOOMIES = [0, 1, 2, 3, 4, 5];
+export const USER_ACTION_WAIT_TIME = 1500;
 
 export const CombatUI = (props: iPropsCombatUI) => {
   // gizmo
@@ -74,6 +85,14 @@ export const CombatUI = (props: iPropsCombatUI) => {
 
   const [modalEscapeVisible, setModalEscapeVisible] = useState<boolean>(false);
 
+  // Game logic states
+
+  const lastPlayerInteractionTime = useRef<number>(0);
+
+  const updateLastPlayerInteractionTime = () => {
+    lastPlayerInteractionTime.current = Date.now();
+  };
+
   const showGizmo = (origin: iGridPosition, icon: string) => {
     // reset
 
@@ -90,26 +109,45 @@ export const CombatUI = (props: iPropsCombatUI) => {
     Animated.parallel([
       Animated.timing(gizmoOpacity.current, {
         toValue: 0,
-        duration: 500,
+        // Add a little more to compensate input
+        duration: USER_ACTION_WAIT_TIME * 1.1,
         useNativeDriver: false
       })
     ]).start();
   };
 
   const touchAttack = (event: GestureResponderEvent) => {
+    // Ignore the event if the player has attacked / dodged in the last 2 seconds
+    if (
+      lastPlayerInteractionTime.current + USER_ACTION_WAIT_TIME >
+      Date.now()
+    ) {
+      return;
+    }
+
     showGizmo(
       { x: event.nativeEvent.pageX, y: event.nativeEvent.pageY },
       'sword-cross'
     );
     props.inputAttack();
+    updateLastPlayerInteractionTime();
   };
 
   const touchDodge = (event: GestureResponderEvent, direction: boolean) => {
+    // Ignore the event if the player has attacked / dodged in the last 2 seconds
+    if (
+      lastPlayerInteractionTime.current + USER_ACTION_WAIT_TIME >
+      Date.now()
+    ) {
+      return;
+    }
+
     showGizmo(
       { x: event.nativeEvent.pageX, y: event.nativeEvent.pageY },
       'shield-half-full'
     );
     props.inputDodge(direction);
+    updateLastPlayerInteractionTime();
   };
 
   // loomies left
@@ -182,8 +220,10 @@ export const CombatUI = (props: iPropsCombatUI) => {
         {/* header */}
 
         <View style={styles.circle}></View>
-        <Text style={styles.title}>{props.gym.name}</Text>
-        <Text style={styles.subtitle}>
+        <Text style={styles.title} numberOfLines={1} ellipsizeMode='tail'>
+          {props.gym.name}
+        </Text>
+        <Text style={styles.subtitle} numberOfLines={1} ellipsizeMode='tail'>
           {props.gym.owner ? props.gym.owner : 'Unclaimed'}
         </Text>
 
@@ -227,11 +267,24 @@ export const CombatUI = (props: iPropsCombatUI) => {
             style={{ opacity: gizmoOpacity.current }}
             pointerEvents='none'
           >
-            <MaterialCommunityIcons
-              size={GIZMO_SIZE}
-              name={gizmoIcon}
-              color={'white'}
-            />
+            <View style={styles.gyzmoContainer}>
+              <MaterialCommunityIcons
+                size={GIZMO_SIZE}
+                name={gizmoIcon}
+                color={'white'}
+              />
+              <View style={styles.gyzmoLoadingBar}>
+                <Animated.View
+                  style={{
+                    ...styles.gyzmoLoadingBarFill,
+                    width: gizmoOpacity.current.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0%', '100%']
+                    })
+                  }}
+                ></Animated.View>
+              </View>
+            </View>
           </Animated.View>
         </View>
 
@@ -307,7 +360,8 @@ export const CombatUI = (props: iPropsCombatUI) => {
                   <Pressable
                     style={{ ...styles.bubbleBig }}
                     onPress={() => {
-                      console.log('Pressed Loomie team bubble');
+                      props.getUserLoomiesTeam();
+                      props.modalLoomiesTeamToggle();
                     }}
                   >
                     <FeatherIcon size={30} name={'github'} color={'white'} />
@@ -356,6 +410,21 @@ export const CombatUI = (props: iPropsCombatUI) => {
         isVisible={props.modalItemVisible}
         toggleVisibilityCallback={props.modalItemToggle}
         submitCallback={props.modalItemCallback}
+      />
+
+      {/* change loomie modal */}
+
+      <SelectLoomieModal
+        loomiesTeam={
+          props.loomieTeamPlayer
+            ? props.loomieTeamPlayer.filter(
+                (l) => l._id != props.loomiePlayer._id
+              )
+            : []
+        }
+        isVisible={props.modalLoomiesTeamVisible}
+        toggleVisibilityCallback={props.modalLoomiesTeamToggle}
+        changeLoomie={props.changeLoomie}
       />
 
       {/* you loose modal */}

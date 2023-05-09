@@ -5,6 +5,8 @@ import React from 'react';
 import { Profile } from '../pages/Profile';
 import { UserLoomies } from '../pages/UserLoomies';
 import { UserInventory } from '../pages/UserInventory';
+import { Image } from 'react-native';
+import { images } from '@src/utils/utils';
 
 const Tab = createBottomTabNavigator();
 
@@ -49,9 +51,15 @@ export const BottomNavigation = () => {
           name={screen.name}
           component={screen.component}
           options={{
-            tabBarIcon: ({ color }) => (
-              <FeatherIcon name={screen.iconName} size={20} color={color} />
-            )
+            tabBarIcon: ({ color }) =>
+              screen.name !== 'Loomies' ? (
+                <FeatherIcon name={screen.iconName} size={20} color={color} />
+              ) : (
+                <Image
+                  source={images['015']}
+                  style={{ width: 76, height: 76, top: -16 }}
+                />
+              )
           }}
           /* Redirect to the Map view if the clicked tab is already active / 
           handle double click */

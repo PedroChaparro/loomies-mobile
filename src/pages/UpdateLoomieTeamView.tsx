@@ -9,9 +9,9 @@ import { LoomiesGrid } from '@src/components/CaughtLoomiesGrid/LoomiesGrid';
 import { Container } from '@src/components/Container';
 import { NavigationProp, useIsFocused } from '@react-navigation/native';
 import { LoomiesGridSkeleton } from '@src/skeletons/CaughtLoomiesGrid/LoomiesGridSkeleton';
-import { CustomButton } from '@src/components/CustomButton';
 import { View } from 'react-native';
 import { useToastAlert } from '@src/hooks/useToastAlert';
+import { FloatingRedIcon } from '@src/components/FloatingRedIcon';
 
 interface IProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,14 +35,26 @@ export const UpdateLoomieTeamView = ({ navigation }: IProps) => {
   };
 
   const getLoomies = async () => {
-    const [response, error] = await getLoomiesRequest();
-    if (error) return;
+    let currentLoomies: TCaughtLoomies[];
 
-    const loomies: TCaughtLoomies[] = response.loomies;
+    // Get the loomies from the database the first time
+    if (!loomies || loomies.length === 0) {
+      const [response, error] = await getLoomiesRequest();
+      if (error || !response.loomies || response.loomies.length == 0) return;
 
-    const loomiesWithTeamProperty = loomies.map((loomie) => {
+      const responseLoomies: TCaughtLoomies[] = response.loomies;
+      currentLoomies = responseLoomies;
+    } else {
+      currentLoomies = loomies;
+    }
+
+    const loomiesWithTeamProperty = currentLoomies.map((loomie) => {
       const isTeamLoomie = team.includes(loomie._id);
-      return { ...loomie, is_in_team: isTeamLoomie, is_selected: isTeamLoomie };
+      return {
+        ...loomie,
+        is_in_team: isTeamLoomie,
+        is_selected: isTeamLoomie
+      };
     });
 
     setLoomies(loomiesWithTeamProperty);
@@ -106,25 +118,29 @@ export const UpdateLoomieTeamView = ({ navigation }: IProps) => {
     }
   };
 
-  const redirectionHeader = (
-    <View style={{ paddingHorizontal: 10 }}>
-      <CustomButton title='Save' type='primary' callback={handleSave} />
-    </View>
-  );
-
   return (
-    <Container>
-      {loading ? (
-        <LoomiesGridSkeleton />
-      ) : (
-        <LoomiesGrid
-          loomies={loomies}
-          markBusyLoomies={true}
-          markSelectedLoomies={true}
-          elementsCallback={handleLoomiePress}
-          listHeaderComponent={redirectionHeader}
+    <View style={{ position: 'relative', flex: 1 }}>
+      <Container>
+        {loading ? (
+          <LoomiesGridSkeleton />
+        ) : (
+          <LoomiesGrid
+            loomies={loomies}
+            markBusyLoomies={true}
+            markSelectedLoomies={true}
+            elementsCallback={handleLoomiePress}
+          />
+        )}
+      </Container>
+      {!loading && loomies.length > 0 && (
+        <FloatingRedIcon
+          onPress={handleSave}
+          collection='MaterialCommunityIcons'
+          name='content-save'
+          bottom={16}
+          right={16}
         />
       )}
-    </Container>
+    </View>
   );
 };

@@ -24,12 +24,15 @@ import { TLoomball, TWildLoomies } from '@src/types/types';
 import { CaptureSM } from './CaptureSM';
 import { CONFIG } from '@src/services/config.services';
 import { MapContext } from '@src/context/MapProvider';
+import { MapModalsContext } from '@src/context/MapModalsProvider';
+import { closeXRSession } from './utilsAnimations';
 const { MAP_DEBUG } = CONFIG;
 
 interface iCaptureLoomie3D {
   loomie: TWildLoomies;
   loomball: TLoomball;
   setBallState: (_state: LOOMBALL_STATE) => void;
+  setCleanUp: (cleanUp: () => Promise<void>) => void;
 }
 
 export const enum LOOMBALL_STATE {
@@ -47,7 +50,8 @@ export const enum LOOMBALL_STATE {
 export const CaptureLoomie3D = ({
   loomie,
   loomball,
-  setBallState
+  setBallState,
+  setCleanUp
 }: iCaptureLoomie3D) => {
   const { sceneCapture, cameraCapture, getCurrentScene } =
     useContext(BabylonContext);
@@ -58,8 +62,10 @@ export const CaptureLoomie3D = ({
   const modelContext = useContext(ModelContext);
   const userPositionContext = useContext(UserPositionContext);
   const mapContext = useContext(MapContext);
+  const { setCurrentModalCapturedInfo } = useContext(MapModalsContext);
 
-  // stores the ballState
+  // stores the loomball state
+
   const stateMachine = useRef<CaptureSM | null>(null);
 
   // frame
@@ -123,6 +129,10 @@ export const CaptureLoomie3D = ({
         loomie._id,
         loomball._id
       );
+
+      if (captured === CAPTURE_RESULT.CAPTURED) {
+        setCurrentModalCapturedInfo(loomie as TWildLoomies);
+      }
       return [captured, loomie];
     }
     return [CAPTURE_RESULT.NOTFOUND, null];
@@ -160,8 +170,21 @@ export const CaptureLoomie3D = ({
         babylonContext,
         modelContext,
         userPositionContext,
-        mapContext
+        mapContext,
+        loomball,
+
+        attemptToCatch,
+        setBallState
       );
+    }
+
+    // update cleanUp function
+
+    if (stateMachine.current != null) {
+      setCleanUp(async () => {
+        stateMachine.current != null &&
+          (await closeXRSession(stateMachine.current.stt));
+      });
     }
 
     return () => {
@@ -173,17 +196,12 @@ export const CaptureLoomie3D = ({
     babylonContext,
     modelContext,
     userPosition,
-    mapContext
+    mapContext,
+    loomball,
+
+    attemptToCatch,
+    setBallState
   ]);
-
-  // none state create scene
-  useEffect(() => {
-    // create scene
-
-    return () => {
-      // destroy everything
-    };
-  }, []);
 
   // toggle scene
 
