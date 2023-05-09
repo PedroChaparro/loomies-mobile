@@ -221,6 +221,11 @@ export const BabylonProvider = (props: { children: ReactNode }) => {
       sceneCombat
     );
 
+    // clear color
+
+    sceneCapture.clearColor = new Babylon.Color4(0.62, 0.8, 0.45);
+    sceneCombat.clearColor = new Babylon.Color4(0.62, 0.8, 0.45);
+
     // set
 
     setSceneMap(sceneMap);

@@ -49,7 +49,7 @@ export const MODEL_RESOURCE: { [key: string]: string } = {
 
   // environment models
 
-  'ENV_GRASS': 'grass.glb',
+  'ENV_GRASS': 'grass2.glb',
 
   // loomballs
 

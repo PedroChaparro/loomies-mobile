@@ -278,7 +278,7 @@ export class CaptureSM {
           sceneCapture
         );
 
-        const modelEnv = await this.stt.modelContext.instantiateModel(
+        const modelEnv = await this.stt.modelContext.cloneModel(
           'ENV_GRASS',
           sceneCapture
         );
@@ -288,6 +288,7 @@ export class CaptureSM {
         if (!modelLoomie)
           throw "Error: Couldn't instantiate Loomie modelLoomie";
         if (!modelEnv) throw "Error: Couldn't instantiate env modelEnv";
+        modelEnv.scaling = Vector3.One().scale(1.5);
 
         // helper nodes
 
