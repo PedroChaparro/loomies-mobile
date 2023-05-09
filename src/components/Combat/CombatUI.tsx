@@ -214,8 +214,10 @@ export const CombatUI = (props: iPropsCombatUI) => {
         {/* header */}
 
         <View style={styles.circle}></View>
-        <Text style={styles.title}>{props.gym.name}</Text>
-        <Text style={styles.subtitle}>
+        <Text style={styles.title} numberOfLines={1} ellipsizeMode='tail'>
+          {props.gym.name}
+        </Text>
+        <Text style={styles.subtitle} numberOfLines={1} ellipsizeMode='tail'>
           {props.gym.owner ? props.gym.owner : 'Unclaimed'}
         </Text>
 

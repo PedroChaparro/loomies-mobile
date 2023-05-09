@@ -46,6 +46,7 @@ export const styles = StyleSheet.create({
 
   title: {
     position: 'absolute',
+    maxWidth: 225,
     top: 10,
     fontSize: 18,
     fontWeight: 'bold',
@@ -54,6 +55,7 @@ export const styles = StyleSheet.create({
 
   subtitle: {
     position: 'absolute',
+    maxWidth: 225,
     top: 32,
     fontSize: 14,
     color: 'white'
